@@ -1,6 +1,7 @@
 # cspell:word autofix
 # cspell:word autoflake
 # cspell:word isort
+# cspell:word frontmatter
 # cspell:word markdownlint
 # cspell:word mdformat
 # cspell:word shfmt
