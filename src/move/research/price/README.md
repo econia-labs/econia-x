@@ -1,5 +1,3 @@
-<!--- cspell:word-->
-
 # Price
 
 ## General
@@ -66,18 +64,16 @@ Thus, the price $987 = 9.87 \cdot 10^2$ is encoded as follows:
 
 <!-- markdownlint-disable MD013 -->
 
-| Symbol | Description         | Encoded value                  | Bits                          |
-| ------ | ------------------- | ------------------------------ | ----------------------------- |
-| $m_e$  | Encoded significand | $9.87 \cdot 10^7 = 98,700,000$ | `101111000100000101011100000` |
-| $n_e$  | Encoded exponent    | $2 + 16 = 18$                  | `10010`                       |
+| Description         | Symbol | Encoded value                  | Bits                          |
+| ------------------- | ------ | ------------------------------ | ----------------------------- |
+| Encoded significand | $m_e$  | $9.87 \cdot 10^7 = 98,700,000$ | `101111000100000101011100000` |
+| Encoded exponent    | $n_e$  | $2 + 16 = 18$                  | `10010`                       |
 
 <!-- markdownlint-enable MD013 -->
 
-> ```
->               10010101111000100000101011100000
-> exponent bits ^^^^^
->                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^ significand bits
-> ```
+>                   10010101111000100000101011100000
+>     exponent bits ^^^^^
+>                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^ significand bits
 
 ## Exponent range selection
 
