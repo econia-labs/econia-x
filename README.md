@@ -1,4 +1,4 @@
-# Econia v5
+# Econia X
 
 [![pre-commit shield]][pre-commit repo]
 

@@ -46,11 +46,11 @@ If you use `brew` on MacOS:
 You'll also need to set up your `poetry` and `pre-commit` environments for this
 repository:
 
-First ensure you're in the `econia-v5` repository at the root directory. If you
+First ensure you're in the `econia-x` repository at the root directory. If you
 haven't cloned it yet, this might look something like:
 
 ```shell
-git clone https://github.com/econia-labs/econia-v5 && cd econia-v5
+git clone https://github.com/econia-labs/econia-x && cd econia-x
 ```
 
 Then install the Python hooks `poetry` dependencies:
