@@ -1,5 +1,10 @@
-# cspell:words autofix, markdownlint, mdformat, shfmt, autoflake, Autoflake
-# cspell:words isort, mypy, Mypy
+# cspell:word autofix
+# cspell:word autoflake
+# cspell:word isort
+# cspell:word markdownlint
+# cspell:word mdformat
+# cspell:word shfmt
+# cspell:word mypy
 ---
 repos:
 -
@@ -112,9 +117,11 @@ repos:
   hooks:
   - additional_dependencies:
     - 'mdformat-gfm'
+    - 'mdformat-frontmatter'
+    - 'mdformat-myst'
     id: 'mdformat'
   repo: 'https://github.com/executablebooks/mdformat'
-  rev: '0.7.17'
+  rev: '0.7.21'
 -
   hooks:
   -
