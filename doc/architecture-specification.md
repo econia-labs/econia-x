@@ -1,6 +1,6 @@
 <!--- cspell:words evictable, incentivized -->
 
-# Econia v5 Architecture Specification
+# Econia X Architecture Specification
 
 The key words `MUST`, `MUST NOT`, `REQUIRED`, `SHALL`, `SHALL NOT`, `SHOULD`,
 `SHOULD NOT`, `RECOMMENDED`,  `MAY`, and `OPTIONAL` in this document are to be
