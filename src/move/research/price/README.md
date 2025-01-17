@@ -20,10 +20,10 @@ $$
 The chosen `u32` format ensures a canonical encoding of any representable
 number, resulting in a strict total order:
 
-| Bits | Encoded data | Symbol |
-|-|-|-|
-| 0—26 | Significand | $m$ |
-| 27—31 | Exponent | $n$ |
+| Bits  | Encoded data | Symbol |
+| ----- | ------------ | ------ |
+| 0—26  | Significand  | $m$    |
+| 27—31 | Exponent     | $n$    |
 
 Hence for a normalized significand $1 \leq m < 10$, price $p$ is denoted:
 
@@ -74,5 +74,5 @@ $a \cdot 10^{16}$. This is consistent with the [IEE 754 standard], which defines
 exponent ranges between $-126$ and $+127$, $-1022$ and $+1023$, and so on
 (`emin = 1 - emax`).
 
-[IEE 754 standard]: https://en.wikipedia.org/wiki/IEEE_754
+[iee 754 standard]: https://en.wikipedia.org/wiki/IEEE_754
 [normalized number]: https://en.wikipedia.org/wiki/Normalized_number
