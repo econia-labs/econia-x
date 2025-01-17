@@ -1,4 +1,5 @@
 <!--- cspell:word-->
+
 # Price
 
 ## General
@@ -21,73 +22,16 @@ $$
 The chosen `u32` format ensures a canonical encoding of any representable
 number, resulting in a strict total order:
 
-| Bits  | Encoded data | Symbol |
-| ----- | ------------ | ------ |
-| 0—26  | Significand  | $m$    |
-| 27—31 | Exponent     | $n$    |
+| Bits  | Encoded data | Symbol | Restriction              |
+| ----- | ------------ | ------ | ------------------------ |
+| 0—26  | Significand  | $m$    | Max 9 significant digits |
+| 27—31 | Exponent     | $n$    | $-16 \leq n \leq 15$     |
 
 Hence for a normalized significand $1 \leq m < 10$, price $p$ is denoted:
 
 $$
 p = m \cdot 10^n
 $$
-
-## Exponent range selection
-
-With 5 `u32` bits allocated for $n$, there are thus $2^5 = 32$ possible
-exponents. Since $n=0$ exhausts one representable exponent, the selection of a
-symmetric range across different orders of magnitude requires choosing between
-two options:
-
-| Option | Lower bound | Upper bound | Range |
-| - | - | - | - |
-| 1 | $n_{min} = -16$ | $n_{max} = +15$ | $ -16 \leq n \leq +15 $ |
-| 2 | $n_{min} = -15$ | $n_{max} = +16$ | $ -15 \leq n \leq +16 $ |
-
-To simplify the decision making process, consider an analogous 2-bit exponent
-with options A and B:
-
-| Option | Lower bound | Upper bound | Range |
-| - | - | - | - |
-| A | $n_{min} = -2$ | $n_{max} = +1$ | $ -2 \leq n \leq +1 $ |
-| B | $n_{min} = -1$ | $n_{max} = +2$ | $ -1 \leq n \leq +2 $ |
-
-Now consider the lowest possible significand $m_{min} = 1.0$ and the highest
-possible significand $m_{max} = 9.99$ (for 3 significant digits). For option A:
-
-| | Smallest exponent | Largest exponent |
-|-| - | - |
-| Smallest significand | $1.00 \cdot 10^{-2} = 0.01$ | $1.00 \cdot 10^{1} = 10$ |
-| Largest significand | $9.99 \cdot 10^{-2} = 0.0999 \approx 0.1$ | $9.99 \cdot 10^{1} = 99.9 \approx 100$|
-
-And for option B:
-
-| | Smallest exponent | Largest exponent |
-|-| - | - |
-| Smallest significand | $1.00 \cdot 10^{-1} = 0.1$ | $1.00 \cdot 10^{2} = 100$ |
-| Largest significand | $9.99 \cdot 10^{-1} = 0.999 \approx 1 $ | $9.99 \cdot 10^{2} = 999 \approx 1000$|
-
-Option A ($|n_{min}| = |n_{max}| + 1$) presents several advantages:
-
-1. In option A, the smallest representable number
-   $p_{min} = m_{min} \cdot 10^{n_{min}} = 0.01$ straddles the number $1$ by two
-   orders of magnitude, as does the largest representable number,
-   $p_{max} = m_{max} \cdot 10^{n_{max}} \approx 100$. This contrast with option
-   B where $p_min = 0.1$ is 1 order less but $p_{max} \approx 1000$ is
-   (approximately) 3 more.
-2. In option B for the largest significand $m_{max} = 9.99$, the smallest
-   representable number $m_{max} \cdot 10 ^ {n_{min}} = 0.999 \approx 1$ is
-   (approximately) $1$, while the largest representable number
-   $m_{max} \cdot 10 ^ {n_{max}} = 9.99 \approx 1000$ is (approximately) 3
-   orders of magnitude above $1$. This asymmetric arrangement impractical, with
-   effectively no dynamic range below $1$.
-
-Hence Option A, is the more practical choice, and by extension for the given
-implementation, option 1, which also has $|n_{min}| = |n_{max}| + 1$:
-
-| Lower bound | Upper bound | Range |
-| - | - | - |
-| $n_{min} = -16$ | $n_{max} = +15$ | $ -16 \leq n \leq +15 $ |
 
 ## Old
 
@@ -131,6 +75,71 @@ effective price range (scientific notation) between $a \cdot 10^{-15}$ and
 $a \cdot 10^{16}$. This is consistent with the [IEE 754 standard], which defines
 exponent ranges between $-126$ and $+127$, $-1022$ and $+1023$, and so on
 (`emin = 1 - emax`).
+
+## Exponent range selection
+
+With 5 `u32` bits allocated for $n$, there are thus $2^5 = 32$ possible
+exponents. Since $n=0$ exhausts one representable exponent, the selection of a
+symmetric range across different orders of magnitude requires choosing between
+two options:
+
+| Option | Lower bound     | Upper bound     | Range                   |
+| ------ | --------------- | --------------- | ----------------------- |
+| 1      | $n_{min} = -16$ | $n_{max} = +15$ | $ -16 \leq n \leq +15 $ |
+| 2      | $n_{min} = -15$ | $n_{max} = +16$ | $ -15 \leq n \leq +16 $ |
+
+To simplify the decision making process, consider an analogous 2-bit exponent
+with options A and B:
+
+| Option | Lower bound    | Upper bound    | Range                 |
+| ------ | -------------- | -------------- | --------------------- |
+| A      | $n_{min} = -2$ | $n_{max} = +1$ | $ -2 \leq n \leq +1 $ |
+| B      | $n_{min} = -1$ | $n_{max} = +2$ | $ -1 \leq n \leq +2 $ |
+
+Now consider the lowest possible significand $m_{min} = 1.0$ and the highest
+possible significand $m_{max} = 9.99$ (for 3 significant digits). For option A:
+
+<!-- markdownlint-disable MD013 -->
+
+|                      | Smallest exponent                         | Largest exponent                       |
+| -------------------- | ----------------------------------------- | -------------------------------------- |
+| Smallest significand | $1.00 \cdot 10^{-2} = 0.01$               | $1.00 \cdot 10^{1} = 10$               |
+| Largest significand  | $9.99 \cdot 10^{-2} = 0.0999 \approx 0.1$ | $9.99 \cdot 10^{1} = 99.9 \approx 100$ |
+
+<!-- markdownlint-enable MD013 -->
+
+And for option B:
+
+<!-- markdownlint-disable MD013 -->
+
+|                      | Smallest exponent                       | Largest exponent                       |
+| -------------------- | --------------------------------------- | -------------------------------------- |
+| Smallest significand | $1.00 \cdot 10^{-1} = 0.1$              | $1.00 \cdot 10^{2} = 100$              |
+| Largest significand  | $9.99 \cdot 10^{-1} = 0.999 \approx 1 $ | $9.99 \cdot 10^{2} = 999 \approx 1000$ |
+
+<!-- markdownlint-enable MD013 -->
+
+Option A ($|n_{min}| = |n_{max}| + 1$) presents several advantages:
+
+1. In option A, the smallest representable number
+   $p_{min} = m_{min} \cdot 10^{n_{min}} = 0.01$ straddles the number $1$ by two
+   orders of magnitude, as does the largest representable number,
+   $p_{max} = m_{max} \cdot 10^{n_{max}} \approx 100$. This contrast with option
+   B where $p_min = 0.1$ is 1 order less but $p_{max} \approx 1000$ is
+   (approximately) 3 more.
+1. In option B for the largest significand $m_{max} = 9.99$, the smallest
+   representable number $m_{max} \cdot 10 ^ {n_{min}} = 0.999 \approx 1$ is
+   (approximately) $1$, while the largest representable number
+   $m_{max} \cdot 10 ^ {n_{max}} = 9.99 \approx 1000$ is (approximately) 3
+   orders of magnitude above $1$. This asymmetric arrangement impractical, with
+   effectively no dynamic range below $1$.
+
+Hence Option A, is the more practical choice, and by extension for the given
+implementation, option 1, which also has $|n_{min}| = |n_{max}| + 1$:
+
+| Lower bound     | Upper bound     | Range                   |
+| --------------- | --------------- | ----------------------- |
+| $n_{min} = -16$ | $n_{max} = +15$ | $ -16 \leq n \leq +15 $ |
 
 [iee 754 standard]: https://en.wikipedia.org/wiki/IEEE_754
 [normalized number]: https://en.wikipedia.org/wiki/Normalized_number
