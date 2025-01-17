@@ -1,3 +1,4 @@
+<!--- cspell:word-->
 # Price
 
 ## General
@@ -10,8 +11,8 @@ p = \frac{q}{b}
 $$
 
 Prices are denoted using an unsigned [normalized number] format, so at current
-market prices as of the time of this writing, for example, the ratio of 9.79
-`USD` per 1 `APT` would be denoted $p = 9.79 \cdot 10^1$:
+market prices as of the time of this writing, for example, the ratio of $9.79$
+`USD` per $1$ `APT` would be denoted $p = 9.79 \cdot 10^1$:
 
 $$
 p = \frac{9.79}{1} = 9.79 \cdot 10^1
@@ -31,7 +32,64 @@ $$
 p = m \cdot 10^n
 $$
 
-## Significant digits
+## Exponent range selection
+
+With 5 `u32` bits allocated for $n$, there are thus $2^5 = 32$ possible
+exponents. Since $n=0$ exhausts one representable exponent, the selection of a
+symmetric range across different orders of magnitude requires choosing between
+two options:
+
+| Option | Lower bound | Upper bound | Range |
+| - | - | - | - |
+| 1 | $n_{min} = -16$ | $n_{max} = +15$ | $ -16 \leq n \leq +15 $ |
+| 2 | $n_{min} = -15$ | $n_{max} = +16$ | $ -15 \leq n \leq +16 $ |
+
+To simplify the decision making process, consider an analogous 2-bit exponent
+with options A and B:
+
+| Option | Lower bound | Upper bound | Range |
+| - | - | - | - |
+| A | $n_{min} = -2$ | $n_{max} = +1$ | $ -2 \leq n \leq +1 $ |
+| B | $n_{min} = -1$ | $n_{max} = +2$ | $ -1 \leq n \leq +2 $ |
+
+Now consider the lowest possible significand $m_{min} = 1.0$ and the highest
+possible significand $m_{max} = 9.99$ (for 3 significant digits). For option A:
+
+| | Smallest exponent | Largest exponent |
+|-| - | - |
+| Smallest significand | $1.00 \cdot 10^{-2} = 0.01$ | $1.00 \cdot 10^{1} = 10$ |
+| Largest significand | $9.99 \cdot 10^{-2} = 0.0999 \approx 0.1$ | $9.99 \cdot 10^{1} = 99.9 \approx 100$|
+
+And for option B:
+
+| | Smallest exponent | Largest exponent |
+|-| - | - |
+| Smallest significand | $1.00 \cdot 10^{-1} = 0.1$ | $1.00 \cdot 10^{2} = 100$ |
+| Largest significand | $9.99 \cdot 10^{-1} = 0.999 \approx 1 $ | $9.99 \cdot 10^{2} = 999 \approx 1000$|
+
+Option A ($|n_{min}| = |n_{max}| + 1$) presents several advantages:
+
+1. In option A, the smallest representable number
+   $p_{min} = m_{min} \cdot 10^{n_{min}} = 0.01$ straddles the number $1$ by two
+   orders of magnitude, as does the largest representable number,
+   $p_{max} = m_{max} \cdot 10^{n_{max}} \approx 100$. This contrast with option
+   B where $p_min = 0.1$ is 1 order less but $p_{max} \approx 1000$ is
+   (approximately) 3 more.
+2. In option B for the largest significand $m_{max} = 9.99$, the smallest
+   representable number $m_{max} \cdot 10 ^ {n_{min}} = 0.999 \approx 1$ is
+   (approximately) $1$, while the largest representable number
+   $m_{max} \cdot 10 ^ {n_{max}} = 9.99 \approx 1000$ is (approximately) 3
+   orders of magnitude above $1$. This asymmetric arrangement impractical, with
+   effectively no dynamic range below $1$.
+
+Hence Option A, is the more practical choice, and by extension for the given
+implementation, option 1, which also has $|n_{min}| = |n_{max}| + 1$:
+
+| Lower bound | Upper bound | Range |
+| - | - | - |
+| $n_{min} = -16$ | $n_{max} = +15$ | $ -16 \leq n \leq +15 $ |
+
+## Old
 
 With 27 bits, the significand can theoretically encode any natural number $n$
 for $0 \leq n \leq 2^{27} - 1 = 134217727$.
