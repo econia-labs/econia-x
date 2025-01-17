@@ -2,18 +2,34 @@
 
 ## General
 
-This implementation defines price as an unsigned floating point decimal, using a
-`u32` encoding schema that canonicalizes all representable numbers to ensure a
-strict total order:
+This implementation defines price $p$ as the ratio of a quote asset $q$ to a
+base asset $b$:
+
+$$
+p = \frac{q}{b}
+$$
+
+Prices are denoted using an unsigned [normalized number] format, so at current
+market prices as of the time of this writing, for example, the ratio of 9.79
+`USD` per 1 `APT` would be denoted $p = 9.79 \cdot 10^1$:
+
+$$
+p = \frac{9.79}{1} = 9.79 \cdot 10^1
+$$
+
+The chosen `u32` format ensures a canonical encoding of any representable
+number, resulting in a strict total order:
 
 | Bits | Encoded data | Symbol |
 |-|-|-|
-| 0—26 | Significand | $s$ |
-| 27—31 | Exponent | $e$ |
+| 0—26 | Significand | $m$ |
+| 27—31 | Exponent | $n$ |
 
-Hence a price $p$ is taken as:
+Hence for a normalized significand $1 \leq m < 10$, price $p$ is denoted:
 
-$$p = s \cdot 10^{e}$$
+$$
+p = m \cdot 10^n
+$$
 
 ## Significant digits
 
@@ -59,3 +75,4 @@ exponent ranges between $-126$ and $+127$, $-1022$ and $+1023$, and so on
 (`emin = 1 - emax`).
 
 [IEE 754 standard]: https://en.wikipedia.org/wiki/IEEE_754
+[normalized number]: https://en.wikipedia.org/wiki/Normalized_number
