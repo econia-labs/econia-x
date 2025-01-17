@@ -24,7 +24,7 @@ number, resulting in a strict total order:
 
 | Bits  | Encoded data | Symbol | Restriction              |
 | ----- | ------------ | ------ | ------------------------ |
-| 0—26  | Significand  | $m$    | Max 9 significant digits |
+| 0—26  | Significand  | $m$    | Max 8 significant digits |
 | 27—31 | Exponent     | $n$    | $-16 \leq n \leq 15$     |
 
 Hence for a normalized significand $1 \leq m < 10$, price $p$ is denoted:
@@ -33,52 +33,55 @@ $$
 p = m \cdot 10^n
 $$
 
-## Old
+## Encoding
 
-With 27 bits, the significand can theoretically encode any natural number $n$
-for $0 \leq n \leq 2^{27} - 1 = 134217727$.
+The 27 significand bits can theoretically encode any natural number $n$ for
+$0 \leq n \leq 2^{27} - 1 = 134,217,727$.
 
-However in practice, a given significand $s$ is bounded between
-$s_{min} = 100000000 = 10^8$ and $s_{max} = 999999999 \approx 10^9$
-($s_{min} \leq s \leq s_{max}$), to ensure a canonical encoding for any given
-representable number. For example the number $1.5$ is represented as
-$1.5 = 150000000 \cdot 10^{-8}$.
+However in practice the encoded value $m_e$ is bounded as follows to ensure
+a canonical representation of any possible number:
 
-## Bias derivation
+$$
+10^7 = 10,000,000 = m_{e, min}\leq m_e \leq m_{e, max} = 99,999,999 \approx 10^8
+$$
 
-With 5 bits, the exponent can theoretically encode any natural number $n$ for
-$0 \leq n \leq 2^5 - 1 = 31$.
+This constraint thus disambiguates numbers that do not use all significant
+digits, resulting in a strict total order among all representable prices. For
+example the price $1.5 \cdot 10^1$ would have an encoded significand
+$m_e = 15,000,000$, and more generally, conversion between a normalized
+significand $m$ and encoded significand $m_e$ is as follows:
 
-However in practice, due to the bounds on $s_{min}$ and $s_{max}$, negative
-exponents are required to represent numbers smaller than $s_{min}$, like $1.5$.
+$$
+m_e = m \cdot 10^7
+$$
 
-Hence for a given significand $s$, there are thus 32 possible prices ranging
-from $s \cdot 10 ^ {e_{min}}$ to $s \cdot 10 ^ {e_{max}}$ across different
-orders of magnitude.
+Similarly, conversion between a normalized exponent $n$ and encoded exponent
+$n_e$ requires a bias to encode negative values:
 
-Note that any significand can be represented as
-$s = a \cdot s_{min} = a \cdot 10^8$, thus converting it to normalized
-scientific notation for $1 \leq a \lt 10$. Hence the range of prices for any
-given significand $s$ resolves to a lower bound of $a \cdot 10 ^ {8 + e_{min}}$
-and an upper bound of $a \cdot 10 ^ {8 + e_{max}}$.
+$$
+n_e = n + 16
+$$
 
-Given the number of bits allowed, ensuring adequate range across both positive
-and negative exponents requires solving the system of equations:
+Thus, the price $987 = 9.87 \cdot 10^2$ is encoded as follows:
 
-$$8 + e_{min} = -(8 + e_{max})$$
+<!-- markdownlint-disable MD013 -->
 
-$$e_{max} - e_{min} = 31$$
+| Symbol | Description         | Encoded value                  | Bits                          |
+| ------ | ------------------- | ------------------------------ | ----------------------------- |
+| $m_e$  | Encoded significand | $9.87 \cdot 10^7 = 98,700,000$ | `101111000100000101011100000` |
+| $n_e$  | Encoded exponent    | $2 + 16 = 18$                  | `10010`                       |
 
-The solution $e_{max} = 7.5, e_{min} = -23.5$, however, does not yield integers,
-so the results are rounded to $e_{max} = 8, e_{min}=-23$, resulting in an
-effective price range (scientific notation) between $a \cdot 10^{-15}$ and
-$a \cdot 10^{16}$. This is consistent with the [IEE 754 standard], which defines
-exponent ranges between $-126$ and $+127$, $-1022$ and $+1023$, and so on
-(`emin = 1 - emax`).
+<!-- markdownlint-enable MD013 -->
+
+> ```
+>               10010101111000100000101011100000
+> exponent bits ^^^^^
+>                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^ significand bits
+> ```
 
 ## Exponent range selection
 
-With 5 `u32` bits allocated for $n$, there are thus $2^5 = 32$ possible
+With 5 `u32` bits allocated for $n_e$, there are thus $2^5 = 32$ possible
 exponents. Since $n=0$ exhausts one representable exponent, the selection of a
 symmetric range across different orders of magnitude requires choosing between
 two options:
@@ -134,12 +137,11 @@ Option A ($|n_{min}| = |n_{max}| + 1$) presents several advantages:
    orders of magnitude above $1$. This asymmetric arrangement impractical, with
    effectively no dynamic range below $1$.
 
-Hence Option A, is the more practical choice, and by extension for the given
+Hence option A is the more practical choice, and by extension for the given
 implementation, option 1, which also has $|n_{min}| = |n_{max}| + 1$:
 
 | Lower bound     | Upper bound     | Range                   |
 | --------------- | --------------- | ----------------------- |
 | $n_{min} = -16$ | $n_{max} = +15$ | $ -16 \leq n \leq +15 $ |
 
-[iee 754 standard]: https://en.wikipedia.org/wiki/IEEE_754
 [normalized number]: https://en.wikipedia.org/wiki/Normalized_number
