@@ -11,6 +11,8 @@ module price::price {
     const EXP_MAX_U128: u32 = 38;
     /// The largest `u128` value. In Python: `f"{2 ** 128 - 1:_}"`
     const U128_MAX: u128 = 340_282_366_920_938_463_463_374_607_431_768_211_455;
+    /// The bias for the exponent of the canonical price encoding.
+    const EXPONENT_BIAS: u32 = 16;
 
     const E_0_U128: u128 = 1;
     const E_1_U128: u128 = 10;
@@ -59,12 +61,14 @@ module price::price {
 
     /*
     #[view]
-    /// Return the canonical price for a given ratio of base and quote.
+    /// Return the canonical price encoding for a given ratio of base and quote.
     public fun price(base: u64, quote: u64): u32 {
         assert!(base > 0, E_BASE_ZERO);
 
         let ratio_scaled = ((quote as u128) * DEC_MAX_U64_AS_U128) / (base as u128);
         let exponent_scaled = floored_log_10(ratio_scaled);
+
+        assert!()
 
         let significand = first_8_sig_figs(ratio_scaled);
         1
@@ -105,18 +109,18 @@ module price::price {
                 }
             } else { // 9 <= n < 19.
                 if (value < E_14_U128) { // 9 <= n < 14.
-                    if (value < E_12_U128) { // 9 <= n < 12.
+                    if (value < E_11_U128) { // 9 <= n < 11.
                         if (value < E_10_U128) { // 9 <= n < 10.
                             9
-                        } else { // 10 <= n < 12.
-                            if (value < E_11_U128) { // 10 <= n < 11.
-                                10
-                            } else { 11 }
+                        } else { 10 }
+                    } else { // 11 <= n < 14.
+                        if (value < E_12_U128) { // 11 <= n < 12.
+                            11
+                        } else {
+                            if (value < E_13_U128) { // 12 <= n < 13.
+                                12
+                            } else { 13 }
                         }
-                    } else { // 12 <= n < 14.
-                        if (value < E_13_U128) { // 12 <= n < 13.
-                            12
-                        } else { 13 }
                     }
                 } else { // 14 <= n < 19.
                     if (value < E_16_U128) { // 14 <= n < 16.
