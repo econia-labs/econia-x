@@ -1,23 +1,9 @@
 module price::price {
 
-    /// The largest power of 10 that can fit in a `u64`, as a `u128`.
-    /// In Python: `f"{10 ** (math.floor(math.log10(2 ** 64 - 1))):_}"`
-    const DEC_MAX_U64_AS: u128 = 10_000_000_000_000_000_000;
-    /// The exponent of the largest power of 10 that can fit in a `u64`.
-    /// In Python: `math.floor(math.log10(2 ** 64 - 1))`
-    const EXP_MAX_U64: u32 = 19;
-    /// The exponent of the largest power of 10 that can fit in a `u128`.
-    /// In Python: `math.floor(math.log10(2 ** 128 - 1))`
-    const EXP_MAX: u32 = 38;
     /// The largest `u128` value. In Python: `f"{2 ** 128 - 1:_}"`
     const MAX_U128: u128 = 340_282_366_920_938_463_463_374_607_431_768_211_455;
-    /// The bias for the exponent of the canonical price encoding, which is the minimum exponent
-    /// that can be represented when taken as a negative number.
-    const EXPONENT_BIAS: u32 = 16;
-    /// The maximum exponent that can be represented in the canonical price encoding.
-    const EXPONENT_MAX: u32 = 15;
-    /// Decimal conversion factor to convert normalized significand to canonical price encoding.
-    const SIGNIFICAND_CONVERSION_SHIFT: u32 = 7;
+    /// Number of bits to shift the exponent to the left in the canonical price encoding.
+    const SHIFT_EXPONENT_BITS: u8 = 27;
 
     const E_0: u128 = 1;
     const E_1: u128 = 10;
@@ -113,55 +99,45 @@ module price::price {
     public fun price(base: u64, quote: u64): u32 {
         assert!(base > 0, E_BASE_ZERO);
 
-        let ratio_scaled = ((quote as u128) * DEC_MAX_U64_AS) / (base as u128);
-        let (log_10_ratio_scaled, last_power_of_10_scaled) =
-            floored_log_10_with_power(ratio_scaled);
+        // Get the ratio of quote to base, scaling up by the maximum power of ten that can fit in a
+        // `u64` (19), to avoid precision loss.
+        let ratio_e19 = ((quote as u128) * E_19) / (base as u128);
 
-        // The base-10 logarithm of the ratio must be at least the minimum allowable exponent after
-        // scaling back down:
-        //
-        // log_10_ratio_scaled - EXP_MAX_U64 >= -EXPONENT_BIAS
-        //
-        // However to avoid underflowing the assertion, this must be rewritten as follows:
-        assert!(
-            log_10_ratio_scaled >= EXP_MAX_U64 - EXPONENT_BIAS,
-            E_TOO_SMALL_TO_REPRESENT
-        );
+        // Get the floored base-10 logarithm of the scaled ratio, and the maximum power of 10 less
+        // than or equal to the scaled ratio.
+        let (floored_log_10_ratio_e19, max_power_10_leq_ratio_e19) =
+            floored_log_10_with_max_power_leq(ratio_e19);
 
-        // At this point, ratio_scaled could be as small as E_3 = 1_000, which scales back down
-        // to 1_000 * 10^-19 = 1 * 10^-16, which is the smallest value that can be represented.
-        // Hence extracting the significand may require padding or truncating. If less than
-        // E_7, will need to pad, and if greater than E_7, will need to truncate. If
-        // truncating, can divide by (last_power_of_10_scaled / E_7) to get the significand.
-        //
-        // In either case, the encoded exponent must be corrected for the shift amount.
-        let (significand_encoded, exponent_encoded) =
-            if (last_power_of_10_scaled < E_7) { // 3 <= n < 7.
-                let (pad_multiplier, exponent_shift) =
-                    if (last_power_of_10_scaled < E_5) { // 3 <= n < 5.
-                        if (last_power_of_10_scaled < E_4) { // 3 <= n < 4.
-                            (E_4, 4)
-                        } else { // 4 <= n < 5.
-                            (E_3, 3)
-                        }
-                    } else { // 5 <= n < 7.
-                        if (last_power_of_10_scaled < E_6) { // 5 <= n < 6.
-                            (E_2, 2)
-                        } else { // 6 <= n < 7.
-                            (E_1, 1)
-                        }
-                    };
-                ((ratio_scaled * pad_multiplier),
-                log_10_ratio_scaled + exponent_shift + EXPONENT_BIAS
-                    - SIGNIFICAND_CONVERSION_SHIFT)
-            } else {
-                (ratio_scaled / (last_power_of_10_scaled / E_7), 42)
+        // The floored base-10 logarithm of the scaled ratio must be at least 3, because otherwise
+        // the nominal price (once scaled back down) would have an exponent less than
+        // `(3 - 19) = -16`, which is the smallest exponent that can be represented.
+        assert!(floored_log_10_ratio_e19 >= N_3, E_TOO_SMALL_TO_REPRESENT);
+
+        // The floored base-10 logarithm of the scaled ratio must be at most 34, because otherwise
+        // the nominal price (once scaled back down) would have an exponent greater than
+        //  `(34 - 19) = 15`, which is the largest exponent that can be represented.
+        assert!(floored_log_10_ratio_e19 <= N_34, E_TOO_LARGE_TO_REPRESENT);
+
+        // The encoded exponent is the floored base-10 logarithm of the scaled ratio, incremented
+        // by the bias (16), then decremented by the maximum power of 10 that can fit in a `u64`
+        // (19). This is equivalent to decrementing by 3.
+        let exponent_encoded = floored_log_10_ratio_e19 - N_3;
+
+        // If scaled ratio is smaller than `E_7`, it must be right-padded to yield a canonicalized
+        // significand with 8 significant digits.
+        let significand_encoded =
+            if (ratio_e19 < E_7) {
+                ratio_e19 * (E_7 / max_power_10_leq_ratio_e19)
+            } else { // Otherwise it must be truncated to 8 significant digits.
+                ratio_e19 / (max_power_10_leq_ratio_e19 / E_7)
             };
-        1
+
+        (exponent_encoded << SHIFT_EXPONENT_BITS) | (significand_encoded as u32)
     }
 
     #[view]
-    /// Returns the floored base-10 logarithm of `value`, and 10 raised to that power.
+    /// Returns the floored base-10 logarithm of `value`, and 10 raised to that power (equal to the
+    /// maximum power of 10 less than or equal to `value`).
     ///
     /// The algorithm uses a binary search for speed, with each new branch of the search bisecting
     /// the remaining range of possible values.
@@ -171,7 +147,7 @@ module price::price {
     /// endpoints: `(0 + 39) / 2 = 19`. This process yields two branches: `0 <= n < 19` and
     /// `19 <= n < 39`. The bisection process is repeated until the range is narrowed to a single
     /// value, terminating the search.
-    public fun floored_log_10_with_power(value: u128): (u32, u128) {
+    public fun floored_log_10_with_max_power_leq(value: u128): (u32, u128) {
         assert!(value > 0, E_LOG_0_UNDEFINED);
         // 0 <= n < 39.
         if (value < E_19) { // 0 <= n < 19.
@@ -330,139 +306,139 @@ module price::price {
     }
 
     #[test_only]
-    fun assert_floored_log_10_with_power(
+    fun assert_floored_log_10_with_max_power_leq(
         value: u128, expected_log: u32, expected_power: u128
     ) {
-        let (log, power) = floored_log_10_with_power(value);
+        let (log, power) = floored_log_10_with_max_power_leq(value);
         assert!(log == expected_log);
         assert!(power == expected_power);
     }
 
     #[test]
-    fun test_floored_log_10_with_power() {
+    fun test_floored_log_10_with_max_power_leq() {
         // Test all powers of 10.
-        assert_floored_log_10_with_power(E_0, N_0, E_0);
-        assert_floored_log_10_with_power(E_1, N_1, E_1);
-        assert_floored_log_10_with_power(E_2, N_2, E_2);
-        assert_floored_log_10_with_power(E_3, N_3, E_3);
-        assert_floored_log_10_with_power(E_4, N_4, E_4);
-        assert_floored_log_10_with_power(E_5, N_5, E_5);
-        assert_floored_log_10_with_power(E_6, N_6, E_6);
-        assert_floored_log_10_with_power(E_7, N_7, E_7);
-        assert_floored_log_10_with_power(E_8, N_8, E_8);
-        assert_floored_log_10_with_power(E_9, N_9, E_9);
-        assert_floored_log_10_with_power(E_10, N_10, E_10);
-        assert_floored_log_10_with_power(E_11, N_11, E_11);
-        assert_floored_log_10_with_power(E_12, N_12, E_12);
-        assert_floored_log_10_with_power(E_13, N_13, E_13);
-        assert_floored_log_10_with_power(E_14, N_14, E_14);
-        assert_floored_log_10_with_power(E_15, N_15, E_15);
-        assert_floored_log_10_with_power(E_16, N_16, E_16);
-        assert_floored_log_10_with_power(E_17, N_17, E_17);
-        assert_floored_log_10_with_power(E_18, N_18, E_18);
-        assert_floored_log_10_with_power(E_19, N_19, E_19);
-        assert_floored_log_10_with_power(E_20, N_20, E_20);
-        assert_floored_log_10_with_power(E_21, N_21, E_21);
-        assert_floored_log_10_with_power(E_22, N_22, E_22);
-        assert_floored_log_10_with_power(E_23, N_23, E_23);
-        assert_floored_log_10_with_power(E_24, N_24, E_24);
-        assert_floored_log_10_with_power(E_25, N_25, E_25);
-        assert_floored_log_10_with_power(E_26, N_26, E_26);
-        assert_floored_log_10_with_power(E_27, N_27, E_27);
-        assert_floored_log_10_with_power(E_28, N_28, E_28);
-        assert_floored_log_10_with_power(E_29, N_29, E_29);
-        assert_floored_log_10_with_power(E_30, N_30, E_30);
-        assert_floored_log_10_with_power(E_31, N_31, E_31);
-        assert_floored_log_10_with_power(E_32, N_32, E_32);
-        assert_floored_log_10_with_power(E_33, N_33, E_33);
-        assert_floored_log_10_with_power(E_34, N_34, E_34);
-        assert_floored_log_10_with_power(E_35, N_35, E_35);
-        assert_floored_log_10_with_power(E_36, N_36, E_36);
-        assert_floored_log_10_with_power(E_37, N_37, E_37);
-        assert_floored_log_10_with_power(E_38, N_38, E_38);
+        assert_floored_log_10_with_max_power_leq(E_0, N_0, E_0);
+        assert_floored_log_10_with_max_power_leq(E_1, N_1, E_1);
+        assert_floored_log_10_with_max_power_leq(E_2, N_2, E_2);
+        assert_floored_log_10_with_max_power_leq(E_3, N_3, E_3);
+        assert_floored_log_10_with_max_power_leq(E_4, N_4, E_4);
+        assert_floored_log_10_with_max_power_leq(E_5, N_5, E_5);
+        assert_floored_log_10_with_max_power_leq(E_6, N_6, E_6);
+        assert_floored_log_10_with_max_power_leq(E_7, N_7, E_7);
+        assert_floored_log_10_with_max_power_leq(E_8, N_8, E_8);
+        assert_floored_log_10_with_max_power_leq(E_9, N_9, E_9);
+        assert_floored_log_10_with_max_power_leq(E_10, N_10, E_10);
+        assert_floored_log_10_with_max_power_leq(E_11, N_11, E_11);
+        assert_floored_log_10_with_max_power_leq(E_12, N_12, E_12);
+        assert_floored_log_10_with_max_power_leq(E_13, N_13, E_13);
+        assert_floored_log_10_with_max_power_leq(E_14, N_14, E_14);
+        assert_floored_log_10_with_max_power_leq(E_15, N_15, E_15);
+        assert_floored_log_10_with_max_power_leq(E_16, N_16, E_16);
+        assert_floored_log_10_with_max_power_leq(E_17, N_17, E_17);
+        assert_floored_log_10_with_max_power_leq(E_18, N_18, E_18);
+        assert_floored_log_10_with_max_power_leq(E_19, N_19, E_19);
+        assert_floored_log_10_with_max_power_leq(E_20, N_20, E_20);
+        assert_floored_log_10_with_max_power_leq(E_21, N_21, E_21);
+        assert_floored_log_10_with_max_power_leq(E_22, N_22, E_22);
+        assert_floored_log_10_with_max_power_leq(E_23, N_23, E_23);
+        assert_floored_log_10_with_max_power_leq(E_24, N_24, E_24);
+        assert_floored_log_10_with_max_power_leq(E_25, N_25, E_25);
+        assert_floored_log_10_with_max_power_leq(E_26, N_26, E_26);
+        assert_floored_log_10_with_max_power_leq(E_27, N_27, E_27);
+        assert_floored_log_10_with_max_power_leq(E_28, N_28, E_28);
+        assert_floored_log_10_with_max_power_leq(E_29, N_29, E_29);
+        assert_floored_log_10_with_max_power_leq(E_30, N_30, E_30);
+        assert_floored_log_10_with_max_power_leq(E_31, N_31, E_31);
+        assert_floored_log_10_with_max_power_leq(E_32, N_32, E_32);
+        assert_floored_log_10_with_max_power_leq(E_33, N_33, E_33);
+        assert_floored_log_10_with_max_power_leq(E_34, N_34, E_34);
+        assert_floored_log_10_with_max_power_leq(E_35, N_35, E_35);
+        assert_floored_log_10_with_max_power_leq(E_36, N_36, E_36);
+        assert_floored_log_10_with_max_power_leq(E_37, N_37, E_37);
+        assert_floored_log_10_with_max_power_leq(E_38, N_38, E_38);
 
         // Test one more than each power of 10.
-        assert_floored_log_10_with_power(E_0 + 1, N_0, E_0);
-        assert_floored_log_10_with_power(E_1 + 1, N_1, E_1);
-        assert_floored_log_10_with_power(E_2 + 1, N_2, E_2);
-        assert_floored_log_10_with_power(E_3 + 1, N_3, E_3);
-        assert_floored_log_10_with_power(E_4 + 1, N_4, E_4);
-        assert_floored_log_10_with_power(E_5 + 1, N_5, E_5);
-        assert_floored_log_10_with_power(E_6 + 1, N_6, E_6);
-        assert_floored_log_10_with_power(E_7 + 1, N_7, E_7);
-        assert_floored_log_10_with_power(E_8 + 1, N_8, E_8);
-        assert_floored_log_10_with_power(E_9 + 1, N_9, E_9);
-        assert_floored_log_10_with_power(E_10 + 1, N_10, E_10);
-        assert_floored_log_10_with_power(E_11 + 1, N_11, E_11);
-        assert_floored_log_10_with_power(E_12 + 1, N_12, E_12);
-        assert_floored_log_10_with_power(E_13 + 1, N_13, E_13);
-        assert_floored_log_10_with_power(E_14 + 1, N_14, E_14);
-        assert_floored_log_10_with_power(E_15 + 1, N_15, E_15);
-        assert_floored_log_10_with_power(E_16 + 1, N_16, E_16);
-        assert_floored_log_10_with_power(E_17 + 1, N_17, E_17);
-        assert_floored_log_10_with_power(E_18 + 1, N_18, E_18);
-        assert_floored_log_10_with_power(E_19 + 1, N_19, E_19);
-        assert_floored_log_10_with_power(E_20 + 1, N_20, E_20);
-        assert_floored_log_10_with_power(E_21 + 1, N_21, E_21);
-        assert_floored_log_10_with_power(E_22 + 1, N_22, E_22);
-        assert_floored_log_10_with_power(E_23 + 1, N_23, E_23);
-        assert_floored_log_10_with_power(E_24 + 1, N_24, E_24);
-        assert_floored_log_10_with_power(E_25 + 1, N_25, E_25);
-        assert_floored_log_10_with_power(E_26 + 1, N_26, E_26);
-        assert_floored_log_10_with_power(E_27 + 1, N_27, E_27);
-        assert_floored_log_10_with_power(E_28 + 1, N_28, E_28);
-        assert_floored_log_10_with_power(E_29 + 1, N_29, E_29);
-        assert_floored_log_10_with_power(E_30 + 1, N_30, E_30);
-        assert_floored_log_10_with_power(E_31 + 1, N_31, E_31);
-        assert_floored_log_10_with_power(E_32 + 1, N_32, E_32);
-        assert_floored_log_10_with_power(E_33 + 1, N_33, E_33);
-        assert_floored_log_10_with_power(E_34 + 1, N_34, E_34);
-        assert_floored_log_10_with_power(E_35 + 1, N_35, E_35);
-        assert_floored_log_10_with_power(E_36 + 1, N_36, E_36);
-        assert_floored_log_10_with_power(E_37 + 1, N_37, E_37);
-        assert_floored_log_10_with_power(E_38 + 1, N_38, E_38);
+        assert_floored_log_10_with_max_power_leq(E_0 + 1, N_0, E_0);
+        assert_floored_log_10_with_max_power_leq(E_1 + 1, N_1, E_1);
+        assert_floored_log_10_with_max_power_leq(E_2 + 1, N_2, E_2);
+        assert_floored_log_10_with_max_power_leq(E_3 + 1, N_3, E_3);
+        assert_floored_log_10_with_max_power_leq(E_4 + 1, N_4, E_4);
+        assert_floored_log_10_with_max_power_leq(E_5 + 1, N_5, E_5);
+        assert_floored_log_10_with_max_power_leq(E_6 + 1, N_6, E_6);
+        assert_floored_log_10_with_max_power_leq(E_7 + 1, N_7, E_7);
+        assert_floored_log_10_with_max_power_leq(E_8 + 1, N_8, E_8);
+        assert_floored_log_10_with_max_power_leq(E_9 + 1, N_9, E_9);
+        assert_floored_log_10_with_max_power_leq(E_10 + 1, N_10, E_10);
+        assert_floored_log_10_with_max_power_leq(E_11 + 1, N_11, E_11);
+        assert_floored_log_10_with_max_power_leq(E_12 + 1, N_12, E_12);
+        assert_floored_log_10_with_max_power_leq(E_13 + 1, N_13, E_13);
+        assert_floored_log_10_with_max_power_leq(E_14 + 1, N_14, E_14);
+        assert_floored_log_10_with_max_power_leq(E_15 + 1, N_15, E_15);
+        assert_floored_log_10_with_max_power_leq(E_16 + 1, N_16, E_16);
+        assert_floored_log_10_with_max_power_leq(E_17 + 1, N_17, E_17);
+        assert_floored_log_10_with_max_power_leq(E_18 + 1, N_18, E_18);
+        assert_floored_log_10_with_max_power_leq(E_19 + 1, N_19, E_19);
+        assert_floored_log_10_with_max_power_leq(E_20 + 1, N_20, E_20);
+        assert_floored_log_10_with_max_power_leq(E_21 + 1, N_21, E_21);
+        assert_floored_log_10_with_max_power_leq(E_22 + 1, N_22, E_22);
+        assert_floored_log_10_with_max_power_leq(E_23 + 1, N_23, E_23);
+        assert_floored_log_10_with_max_power_leq(E_24 + 1, N_24, E_24);
+        assert_floored_log_10_with_max_power_leq(E_25 + 1, N_25, E_25);
+        assert_floored_log_10_with_max_power_leq(E_26 + 1, N_26, E_26);
+        assert_floored_log_10_with_max_power_leq(E_27 + 1, N_27, E_27);
+        assert_floored_log_10_with_max_power_leq(E_28 + 1, N_28, E_28);
+        assert_floored_log_10_with_max_power_leq(E_29 + 1, N_29, E_29);
+        assert_floored_log_10_with_max_power_leq(E_30 + 1, N_30, E_30);
+        assert_floored_log_10_with_max_power_leq(E_31 + 1, N_31, E_31);
+        assert_floored_log_10_with_max_power_leq(E_32 + 1, N_32, E_32);
+        assert_floored_log_10_with_max_power_leq(E_33 + 1, N_33, E_33);
+        assert_floored_log_10_with_max_power_leq(E_34 + 1, N_34, E_34);
+        assert_floored_log_10_with_max_power_leq(E_35 + 1, N_35, E_35);
+        assert_floored_log_10_with_max_power_leq(E_36 + 1, N_36, E_36);
+        assert_floored_log_10_with_max_power_leq(E_37 + 1, N_37, E_37);
+        assert_floored_log_10_with_max_power_leq(E_38 + 1, N_38, E_38);
 
         // Test one less than each power of 10.
-        assert_floored_log_10_with_power(E_1 - 1, N_0, E_0);
-        assert_floored_log_10_with_power(E_2 - 1, N_1, E_1);
-        assert_floored_log_10_with_power(E_3 - 1, N_2, E_2);
-        assert_floored_log_10_with_power(E_4 - 1, N_3, E_3);
-        assert_floored_log_10_with_power(E_5 - 1, N_4, E_4);
-        assert_floored_log_10_with_power(E_6 - 1, N_5, E_5);
-        assert_floored_log_10_with_power(E_7 - 1, N_6, E_6);
-        assert_floored_log_10_with_power(E_8 - 1, N_7, E_7);
-        assert_floored_log_10_with_power(E_9 - 1, N_8, E_8);
-        assert_floored_log_10_with_power(E_10 - 1, N_9, E_9);
-        assert_floored_log_10_with_power(E_11 - 1, N_10, E_10);
-        assert_floored_log_10_with_power(E_12 - 1, N_11, E_11);
-        assert_floored_log_10_with_power(E_13 - 1, N_12, E_12);
-        assert_floored_log_10_with_power(E_14 - 1, N_13, E_13);
-        assert_floored_log_10_with_power(E_15 - 1, N_14, E_14);
-        assert_floored_log_10_with_power(E_16 - 1, N_15, E_15);
-        assert_floored_log_10_with_power(E_17 - 1, N_16, E_16);
-        assert_floored_log_10_with_power(E_18 - 1, N_17, E_17);
-        assert_floored_log_10_with_power(E_19 - 1, N_18, E_18);
-        assert_floored_log_10_with_power(E_20 - 1, N_19, E_19);
-        assert_floored_log_10_with_power(E_21 - 1, N_20, E_20);
-        assert_floored_log_10_with_power(E_22 - 1, N_21, E_21);
-        assert_floored_log_10_with_power(E_23 - 1, N_22, E_22);
-        assert_floored_log_10_with_power(E_24 - 1, N_23, E_23);
-        assert_floored_log_10_with_power(E_25 - 1, N_24, E_24);
-        assert_floored_log_10_with_power(E_26 - 1, N_25, E_25);
-        assert_floored_log_10_with_power(E_27 - 1, N_26, E_26);
-        assert_floored_log_10_with_power(E_28 - 1, N_27, E_27);
-        assert_floored_log_10_with_power(E_29 - 1, N_28, E_28);
-        assert_floored_log_10_with_power(E_30 - 1, N_29, E_29);
-        assert_floored_log_10_with_power(E_31 - 1, N_30, E_30);
-        assert_floored_log_10_with_power(E_32 - 1, N_31, E_31);
-        assert_floored_log_10_with_power(E_33 - 1, N_32, E_32);
-        assert_floored_log_10_with_power(E_34 - 1, N_33, E_33);
-        assert_floored_log_10_with_power(E_35 - 1, N_34, E_34);
-        assert_floored_log_10_with_power(E_36 - 1, N_35, E_35);
-        assert_floored_log_10_with_power(E_37 - 1, N_36, E_36);
-        assert_floored_log_10_with_power(E_38 - 1, N_37, E_37);
+        assert_floored_log_10_with_max_power_leq(E_1 - 1, N_0, E_0);
+        assert_floored_log_10_with_max_power_leq(E_2 - 1, N_1, E_1);
+        assert_floored_log_10_with_max_power_leq(E_3 - 1, N_2, E_2);
+        assert_floored_log_10_with_max_power_leq(E_4 - 1, N_3, E_3);
+        assert_floored_log_10_with_max_power_leq(E_5 - 1, N_4, E_4);
+        assert_floored_log_10_with_max_power_leq(E_6 - 1, N_5, E_5);
+        assert_floored_log_10_with_max_power_leq(E_7 - 1, N_6, E_6);
+        assert_floored_log_10_with_max_power_leq(E_8 - 1, N_7, E_7);
+        assert_floored_log_10_with_max_power_leq(E_9 - 1, N_8, E_8);
+        assert_floored_log_10_with_max_power_leq(E_10 - 1, N_9, E_9);
+        assert_floored_log_10_with_max_power_leq(E_11 - 1, N_10, E_10);
+        assert_floored_log_10_with_max_power_leq(E_12 - 1, N_11, E_11);
+        assert_floored_log_10_with_max_power_leq(E_13 - 1, N_12, E_12);
+        assert_floored_log_10_with_max_power_leq(E_14 - 1, N_13, E_13);
+        assert_floored_log_10_with_max_power_leq(E_15 - 1, N_14, E_14);
+        assert_floored_log_10_with_max_power_leq(E_16 - 1, N_15, E_15);
+        assert_floored_log_10_with_max_power_leq(E_17 - 1, N_16, E_16);
+        assert_floored_log_10_with_max_power_leq(E_18 - 1, N_17, E_17);
+        assert_floored_log_10_with_max_power_leq(E_19 - 1, N_18, E_18);
+        assert_floored_log_10_with_max_power_leq(E_20 - 1, N_19, E_19);
+        assert_floored_log_10_with_max_power_leq(E_21 - 1, N_20, E_20);
+        assert_floored_log_10_with_max_power_leq(E_22 - 1, N_21, E_21);
+        assert_floored_log_10_with_max_power_leq(E_23 - 1, N_22, E_22);
+        assert_floored_log_10_with_max_power_leq(E_24 - 1, N_23, E_23);
+        assert_floored_log_10_with_max_power_leq(E_25 - 1, N_24, E_24);
+        assert_floored_log_10_with_max_power_leq(E_26 - 1, N_25, E_25);
+        assert_floored_log_10_with_max_power_leq(E_27 - 1, N_26, E_26);
+        assert_floored_log_10_with_max_power_leq(E_28 - 1, N_27, E_27);
+        assert_floored_log_10_with_max_power_leq(E_29 - 1, N_28, E_28);
+        assert_floored_log_10_with_max_power_leq(E_30 - 1, N_29, E_29);
+        assert_floored_log_10_with_max_power_leq(E_31 - 1, N_30, E_30);
+        assert_floored_log_10_with_max_power_leq(E_32 - 1, N_31, E_31);
+        assert_floored_log_10_with_max_power_leq(E_33 - 1, N_32, E_32);
+        assert_floored_log_10_with_max_power_leq(E_34 - 1, N_33, E_33);
+        assert_floored_log_10_with_max_power_leq(E_35 - 1, N_34, E_34);
+        assert_floored_log_10_with_max_power_leq(E_36 - 1, N_35, E_35);
+        assert_floored_log_10_with_max_power_leq(E_37 - 1, N_36, E_36);
+        assert_floored_log_10_with_max_power_leq(E_38 - 1, N_37, E_37);
 
         // Test max value that can fit in a `u128`.
-        assert_floored_log_10_with_power(MAX_U128, N_38, E_38);
+        assert_floored_log_10_with_max_power_leq(MAX_U128, N_38, E_38);
     }
 }
