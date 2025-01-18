@@ -9,6 +9,8 @@ module price::price {
     /// The exponent of the largest power of 10 that can fit in a `u128`.
     /// In Python: `math.floor(math.log10(2 ** 128 - 1))`
     const EXP_MAX_U128: u32 = 38;
+    /// The largest `u128` value. In Python: `f"{2 ** 128 - 1:_}"`
+    const U128_MAX: u128 = 340_282_366_920_938_463_463_374_607_431_768_211_455;
 
     const E_0_U128: u128 = 1;
     const E_1_U128: u128 = 10;
@@ -52,6 +54,8 @@ module price::price {
 
     /// Base term is 0.
     const E_BASE_ZERO: u64 = 1;
+    /// Logarithm of 0 is undefined.
+    const E_LOG_0_UNDEFINED: u64 = 2;
 
     /*
     #[view]
@@ -71,6 +75,7 @@ module price::price {
     /// Return the floored base-10 logarithm of `value`. Uses binary search for speed, with each new
     /// branch of the tree testing at the floored midpoint of the previous branch.
     public fun floored_log_10(value: u128): u32 {
+        assert!(value > 0, E_LOG_0_UNDEFINED);
         if (value < E_19_U128) { // 0 <= n < 19.
             if (value < E_9_U128) { // 0 <= n < 9.
                 if (value < E_4_U128) { // 0 <= n < 4.
@@ -176,7 +181,19 @@ module price::price {
                         }
                     }
                 } else { // 34 <= n < 39.
-                    16
+                    if (value < E_36_U128) { // 34 <= n < 36.
+                        if (value < E_35_U128) { // 34 <= n < 35.
+                            34
+                        } else { 35 }
+                    } else { // 36 <= n < 39.
+                        if (value < E_37_U128) { // 36 <= n < 37.
+                            36
+                        } else { // 37 <= n < 39.
+                            if (value < E_38_U128) { // 37 <= n < 38.
+                                37
+                            } else { 38 }
+                        }
+                    }
                 }
             }
         }
@@ -184,7 +201,7 @@ module price::price {
 
     #[test]
     fun test_floored_log_10() {
-        // Test all constants up through E_38_U128.
+        // Test all powers of 10.
         assert!(floored_log_10(E_0_U128) == 0);
         assert!(floored_log_10(E_1_U128) == 1);
         assert!(floored_log_10(E_2_U128) == 2);
@@ -225,9 +242,88 @@ module price::price {
         assert!(floored_log_10(E_37_U128) == 37);
         assert!(floored_log_10(E_38_U128) == 38);
 
-        // u128 max
-        // each value + 1
-        // each value - 1
+        // Test one more than each power of 10.
+        assert!(floored_log_10(E_0_U128 + 1) == 0);
+        assert!(floored_log_10(E_1_U128 + 1) == 1);
+        assert!(floored_log_10(E_2_U128 + 1) == 2);
+        assert!(floored_log_10(E_3_U128 + 1) == 3);
+        assert!(floored_log_10(E_4_U128 + 1) == 4);
+        assert!(floored_log_10(E_5_U128 + 1) == 5);
+        assert!(floored_log_10(E_6_U128 + 1) == 6);
+        assert!(floored_log_10(E_7_U128 + 1) == 7);
+        assert!(floored_log_10(E_8_U128 + 1) == 8);
+        assert!(floored_log_10(E_9_U128 + 1) == 9);
+        assert!(floored_log_10(E_10_U128 + 1) == 10);
+        assert!(floored_log_10(E_11_U128 + 1) == 11);
+        assert!(floored_log_10(E_12_U128 + 1) == 12);
+        assert!(floored_log_10(E_13_U128 + 1) == 13);
+        assert!(floored_log_10(E_14_U128 + 1) == 14);
+        assert!(floored_log_10(E_15_U128 + 1) == 15);
+        assert!(floored_log_10(E_16_U128 + 1) == 16);
+        assert!(floored_log_10(E_17_U128 + 1) == 17);
+        assert!(floored_log_10(E_18_U128 + 1) == 18);
+        assert!(floored_log_10(E_19_U128 + 1) == 19);
+        assert!(floored_log_10(E_20_U128 + 1) == 20);
+        assert!(floored_log_10(E_21_U128 + 1) == 21);
+        assert!(floored_log_10(E_22_U128 + 1) == 22);
+        assert!(floored_log_10(E_23_U128 + 1) == 23);
+        assert!(floored_log_10(E_24_U128 + 1) == 24);
+        assert!(floored_log_10(E_25_U128 + 1) == 25);
+        assert!(floored_log_10(E_26_U128 + 1) == 26);
+        assert!(floored_log_10(E_27_U128 + 1) == 27);
+        assert!(floored_log_10(E_28_U128 + 1) == 28);
+        assert!(floored_log_10(E_29_U128 + 1) == 29);
+        assert!(floored_log_10(E_30_U128 + 1) == 30);
+        assert!(floored_log_10(E_31_U128 + 1) == 31);
+        assert!(floored_log_10(E_32_U128 + 1) == 32);
+        assert!(floored_log_10(E_33_U128 + 1) == 33);
+        assert!(floored_log_10(E_34_U128 + 1) == 34);
+        assert!(floored_log_10(E_35_U128 + 1) == 35);
+        assert!(floored_log_10(E_36_U128 + 1) == 36);
+        assert!(floored_log_10(E_37_U128 + 1) == 37);
+        assert!(floored_log_10(E_38_U128 + 1) == 38);
 
+        // Test one less than each power of 10.
+        assert!(floored_log_10(E_1_U128 - 1) == 0);
+        assert!(floored_log_10(E_2_U128 - 1) == 1);
+        assert!(floored_log_10(E_3_U128 - 1) == 2);
+        assert!(floored_log_10(E_4_U128 - 1) == 3);
+        assert!(floored_log_10(E_5_U128 - 1) == 4);
+        assert!(floored_log_10(E_6_U128 - 1) == 5);
+        assert!(floored_log_10(E_7_U128 - 1) == 6);
+        assert!(floored_log_10(E_8_U128 - 1) == 7);
+        assert!(floored_log_10(E_9_U128 - 1) == 8);
+        assert!(floored_log_10(E_10_U128 - 1) == 9);
+        assert!(floored_log_10(E_11_U128 - 1) == 10);
+        assert!(floored_log_10(E_12_U128 - 1) == 11);
+        assert!(floored_log_10(E_13_U128 - 1) == 12);
+        assert!(floored_log_10(E_14_U128 - 1) == 13);
+        assert!(floored_log_10(E_15_U128 - 1) == 14);
+        assert!(floored_log_10(E_16_U128 - 1) == 15);
+        assert!(floored_log_10(E_17_U128 - 1) == 16);
+        assert!(floored_log_10(E_18_U128 - 1) == 17);
+        assert!(floored_log_10(E_19_U128 - 1) == 18);
+        assert!(floored_log_10(E_20_U128 - 1) == 19);
+        assert!(floored_log_10(E_21_U128 - 1) == 20);
+        assert!(floored_log_10(E_22_U128 - 1) == 21);
+        assert!(floored_log_10(E_23_U128 - 1) == 22);
+        assert!(floored_log_10(E_24_U128 - 1) == 23);
+        assert!(floored_log_10(E_25_U128 - 1) == 24);
+        assert!(floored_log_10(E_26_U128 - 1) == 25);
+        assert!(floored_log_10(E_27_U128 - 1) == 26);
+        assert!(floored_log_10(E_28_U128 - 1) == 27);
+        assert!(floored_log_10(E_29_U128 - 1) == 28);
+        assert!(floored_log_10(E_30_U128 - 1) == 29);
+        assert!(floored_log_10(E_31_U128 - 1) == 30);
+        assert!(floored_log_10(E_32_U128 - 1) == 31);
+        assert!(floored_log_10(E_33_U128 - 1) == 32);
+        assert!(floored_log_10(E_34_U128 - 1) == 33);
+        assert!(floored_log_10(E_35_U128 - 1) == 34);
+        assert!(floored_log_10(E_36_U128 - 1) == 35);
+        assert!(floored_log_10(E_37_U128 - 1) == 36);
+        assert!(floored_log_10(E_38_U128 - 1) == 37);
+
+        // Test max value that can fit in a u128.
+        assert!(floored_log_10(U128_MAX) == 38);
     }
 }
