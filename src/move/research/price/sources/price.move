@@ -1,9 +1,12 @@
 module price::price {
 
-    /// The largest `u128` value. In Python: `f"{2 ** 128 - 1:_}"`
+    /// The largest `u128` value. In Python: `f"{int('1' * 128, 2):_}"`
     const MAX_U128: u128 = 340_282_366_920_938_463_463_374_607_431_768_211_455;
     /// Number of bits to shift the exponent to the left in the canonical price encoding.
     const SHIFT_EXPONENT_BITS: u8 = 27;
+    /// All bits set in integer of width required to encode significand.
+    /// In Python: `hex(int('1' * 27, 2))`.
+    const HI_SIGNIFICAND: u32 = 0x7ffffff;
 
     const E_0: u128 = 1;
     const E_1: u128 = 10;
@@ -95,44 +98,13 @@ module price::price {
     const E_TOO_LARGE_TO_REPRESENT: u64 = 4;
 
     #[view]
-    /// Return the canonical price encoding for a given ratio of base and quote.
-    public fun price(base: u64, quote: u64): u32 {
-        assert!(base > 0, E_BASE_ZERO);
+    public fun encoded_exponent(price: u32): u32 {
+        price >> SHIFT_EXPONENT_BITS
+    }
 
-        // Get the ratio of quote to base, scaling up by the maximum power of ten that can fit in a
-        // `u64` (19), to avoid precision loss.
-        let ratio_e19 = ((quote as u128) * E_19) / (base as u128);
-
-        // Get the floored base-10 logarithm of the scaled ratio, and the maximum power of 10 less
-        // than or equal to the scaled ratio.
-        let (floored_log_10_ratio_e19, max_power_10_leq_ratio_e19) =
-            floored_log_10_with_max_power_leq(ratio_e19);
-
-        // The floored base-10 logarithm of the scaled ratio must be at least 3, because otherwise
-        // the nominal price (once scaled back down) would have an exponent less than
-        // `(3 - 19) = -16`, which is the smallest exponent that can be represented.
-        assert!(floored_log_10_ratio_e19 >= N_3, E_TOO_SMALL_TO_REPRESENT);
-
-        // The floored base-10 logarithm of the scaled ratio must be at most 34, because otherwise
-        // the nominal price (once scaled back down) would have an exponent greater than
-        //  `(34 - 19) = 15`, which is the largest exponent that can be represented.
-        assert!(floored_log_10_ratio_e19 <= N_34, E_TOO_LARGE_TO_REPRESENT);
-
-        // The encoded exponent is the floored base-10 logarithm of the scaled ratio, incremented
-        // by the bias (16), then decremented by the maximum power of 10 that can fit in a `u64`
-        // (19). This is equivalent to decrementing by 3.
-        let exponent_encoded = floored_log_10_ratio_e19 - N_3;
-
-        // If scaled ratio is smaller than `E_7`, it must be right-padded to yield a canonicalized
-        // significand with 8 significant digits.
-        let significand_encoded =
-            if (ratio_e19 < E_7) {
-                ratio_e19 * (E_7 / max_power_10_leq_ratio_e19)
-            } else { // Otherwise it must be truncated to 8 significant digits.
-                ratio_e19 / (max_power_10_leq_ratio_e19 / E_7)
-            };
-
-        (exponent_encoded << SHIFT_EXPONENT_BITS) | (significand_encoded as u32)
+    #[view]
+    public fun encoded_price(price: u32): u32 {
+        price & HI_SIGNIFICAND
     }
 
     #[view]
@@ -305,6 +277,47 @@ module price::price {
         }
     }
 
+    #[view]
+    /// Return the canonical price encoding for a given ratio of base and quote.
+    public fun price(base: u64, quote: u64): u32 {
+        assert!(base > 0, E_BASE_ZERO);
+
+        // Get the ratio of quote to base, scaling up by the maximum power of ten that can fit in a
+        // `u64` (19), to avoid precision loss.
+        let ratio_e19 = ((quote as u128) * E_19) / (base as u128);
+
+        // Get the floored base-10 logarithm of the scaled ratio, and the maximum power of 10 less
+        // than or equal to the scaled ratio.
+        let (floored_log_10_ratio_e19, max_power_10_leq_ratio_e19) =
+            floored_log_10_with_max_power_leq(ratio_e19);
+
+        // The floored base-10 logarithm of the scaled ratio must be at least 3, because otherwise
+        // the nominal price (once scaled back down) would have an exponent less than
+        // `(3 - 19) = -16`, which is the smallest exponent that can be represented.
+        assert!(floored_log_10_ratio_e19 >= N_3, E_TOO_SMALL_TO_REPRESENT);
+
+        // The floored base-10 logarithm of the scaled ratio must be at most 34, because otherwise
+        // the nominal price (once scaled back down) would have an exponent greater than
+        //  `(34 - 19) = 15`, which is the largest exponent that can be represented.
+        assert!(floored_log_10_ratio_e19 <= N_34, E_TOO_LARGE_TO_REPRESENT);
+
+        // The encoded exponent is the floored base-10 logarithm of the scaled ratio, incremented
+        // by the bias (16), then decremented by the maximum power of 10 that can fit in a `u64`
+        // (19). This is equivalent to decrementing by 3.
+        let exponent_encoded = floored_log_10_ratio_e19 - N_3;
+
+        // If scaled ratio is smaller than `E_7`, it must be right-padded to yield a canonicalized
+        // significand with 8 significant digits.
+        let significand_encoded =
+            if (ratio_e19 < E_7) {
+                ratio_e19 * (E_7 / max_power_10_leq_ratio_e19)
+            } else { // Otherwise it must be truncated to 8 significant digits.
+                ratio_e19 / (max_power_10_leq_ratio_e19 / E_7)
+            };
+
+        (exponent_encoded << SHIFT_EXPONENT_BITS) | (significand_encoded as u32)
+    }
+
     #[test_only]
     fun assert_floored_log_10_with_max_power_leq(
         value: u128, expected_log: u32, expected_power: u128
@@ -440,5 +453,54 @@ module price::price {
 
         // Test max value that can fit in a `u128`.
         assert_floored_log_10_with_max_power_leq(MAX_U128, N_38, E_38);
+    }
+
+    #[test]
+    public fun test_price() {
+        // Price 1.25 * 10^7
+        // Base = 23_587
+        // Quote = 294_837_500_000
+        let base = 23_587;
+        let quote = 294_837_500_000;
+        let price = price(base, quote);
+        assert!(encoded_exponent(price) == N_16 + 7);
+        assert!(encoded_price(price) == 12_500_000);
+
+        // Price 8.7654321 * 10^-12
+        // Base = 10_000_000_000_000_000_000
+        // Quote = 87_654_321
+        base = 10_000_000_000_000_000_000;
+        quote = 87_654_321;
+        price = price(base, quote);
+        assert!(encoded_exponent(price) == N_16 - 12);
+        assert!(encoded_price(price) == 87_654_321);
+
+        // Price 5.0000000 * 10^-16
+        // Base = 2_000_000_000_000_000_000
+        // Quote = 1_000
+        base = 2_000_000_000_000_000_000;
+        quote = 1_000;
+        price = price(base, quote);
+        assert!(encoded_exponent(price) == N_16 - 16);
+        assert!(encoded_price(price) == 50_000_000);
+
+        // Price 9.9999999 * 10^15
+        // Base = 1_000
+        // Quote = 9_999_999_900_000_000_000
+        base = 1_000;
+        quote = 9_999_999_900_000_000_000;
+        price = price(base, quote);
+        assert!(encoded_exponent(price) == N_16 + 15);
+        assert!(encoded_price(price) == 99_999_999);
+
+        // Price 1.0000000 * 10^-16
+        // Base = 2_000_000_000_000_000_000
+        // Quote = 200
+        base = 2_000_000_000_000_000_000;
+        quote = 200;
+        price = price(base, quote);
+        assert!(encoded_exponent(price) == N_16 - 16);
+        assert!(encoded_price(price) == 10_000_000);
+
     }
 }
