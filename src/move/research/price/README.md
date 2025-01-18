@@ -1,4 +1,4 @@
-# Price
+# Econia canonical price
 
 ## General
 
