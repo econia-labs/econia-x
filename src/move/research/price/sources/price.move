@@ -11,8 +11,11 @@ module price::price {
     const EXP_MAX_U128: u32 = 38;
     /// The largest `u128` value. In Python: `f"{2 ** 128 - 1:_}"`
     const U128_MAX: u128 = 340_282_366_920_938_463_463_374_607_431_768_211_455;
-    /// The bias for the exponent of the canonical price encoding.
+    /// The bias for the exponent of the canonical price encoding, which is the minimum exponent
+    /// that can be represented when taken as a negative number.
     const EXPONENT_BIAS: u32 = 16;
+    /// The maximum exponent that can be represented in the canonical price encoding.
+    const EXPONENT_MAX: u32 = 15;
 
     const E_0_U128: u128 = 1;
     const E_1_U128: u128 = 10;
@@ -58,22 +61,35 @@ module price::price {
     const E_BASE_ZERO: u64 = 1;
     /// Logarithm of 0 is undefined.
     const E_LOG_0_UNDEFINED: u64 = 2;
+    /// Price is too small to represent.
+    const E_TOO_SMALL_TO_REPRESENT: u64 = 3;
+    /// Price is too large to represent.
+    const E_TOO_LARGE_TO_REPRESENT: u64 = 4;
 
-    /*
     #[view]
     /// Return the canonical price encoding for a given ratio of base and quote.
     public fun price(base: u64, quote: u64): u32 {
         assert!(base > 0, E_BASE_ZERO);
 
         let ratio_scaled = ((quote as u128) * DEC_MAX_U64_AS_U128) / (base as u128);
-        let exponent_scaled = floored_log_10(ratio_scaled);
+        let log_10_ratio_scaled = floored_log_10(ratio_scaled);
 
-        assert!()
+        // The base-10 logarithm of the ratio must be at least the minimum allowable exponent after
+        // scaling back down:
+        //
+        // log_10_ratio_scaled - EXP_MAX_U64 >= -EXPONENT_BIAS
+        //
+        // However to avoid underflowing the assertion, this must be rewritten as follows:
+        assert!(
+            log_10_ratio_scaled >= EXP_MAX_U64 - EXPONENT_BIAS,
+            E_TOO_SMALL_TO_REPRESENT
+        );
 
-        let significand = first_8_sig_figs(ratio_scaled);
+        let exponent_encoded = log_10_ratio_scaled + EXPONENT_BIAS - EXP_MAX_U128;
+        assert!(exponent_encoded <= (EXPONENT_MAX + EXPONENT_BIAS), E_TOO_LARGE_TO_REPRESENT);
+
         1
     }
-    */
 
     #[view]
     /// Return the floored base-10 logarithm of `value`. Uses binary search for speed, with each new
