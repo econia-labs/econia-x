@@ -2,8 +2,8 @@
 
 ## General
 
-This implementation defines price $p$ as the ratio of a quote asset $q$ to a
-base asset $b$:
+This implementation defines price $p$ as the ratio of quote asset indivisible
+subunits $q$ to base asset indivisible subunits $b$:
 
 $$
 p = \frac{q}{b}
@@ -128,7 +128,7 @@ Option A ($|n_{min}| = |n_{max}| + 1$) presents several advantages:
    $p_{min} = m_{min} \cdot 10^{n_{min}} = 0.01$ straddles the number $1$ by two
    orders of magnitude, as does the largest representable number,
    $p_{max} = m_{max} \cdot 10^{n_{max}} \approx 100$. This contrast with option
-   B where $p_min = 0.1$ is 1 order less but $p_{max} \approx 1000$ is
+   B where $p_{min} = 0.1$ is 1 order less but $p_{max} \approx 1000$ is
    (approximately) 3 more.
 1. In option B for the largest significand $m_{max} = 9.99$, the smallest
    representable number $m_{max} \cdot 10 ^ {n_{min}} = 0.999 \approx 1$ is
@@ -137,7 +137,7 @@ Option A ($|n_{min}| = |n_{max}| + 1$) presents several advantages:
    orders of magnitude above $1$. This asymmetric arrangement impractical, with
    effectively no dynamic range below $1$.
 
-Hence option A is the more practical choice, and by extension for the given
+Hence option A is the more practical choice, and by extension for the current
 implementation, option 1, which also has $|n_{min}| = |n_{max}| + 1$:
 
 | Lower bound     | Upper bound     | Range                   |
