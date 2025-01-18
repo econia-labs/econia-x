@@ -71,9 +71,11 @@ Thus, the price $987 = 9.87 \cdot 10^2$ is encoded as follows:
 
 <!-- markdownlint-enable MD013 -->
 
->                   10010101111000100000101011100000
->     exponent bits ^^^^^
->                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^ significand bits
+> ```txt
+>               10010101111000100000101011100000
+> exponent bits ^^^^^
+>                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^ significand bits
+> ```
 
 ## Exponent range selection
 
