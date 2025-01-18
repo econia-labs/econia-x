@@ -118,7 +118,7 @@ module price::price {
     /// as `0 <= n < 39`. Then the search range is bisected about the floored average of the
     /// endpoints: `(0 + 39) / 2 = 19`. This process yields two branches: `0 <= n < 19` and
     /// `19 <= n < 39`. The bisection process is repeated until the range is narrowed to a single
-    /// value, terminating the search in `log2(39) = 6` iterations or less.
+    /// value, terminating the search in `ceiling(log2(39)) = 6` iterations or less.
     public fun floored_log_10_with_max_power_leq(value: u128): (u32, u128) {
         assert!(value > 0, E_LOG_0_UNDEFINED);
         // 0 <= n < 39.
