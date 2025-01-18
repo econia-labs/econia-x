@@ -456,10 +456,14 @@ module price::price {
     }
 
     #[test]
+    #[expected_failure(abort_code = E_LOG_0_UNDEFINED)]
+    public fun test_floored_log_10_with_max_power_leq_log_0_undefined() {
+        floored_log_10_with_max_power_leq(0);
+    }
+
+    #[test]
     public fun test_price() {
         // Price 1.25 * 10^7
-        // Base = 23_587
-        // Quote = 294_837_500_000
         let base = 23_587;
         let quote = 294_837_500_000;
         let price = price(base, quote);
@@ -467,8 +471,6 @@ module price::price {
         assert!(encoded_price(price) == 12_500_000);
 
         // Price 8.7654321 * 10^-12
-        // Base = 10_000_000_000_000_000_000
-        // Quote = 87_654_321
         base = 10_000_000_000_000_000_000;
         quote = 87_654_321;
         price = price(base, quote);
@@ -476,8 +478,6 @@ module price::price {
         assert!(encoded_price(price) == 87_654_321);
 
         // Price 5.0000000 * 10^-16
-        // Base = 2_000_000_000_000_000_000
-        // Quote = 1_000
         base = 2_000_000_000_000_000_000;
         quote = 1_000;
         price = price(base, quote);
@@ -485,8 +485,6 @@ module price::price {
         assert!(encoded_price(price) == 50_000_000);
 
         // Price 9.9999999 * 10^15
-        // Base = 1_000
-        // Quote = 9_999_999_900_000_000_000
         base = 1_000;
         quote = 9_999_999_900_000_000_000;
         price = price(base, quote);
@@ -494,13 +492,41 @@ module price::price {
         assert!(encoded_price(price) == 99_999_999);
 
         // Price 1.0000000 * 10^-16
-        // Base = 2_000_000_000_000_000_000
-        // Quote = 200
         base = 2_000_000_000_000_000_000;
         quote = 200;
         price = price(base, quote);
         assert!(encoded_exponent(price) == N_16 - 16);
         assert!(encoded_price(price) == 10_000_000);
 
+        // Price 9.7900000 * 10^1
+        base = 2_000_000;
+        quote = 195_800_000;
+        price = price(base, quote);
+        assert!(encoded_exponent(price) == N_16 + 1);
+        assert!(encoded_price(price) == 97_900_000);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_BASE_ZERO)]
+    public fun test_price_base_zero() {
+        price(0, 1);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_TOO_LARGE_TO_REPRESENT)]
+    public fun test_price_too_large_to_represent() {
+        // Price 9.9999999 * 10^16
+        let base = 100;
+        let quote = 9_999_999_900_000_000_000;
+        price(base, quote);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_TOO_SMALL_TO_REPRESENT)]
+    public fun test_price_too_small_to_represent() {
+        // Price 1.0000000 * 10^-17
+        let base = 2_000_000_000_000_000_000;
+        let quote = 20;
+        price(base, quote);
     }
 }
