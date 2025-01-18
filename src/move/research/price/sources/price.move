@@ -2,15 +2,15 @@ module price::price {
 
     /// The largest power of 10 that can fit in a `u64`, as a `u128`.
     /// In Python: `f"{10 ** (math.floor(math.log10(2 ** 64 - 1))):_}"`
-    const DEC_MAX_U64_AS_U128: u128 = 10_000_000_000_000_000_000;
+    const DEC_MAX_U64_AS: u128 = 10_000_000_000_000_000_000;
     /// The exponent of the largest power of 10 that can fit in a `u64`.
     /// In Python: `math.floor(math.log10(2 ** 64 - 1))`
     const EXP_MAX_U64: u32 = 19;
     /// The exponent of the largest power of 10 that can fit in a `u128`.
     /// In Python: `math.floor(math.log10(2 ** 128 - 1))`
-    const EXP_MAX_U128: u32 = 38;
+    const EXP_MAX: u32 = 38;
     /// The largest `u128` value. In Python: `f"{2 ** 128 - 1:_}"`
-    const U128_MAX: u128 = 340_282_366_920_938_463_463_374_607_431_768_211_455;
+    const MAX_U128: u128 = 340_282_366_920_938_463_463_374_607_431_768_211_455;
     /// The bias for the exponent of the canonical price encoding, which is the minimum exponent
     /// that can be represented when taken as a negative number.
     const EXPONENT_BIAS: u32 = 16;
@@ -19,45 +19,45 @@ module price::price {
     /// Decimal conversion factor to convert normalized significand to canonical price encoding.
     const SIGNIFICAND_CONVERSION_SHIFT: u32 = 7;
 
-    const E_0_U128: u128 = 1;
-    const E_1_U128: u128 = 10;
-    const E_2_U128: u128 = 100;
-    const E_3_U128: u128 = 1_000;
-    const E_4_U128: u128 = 10_000;
-    const E_5_U128: u128 = 100_000;
-    const E_6_U128: u128 = 1_000_000;
-    const E_7_U128: u128 = 10_000_000;
-    const E_8_U128: u128 = 100_000_000;
-    const E_9_U128: u128 = 1_000_000_000;
-    const E_10_U128: u128 = 10_000_000_000;
-    const E_11_U128: u128 = 100_000_000_000;
-    const E_12_U128: u128 = 1_000_000_000_000;
-    const E_13_U128: u128 = 10_000_000_000_000;
-    const E_14_U128: u128 = 100_000_000_000_000;
-    const E_15_U128: u128 = 1_000_000_000_000_000;
-    const E_16_U128: u128 = 10_000_000_000_000_000;
-    const E_17_U128: u128 = 100_000_000_000_000_000;
-    const E_18_U128: u128 = 1_000_000_000_000_000_000;
-    const E_19_U128: u128 = 10_000_000_000_000_000_000;
-    const E_20_U128: u128 = 100_000_000_000_000_000_000;
-    const E_21_U128: u128 = 1_000_000_000_000_000_000_000;
-    const E_22_U128: u128 = 10_000_000_000_000_000_000_000;
-    const E_23_U128: u128 = 100_000_000_000_000_000_000_000;
-    const E_24_U128: u128 = 1_000_000_000_000_000_000_000_000;
-    const E_25_U128: u128 = 10_000_000_000_000_000_000_000_000;
-    const E_26_U128: u128 = 100_000_000_000_000_000_000_000_000;
-    const E_27_U128: u128 = 1_000_000_000_000_000_000_000_000_000;
-    const E_28_U128: u128 = 10_000_000_000_000_000_000_000_000_000;
-    const E_29_U128: u128 = 100_000_000_000_000_000_000_000_000_000;
-    const E_30_U128: u128 = 1_000_000_000_000_000_000_000_000_000_000;
-    const E_31_U128: u128 = 10_000_000_000_000_000_000_000_000_000_000;
-    const E_32_U128: u128 = 100_000_000_000_000_000_000_000_000_000_000;
-    const E_33_U128: u128 = 1_000_000_000_000_000_000_000_000_000_000_000;
-    const E_34_U128: u128 = 10_000_000_000_000_000_000_000_000_000_000_000;
-    const E_35_U128: u128 = 100_000_000_000_000_000_000_000_000_000_000_000;
-    const E_36_U128: u128 = 1_000_000_000_000_000_000_000_000_000_000_000_000;
-    const E_37_U128: u128 = 10_000_000_000_000_000_000_000_000_000_000_000_000;
-    const E_38_U128: u128 = 100_000_000_000_000_000_000_000_000_000_000_000_000;
+    const E_0: u128 = 1;
+    const E_1: u128 = 10;
+    const E_2: u128 = 100;
+    const E_3: u128 = 1_000;
+    const E_4: u128 = 10_000;
+    const E_5: u128 = 100_000;
+    const E_6: u128 = 1_000_000;
+    const E_7: u128 = 10_000_000;
+    const E_8: u128 = 100_000_000;
+    const E_9: u128 = 1_000_000_000;
+    const E_10: u128 = 10_000_000_000;
+    const E_11: u128 = 100_000_000_000;
+    const E_12: u128 = 1_000_000_000_000;
+    const E_13: u128 = 10_000_000_000_000;
+    const E_14: u128 = 100_000_000_000_000;
+    const E_15: u128 = 1_000_000_000_000_000;
+    const E_16: u128 = 10_000_000_000_000_000;
+    const E_17: u128 = 100_000_000_000_000_000;
+    const E_18: u128 = 1_000_000_000_000_000_000;
+    const E_19: u128 = 10_000_000_000_000_000_000;
+    const E_20: u128 = 100_000_000_000_000_000_000;
+    const E_21: u128 = 1_000_000_000_000_000_000_000;
+    const E_22: u128 = 10_000_000_000_000_000_000_000;
+    const E_23: u128 = 100_000_000_000_000_000_000_000;
+    const E_24: u128 = 1_000_000_000_000_000_000_000_000;
+    const E_25: u128 = 10_000_000_000_000_000_000_000_000;
+    const E_26: u128 = 100_000_000_000_000_000_000_000_000;
+    const E_27: u128 = 1_000_000_000_000_000_000_000_000_000;
+    const E_28: u128 = 10_000_000_000_000_000_000_000_000_000;
+    const E_29: u128 = 100_000_000_000_000_000_000_000_000_000;
+    const E_30: u128 = 1_000_000_000_000_000_000_000_000_000_000;
+    const E_31: u128 = 10_000_000_000_000_000_000_000_000_000_000;
+    const E_32: u128 = 100_000_000_000_000_000_000_000_000_000_000;
+    const E_33: u128 = 1_000_000_000_000_000_000_000_000_000_000_000;
+    const E_34: u128 = 10_000_000_000_000_000_000_000_000_000_000_000;
+    const E_35: u128 = 100_000_000_000_000_000_000_000_000_000_000_000;
+    const E_36: u128 = 1_000_000_000_000_000_000_000_000_000_000_000_000;
+    const E_37: u128 = 10_000_000_000_000_000_000_000_000_000_000_000_000;
+    const E_38: u128 = 100_000_000_000_000_000_000_000_000_000_000_000_000;
 
     /// Base term is 0.
     const E_BASE_ZERO: u64 = 1;
@@ -73,8 +73,9 @@ module price::price {
     public fun price(base: u64, quote: u64): u32 {
         assert!(base > 0, E_BASE_ZERO);
 
-        let ratio_scaled = ((quote as u128) * DEC_MAX_U64_AS_U128) / (base as u128);
-        let (log_10_ratio_scaled, last_power_of_10_scaled) = floored_log_10(ratio_scaled);
+        let ratio_scaled = ((quote as u128) * DEC_MAX_U64_AS) / (base as u128);
+        let (log_10_ratio_scaled, last_power_of_10_scaled) =
+            floored_log_10_with_power(ratio_scaled);
 
         // The base-10 logarithm of the ratio must be at least the minimum allowable exponent after
         // scaling back down:
@@ -87,191 +88,199 @@ module price::price {
             E_TOO_SMALL_TO_REPRESENT
         );
 
-        // At this point, ratio_scaled could be as small as E_3_U128 = 1_000, which scales back down
+        // At this point, ratio_scaled could be as small as E_3 = 1_000, which scales back down
         // to 1_000 * 10^-19 = 1 * 10^-16, which is the smallest value that can be represented.
         // Hence extracting the significand may require padding or truncating. If less than
-        // E_7_U128, will need to pad, and if greater than E_7_U128, will need to truncate. If
-        // truncating, can divide by (last_power_of_10_scaled / E_7_U128) to get the significand.
+        // E_7, will need to pad, and if greater than E_7, will need to truncate. If
+        // truncating, can divide by (last_power_of_10_scaled / E_7) to get the significand.
         //
         // In either case, the encoded exponent must be corrected for the shift amount.
         let (significand_encoded, exponent_encoded) =
-            if (last_power_of_10_scaled < E_7_U128) { // 3 <= n < 7.
+            if (last_power_of_10_scaled < E_7) { // 3 <= n < 7.
                 let (pad_multiplier, exponent_shift) =
-                    if (last_power_of_10_scaled < E_5_U128) { // 3 <= n < 5.
-                        if (last_power_of_10_scaled < E_4_U128) { // 3 <= n < 4.
-                            (E_4_U128, 4)
+                    if (last_power_of_10_scaled < E_5) { // 3 <= n < 5.
+                        if (last_power_of_10_scaled < E_4) { // 3 <= n < 4.
+                            (E_4, 4)
                         } else { // 4 <= n < 5.
-                            (E_3_U128, 3)
+                            (E_3, 3)
                         }
                     } else { // 5 <= n < 7.
-                        if (last_power_of_10_scaled < E_6_U128) { // 5 <= n < 6.
-                            (E_2_U128, 2)
+                        if (last_power_of_10_scaled < E_6) { // 5 <= n < 6.
+                            (E_2, 2)
                         } else { // 6 <= n < 7.
-                            (E_1_U128, 1)
+                            (E_1, 1)
                         }
                     };
                 ((ratio_scaled * pad_multiplier),
                 log_10_ratio_scaled + exponent_shift + EXPONENT_BIAS
                     - SIGNIFICAND_CONVERSION_SHIFT)
             } else {
-                (ratio_scaled / (last_power_of_10_scaled / E_7_U128), 42)
+                (ratio_scaled / (last_power_of_10_scaled / E_7), 42)
             };
         1
     }
 
     #[view]
-    /// Return the floored base-10 logarithm of `value` and 10 raised to that power. Uses binary
-    /// search for speed, with each new branch of the tree testing at the floored midpoint of the
-    /// previous branch.
-    public fun floored_log_10(value: u128): (u32, u128) {
+    /// Returns the floored base-10 logarithm of `value`, and 10 raised to that power.
+    ///
+    /// The algorithm uses a binary search for speed, with each new branch of the search bisecting
+    /// the remaining range of possible values.
+    ///
+    /// Since the largest power of then that can fit in a `u128` is `10^38`, the search range begins
+    /// as `0 <= n < 39`. Then the search range is bisected about the floored average of the
+    /// endpoints: `(0 + 39) / 2 = 19`. This process yields two branches: `0 <= n < 19` and
+    /// `19 <= n < 39`. The bisection process is repeated until the range is narrowed to a single
+    /// value, terminating the search.
+    public fun floored_log_10_with_power(value: u128): (u32, u128) {
         assert!(value > 0, E_LOG_0_UNDEFINED);
-        if (value < E_19_U128) { // 0 <= n < 19.
-            if (value < E_9_U128) { // 0 <= n < 9.
-                if (value < E_4_U128) { // 0 <= n < 4.
-                    if (value < E_2_U128) { // 0 <= n < 2.
-                        if (value < E_1_U128) { // 0 <= n < 1.
-                            (0, E_0_U128)
+        // 0 <= n < 39.
+        if (value < E_19) { // 0 <= n < 19.
+            if (value < E_9) { // 0 <= n < 9.
+                if (value < E_4) { // 0 <= n < 4.
+                    if (value < E_2) { // 0 <= n < 2.
+                        if (value < E_1) { // 0 <= n < 1.
+                            (0, E_0)
                         } else {
-                            (1, E_1_U128)
+                            (1, E_1)
                         }
                     } else { // 2 <= n < 4.
-                        if (value < E_3_U128) { // 2 <= n < 3.
-                            (2, E_2_U128)
+                        if (value < E_3) { // 2 <= n < 3.
+                            (2, E_2)
                         } else {
-                            (3, E_3_U128)
+                            (3, E_3)
                         }
                     }
                 } else { // 4 <= n < 9.
-                    if (value < E_6_U128) { // 4 <= n < 6.
-                        if (value < E_5_U128) { // 4 <= n < 5.
-                            (4, E_4_U128)
+                    if (value < E_6) { // 4 <= n < 6.
+                        if (value < E_5) { // 4 <= n < 5.
+                            (4, E_4)
                         } else {
-                            (5, E_5_U128)
+                            (5, E_5)
                         }
                     } else { // 6 <= n < 9.
-                        if (value < E_7_U128) { // 6 <= n < 7.
-                            (6, E_6_U128)
+                        if (value < E_7) { // 6 <= n < 7.
+                            (6, E_6)
                         } else { // 7 <= n < 9.
-                            if (value < E_8_U128) { // 7 <= n < 8.
-                                (7, E_7_U128)
+                            if (value < E_8) { // 7 <= n < 8.
+                                (7, E_7)
                             } else {
-                                (8, E_8_U128)
+                                (8, E_8)
                             }
                         }
                     }
                 }
             } else { // 9 <= n < 19.
-                if (value < E_14_U128) { // 9 <= n < 14.
-                    if (value < E_11_U128) { // 9 <= n < 11.
-                        if (value < E_10_U128) { // 9 <= n < 10.
-                            (9, E_9_U128)
+                if (value < E_14) { // 9 <= n < 14.
+                    if (value < E_11) { // 9 <= n < 11.
+                        if (value < E_10) { // 9 <= n < 10.
+                            (9, E_9)
                         } else {
-                            (10, E_10_U128)
+                            (10, E_10)
                         }
                     } else { // 11 <= n < 14.
-                        if (value < E_12_U128) { // 11 <= n < 12.
-                            (11, E_11_U128)
+                        if (value < E_12) { // 11 <= n < 12.
+                            (11, E_11)
                         } else {
-                            if (value < E_13_U128) { // 12 <= n < 13.
-                                (12, E_12_U128)
+                            if (value < E_13) { // 12 <= n < 13.
+                                (12, E_12)
                             } else {
-                                (13, E_13_U128)
+                                (13, E_13)
                             }
                         }
                     }
                 } else { // 14 <= n < 19.
-                    if (value < E_16_U128) { // 14 <= n < 16.
-                        if (value < E_15_U128) { // 14 <= n < 15.
-                            (14, E_14_U128)
+                    if (value < E_16) { // 14 <= n < 16.
+                        if (value < E_15) { // 14 <= n < 15.
+                            (14, E_14)
                         } else {
-                            (15, E_15_U128)
+                            (15, E_15)
                         }
                     } else { // 16 <= n < 19.
-                        if (value < E_17_U128) { // 16 <= n < 17.
-                            (16, E_16_U128)
+                        if (value < E_17) { // 16 <= n < 17.
+                            (16, E_16)
                         } else { // 17 <= n < 19.
-                            if (value < E_18_U128) { // 17 <= n < 18.
-                                (17, E_17_U128)
+                            if (value < E_18) { // 17 <= n < 18.
+                                (17, E_17)
                             } else {
-                                (18, E_18_U128)
+                                (18, E_18)
                             }
                         }
                     }
                 }
             }
         } else { // 19 <= n < 39.
-            if (value < E_29_U128) { // 19 <= n < 29.
-                if (value < E_24_U128) { // 19 <= n < 24.
-                    if (value < E_21_U128) { // 19 <= n < 21.
-                        if (value < E_20_U128) { // 19 <= n < 20.
-                            (19, E_19_U128)
+            if (value < E_29) { // 19 <= n < 29.
+                if (value < E_24) { // 19 <= n < 24.
+                    if (value < E_21) { // 19 <= n < 21.
+                        if (value < E_20) { // 19 <= n < 20.
+                            (19, E_19)
                         } else {
-                            (20, E_20_U128)
+                            (20, E_20)
                         }
                     } else { // 21 <= n < 24.
-                        if (value < E_22_U128) { // 21 <= n < 22.
-                            (21, E_21_U128)
+                        if (value < E_22) { // 21 <= n < 22.
+                            (21, E_21)
                         } else { // 22 <= n < 24.
-                            if (value < E_23_U128) { // 22 <= n < 23.
-                                (22, E_22_U128)
+                            if (value < E_23) { // 22 <= n < 23.
+                                (22, E_22)
                             } else {
-                                (23, E_23_U128)
+                                (23, E_23)
                             }
                         }
                     }
                 } else { // 24 <= n < 29.
-                    if (value < E_26_U128) { // 24 <= n < 26.
-                        if (value < E_25_U128) { // 24 <= n < 25.
-                            (24, E_24_U128)
+                    if (value < E_26) { // 24 <= n < 26.
+                        if (value < E_25) { // 24 <= n < 25.
+                            (24, E_24)
                         } else {
-                            (25, E_25_U128)
+                            (25, E_25)
                         }
                     } else { // 26 <= n < 29.
-                        if (value < E_27_U128) { // 26 <= n < 27.
-                            (26, E_26_U128)
+                        if (value < E_27) { // 26 <= n < 27.
+                            (26, E_26)
                         } else { // 27 <= n < 29.
-                            if (value < E_28_U128) { // 27 <= n < 28.
-                                (27, E_27_U128)
+                            if (value < E_28) { // 27 <= n < 28.
+                                (27, E_27)
                             } else {
-                                (28, E_28_U128)
+                                (28, E_28)
                             }
                         }
                     }
                 }
             } else { // 29 <= n < 39.
-                if (value < E_34_U128) { // 29 <= n < 34.
-                    if (value < E_31_U128) { // 29 <= n < 31.
-                        if (value < E_30_U128) { // 29 <= n < 30.
-                            (29, E_29_U128)
+                if (value < E_34) { // 29 <= n < 34.
+                    if (value < E_31) { // 29 <= n < 31.
+                        if (value < E_30) { // 29 <= n < 30.
+                            (29, E_29)
                         } else {
-                            (30, E_30_U128)
+                            (30, E_30)
                         }
                     } else { // 31 <= n < 34.
-                        if (value < E_32_U128) { // 31 <= n < 32.
-                            (31, E_31_U128)
+                        if (value < E_32) { // 31 <= n < 32.
+                            (31, E_31)
                         } else { // 32 <= n < 34.
-                            if (value < E_33_U128) { // 32 <= n < 33.
-                                (32, E_32_U128)
+                            if (value < E_33) { // 32 <= n < 33.
+                                (32, E_32)
                             } else {
-                                (33, E_33_U128)
+                                (33, E_33)
                             }
                         }
                     }
                 } else { // 34 <= n < 39.
-                    if (value < E_36_U128) { // 34 <= n < 36.
-                        if (value < E_35_U128) { // 34 <= n < 35.
-                            (34, E_34_U128)
+                    if (value < E_36) { // 34 <= n < 36.
+                        if (value < E_35) { // 34 <= n < 35.
+                            (34, E_34)
                         } else {
-                            (35, E_35_U128)
+                            (35, E_35)
                         }
                     } else { // 36 <= n < 39.
-                        if (value < E_37_U128) { // 36 <= n < 37.
-                            (36, E_36_U128)
+                        if (value < E_37) { // 36 <= n < 37.
+                            (36, E_36)
                         } else { // 37 <= n < 39.
-                            if (value < E_38_U128) { // 37 <= n < 38.
-                                (37, E_37_U128)
+                            if (value < E_38) { // 37 <= n < 38.
+                                (37, E_37)
                             } else {
-                                (38, E_38_U128)
+                                (38, E_38)
                             }
                         }
                     }
@@ -281,139 +290,139 @@ module price::price {
     }
 
     #[test_only]
-    fun assert_floored_log_10(
+    fun assert_floored_log_10_with_power(
         value: u128, expected_log: u32, expected_power: u128
     ) {
-        let (log, power) = floored_log_10(value);
-        assert!(log == expected_log, 1);
-        assert!(power == expected_power, 2);
+        let (log, power) = floored_log_10_with_power(value);
+        assert!(log == expected_log);
+        assert!(power == expected_power);
     }
 
     #[test]
-    fun test_floored_log_10() {
+    fun test_floored_log_10_with_power() {
         // Test all powers of 10.
-        assert_floored_log_10(E_0_U128, 0, E_0_U128);
-        assert_floored_log_10(E_1_U128, 1, E_1_U128);
-        assert_floored_log_10(E_2_U128, 2, E_2_U128);
-        assert_floored_log_10(E_3_U128, 3, E_3_U128);
-        assert_floored_log_10(E_4_U128, 4, E_4_U128);
-        assert_floored_log_10(E_5_U128, 5, E_5_U128);
-        assert_floored_log_10(E_6_U128, 6, E_6_U128);
-        assert_floored_log_10(E_7_U128, 7, E_7_U128);
-        assert_floored_log_10(E_8_U128, 8, E_8_U128);
-        assert_floored_log_10(E_9_U128, 9, E_9_U128);
-        assert_floored_log_10(E_10_U128, 10, E_10_U128);
-        assert_floored_log_10(E_11_U128, 11, E_11_U128);
-        assert_floored_log_10(E_12_U128, 12, E_12_U128);
-        assert_floored_log_10(E_13_U128, 13, E_13_U128);
-        assert_floored_log_10(E_14_U128, 14, E_14_U128);
-        assert_floored_log_10(E_15_U128, 15, E_15_U128);
-        assert_floored_log_10(E_16_U128, 16, E_16_U128);
-        assert_floored_log_10(E_17_U128, 17, E_17_U128);
-        assert_floored_log_10(E_18_U128, 18, E_18_U128);
-        assert_floored_log_10(E_19_U128, 19, E_19_U128);
-        assert_floored_log_10(E_20_U128, 20, E_20_U128);
-        assert_floored_log_10(E_21_U128, 21, E_21_U128);
-        assert_floored_log_10(E_22_U128, 22, E_22_U128);
-        assert_floored_log_10(E_23_U128, 23, E_23_U128);
-        assert_floored_log_10(E_24_U128, 24, E_24_U128);
-        assert_floored_log_10(E_25_U128, 25, E_25_U128);
-        assert_floored_log_10(E_26_U128, 26, E_26_U128);
-        assert_floored_log_10(E_27_U128, 27, E_27_U128);
-        assert_floored_log_10(E_28_U128, 28, E_28_U128);
-        assert_floored_log_10(E_29_U128, 29, E_29_U128);
-        assert_floored_log_10(E_30_U128, 30, E_30_U128);
-        assert_floored_log_10(E_31_U128, 31, E_31_U128);
-        assert_floored_log_10(E_32_U128, 32, E_32_U128);
-        assert_floored_log_10(E_33_U128, 33, E_33_U128);
-        assert_floored_log_10(E_34_U128, 34, E_34_U128);
-        assert_floored_log_10(E_35_U128, 35, E_35_U128);
-        assert_floored_log_10(E_36_U128, 36, E_36_U128);
-        assert_floored_log_10(E_37_U128, 37, E_37_U128);
-        assert_floored_log_10(E_38_U128, 38, E_38_U128);
+        assert_floored_log_10_with_power(E_0, 0, E_0);
+        assert_floored_log_10_with_power(E_1, 1, E_1);
+        assert_floored_log_10_with_power(E_2, 2, E_2);
+        assert_floored_log_10_with_power(E_3, 3, E_3);
+        assert_floored_log_10_with_power(E_4, 4, E_4);
+        assert_floored_log_10_with_power(E_5, 5, E_5);
+        assert_floored_log_10_with_power(E_6, 6, E_6);
+        assert_floored_log_10_with_power(E_7, 7, E_7);
+        assert_floored_log_10_with_power(E_8, 8, E_8);
+        assert_floored_log_10_with_power(E_9, 9, E_9);
+        assert_floored_log_10_with_power(E_10, 10, E_10);
+        assert_floored_log_10_with_power(E_11, 11, E_11);
+        assert_floored_log_10_with_power(E_12, 12, E_12);
+        assert_floored_log_10_with_power(E_13, 13, E_13);
+        assert_floored_log_10_with_power(E_14, 14, E_14);
+        assert_floored_log_10_with_power(E_15, 15, E_15);
+        assert_floored_log_10_with_power(E_16, 16, E_16);
+        assert_floored_log_10_with_power(E_17, 17, E_17);
+        assert_floored_log_10_with_power(E_18, 18, E_18);
+        assert_floored_log_10_with_power(E_19, 19, E_19);
+        assert_floored_log_10_with_power(E_20, 20, E_20);
+        assert_floored_log_10_with_power(E_21, 21, E_21);
+        assert_floored_log_10_with_power(E_22, 22, E_22);
+        assert_floored_log_10_with_power(E_23, 23, E_23);
+        assert_floored_log_10_with_power(E_24, 24, E_24);
+        assert_floored_log_10_with_power(E_25, 25, E_25);
+        assert_floored_log_10_with_power(E_26, 26, E_26);
+        assert_floored_log_10_with_power(E_27, 27, E_27);
+        assert_floored_log_10_with_power(E_28, 28, E_28);
+        assert_floored_log_10_with_power(E_29, 29, E_29);
+        assert_floored_log_10_with_power(E_30, 30, E_30);
+        assert_floored_log_10_with_power(E_31, 31, E_31);
+        assert_floored_log_10_with_power(E_32, 32, E_32);
+        assert_floored_log_10_with_power(E_33, 33, E_33);
+        assert_floored_log_10_with_power(E_34, 34, E_34);
+        assert_floored_log_10_with_power(E_35, 35, E_35);
+        assert_floored_log_10_with_power(E_36, 36, E_36);
+        assert_floored_log_10_with_power(E_37, 37, E_37);
+        assert_floored_log_10_with_power(E_38, 38, E_38);
 
         // Test one more than each power of 10.
-        assert_floored_log_10(E_0_U128 + 1, 0, E_0_U128);
-        assert_floored_log_10(E_1_U128 + 1, 1, E_1_U128);
-        assert_floored_log_10(E_2_U128 + 1, 2, E_2_U128);
-        assert_floored_log_10(E_3_U128 + 1, 3, E_3_U128);
-        assert_floored_log_10(E_4_U128 + 1, 4, E_4_U128);
-        assert_floored_log_10(E_5_U128 + 1, 5, E_5_U128);
-        assert_floored_log_10(E_6_U128 + 1, 6, E_6_U128);
-        assert_floored_log_10(E_7_U128 + 1, 7, E_7_U128);
-        assert_floored_log_10(E_8_U128 + 1, 8, E_8_U128);
-        assert_floored_log_10(E_9_U128 + 1, 9, E_9_U128);
-        assert_floored_log_10(E_10_U128 + 1, 10, E_10_U128);
-        assert_floored_log_10(E_11_U128 + 1, 11, E_11_U128);
-        assert_floored_log_10(E_12_U128 + 1, 12, E_12_U128);
-        assert_floored_log_10(E_13_U128 + 1, 13, E_13_U128);
-        assert_floored_log_10(E_14_U128 + 1, 14, E_14_U128);
-        assert_floored_log_10(E_15_U128 + 1, 15, E_15_U128);
-        assert_floored_log_10(E_16_U128 + 1, 16, E_16_U128);
-        assert_floored_log_10(E_17_U128 + 1, 17, E_17_U128);
-        assert_floored_log_10(E_18_U128 + 1, 18, E_18_U128);
-        assert_floored_log_10(E_19_U128 + 1, 19, E_19_U128);
-        assert_floored_log_10(E_20_U128 + 1, 20, E_20_U128);
-        assert_floored_log_10(E_21_U128 + 1, 21, E_21_U128);
-        assert_floored_log_10(E_22_U128 + 1, 22, E_22_U128);
-        assert_floored_log_10(E_23_U128 + 1, 23, E_23_U128);
-        assert_floored_log_10(E_24_U128 + 1, 24, E_24_U128);
-        assert_floored_log_10(E_25_U128 + 1, 25, E_25_U128);
-        assert_floored_log_10(E_26_U128 + 1, 26, E_26_U128);
-        assert_floored_log_10(E_27_U128 + 1, 27, E_27_U128);
-        assert_floored_log_10(E_28_U128 + 1, 28, E_28_U128);
-        assert_floored_log_10(E_29_U128 + 1, 29, E_29_U128);
-        assert_floored_log_10(E_30_U128 + 1, 30, E_30_U128);
-        assert_floored_log_10(E_31_U128 + 1, 31, E_31_U128);
-        assert_floored_log_10(E_32_U128 + 1, 32, E_32_U128);
-        assert_floored_log_10(E_33_U128 + 1, 33, E_33_U128);
-        assert_floored_log_10(E_34_U128 + 1, 34, E_34_U128);
-        assert_floored_log_10(E_35_U128 + 1, 35, E_35_U128);
-        assert_floored_log_10(E_36_U128 + 1, 36, E_36_U128);
-        assert_floored_log_10(E_37_U128 + 1, 37, E_37_U128);
-        assert_floored_log_10(E_38_U128 + 1, 38, E_38_U128);
+        assert_floored_log_10_with_power(E_0 + 1, 0, E_0);
+        assert_floored_log_10_with_power(E_1 + 1, 1, E_1);
+        assert_floored_log_10_with_power(E_2 + 1, 2, E_2);
+        assert_floored_log_10_with_power(E_3 + 1, 3, E_3);
+        assert_floored_log_10_with_power(E_4 + 1, 4, E_4);
+        assert_floored_log_10_with_power(E_5 + 1, 5, E_5);
+        assert_floored_log_10_with_power(E_6 + 1, 6, E_6);
+        assert_floored_log_10_with_power(E_7 + 1, 7, E_7);
+        assert_floored_log_10_with_power(E_8 + 1, 8, E_8);
+        assert_floored_log_10_with_power(E_9 + 1, 9, E_9);
+        assert_floored_log_10_with_power(E_10 + 1, 10, E_10);
+        assert_floored_log_10_with_power(E_11 + 1, 11, E_11);
+        assert_floored_log_10_with_power(E_12 + 1, 12, E_12);
+        assert_floored_log_10_with_power(E_13 + 1, 13, E_13);
+        assert_floored_log_10_with_power(E_14 + 1, 14, E_14);
+        assert_floored_log_10_with_power(E_15 + 1, 15, E_15);
+        assert_floored_log_10_with_power(E_16 + 1, 16, E_16);
+        assert_floored_log_10_with_power(E_17 + 1, 17, E_17);
+        assert_floored_log_10_with_power(E_18 + 1, 18, E_18);
+        assert_floored_log_10_with_power(E_19 + 1, 19, E_19);
+        assert_floored_log_10_with_power(E_20 + 1, 20, E_20);
+        assert_floored_log_10_with_power(E_21 + 1, 21, E_21);
+        assert_floored_log_10_with_power(E_22 + 1, 22, E_22);
+        assert_floored_log_10_with_power(E_23 + 1, 23, E_23);
+        assert_floored_log_10_with_power(E_24 + 1, 24, E_24);
+        assert_floored_log_10_with_power(E_25 + 1, 25, E_25);
+        assert_floored_log_10_with_power(E_26 + 1, 26, E_26);
+        assert_floored_log_10_with_power(E_27 + 1, 27, E_27);
+        assert_floored_log_10_with_power(E_28 + 1, 28, E_28);
+        assert_floored_log_10_with_power(E_29 + 1, 29, E_29);
+        assert_floored_log_10_with_power(E_30 + 1, 30, E_30);
+        assert_floored_log_10_with_power(E_31 + 1, 31, E_31);
+        assert_floored_log_10_with_power(E_32 + 1, 32, E_32);
+        assert_floored_log_10_with_power(E_33 + 1, 33, E_33);
+        assert_floored_log_10_with_power(E_34 + 1, 34, E_34);
+        assert_floored_log_10_with_power(E_35 + 1, 35, E_35);
+        assert_floored_log_10_with_power(E_36 + 1, 36, E_36);
+        assert_floored_log_10_with_power(E_37 + 1, 37, E_37);
+        assert_floored_log_10_with_power(E_38 + 1, 38, E_38);
 
         // Test one less than each power of 10.
-        assert_floored_log_10(E_1_U128 - 1, 0, E_0_U128);
-        assert_floored_log_10(E_2_U128 - 1, 1, E_1_U128);
-        assert_floored_log_10(E_3_U128 - 1, 2, E_2_U128);
-        assert_floored_log_10(E_4_U128 - 1, 3, E_3_U128);
-        assert_floored_log_10(E_5_U128 - 1, 4, E_4_U128);
-        assert_floored_log_10(E_6_U128 - 1, 5, E_5_U128);
-        assert_floored_log_10(E_7_U128 - 1, 6, E_6_U128);
-        assert_floored_log_10(E_8_U128 - 1, 7, E_7_U128);
-        assert_floored_log_10(E_9_U128 - 1, 8, E_8_U128);
-        assert_floored_log_10(E_10_U128 - 1, 9, E_9_U128);
-        assert_floored_log_10(E_11_U128 - 1, 10, E_10_U128);
-        assert_floored_log_10(E_12_U128 - 1, 11, E_11_U128);
-        assert_floored_log_10(E_13_U128 - 1, 12, E_12_U128);
-        assert_floored_log_10(E_14_U128 - 1, 13, E_13_U128);
-        assert_floored_log_10(E_15_U128 - 1, 14, E_14_U128);
-        assert_floored_log_10(E_16_U128 - 1, 15, E_15_U128);
-        assert_floored_log_10(E_17_U128 - 1, 16, E_16_U128);
-        assert_floored_log_10(E_18_U128 - 1, 17, E_17_U128);
-        assert_floored_log_10(E_19_U128 - 1, 18, E_18_U128);
-        assert_floored_log_10(E_20_U128 - 1, 19, E_19_U128);
-        assert_floored_log_10(E_21_U128 - 1, 20, E_20_U128);
-        assert_floored_log_10(E_22_U128 - 1, 21, E_21_U128);
-        assert_floored_log_10(E_23_U128 - 1, 22, E_22_U128);
-        assert_floored_log_10(E_24_U128 - 1, 23, E_23_U128);
-        assert_floored_log_10(E_25_U128 - 1, 24, E_24_U128);
-        assert_floored_log_10(E_26_U128 - 1, 25, E_25_U128);
-        assert_floored_log_10(E_27_U128 - 1, 26, E_26_U128);
-        assert_floored_log_10(E_28_U128 - 1, 27, E_27_U128);
-        assert_floored_log_10(E_29_U128 - 1, 28, E_28_U128);
-        assert_floored_log_10(E_30_U128 - 1, 29, E_29_U128);
-        assert_floored_log_10(E_31_U128 - 1, 30, E_30_U128);
-        assert_floored_log_10(E_32_U128 - 1, 31, E_31_U128);
-        assert_floored_log_10(E_33_U128 - 1, 32, E_32_U128);
-        assert_floored_log_10(E_34_U128 - 1, 33, E_33_U128);
-        assert_floored_log_10(E_35_U128 - 1, 34, E_34_U128);
-        assert_floored_log_10(E_36_U128 - 1, 35, E_35_U128);
-        assert_floored_log_10(E_37_U128 - 1, 36, E_36_U128);
-        assert_floored_log_10(E_38_U128 - 1, 37, E_37_U128);
+        assert_floored_log_10_with_power(E_1 - 1, 0, E_0);
+        assert_floored_log_10_with_power(E_2 - 1, 1, E_1);
+        assert_floored_log_10_with_power(E_3 - 1, 2, E_2);
+        assert_floored_log_10_with_power(E_4 - 1, 3, E_3);
+        assert_floored_log_10_with_power(E_5 - 1, 4, E_4);
+        assert_floored_log_10_with_power(E_6 - 1, 5, E_5);
+        assert_floored_log_10_with_power(E_7 - 1, 6, E_6);
+        assert_floored_log_10_with_power(E_8 - 1, 7, E_7);
+        assert_floored_log_10_with_power(E_9 - 1, 8, E_8);
+        assert_floored_log_10_with_power(E_10 - 1, 9, E_9);
+        assert_floored_log_10_with_power(E_11 - 1, 10, E_10);
+        assert_floored_log_10_with_power(E_12 - 1, 11, E_11);
+        assert_floored_log_10_with_power(E_13 - 1, 12, E_12);
+        assert_floored_log_10_with_power(E_14 - 1, 13, E_13);
+        assert_floored_log_10_with_power(E_15 - 1, 14, E_14);
+        assert_floored_log_10_with_power(E_16 - 1, 15, E_15);
+        assert_floored_log_10_with_power(E_17 - 1, 16, E_16);
+        assert_floored_log_10_with_power(E_18 - 1, 17, E_17);
+        assert_floored_log_10_with_power(E_19 - 1, 18, E_18);
+        assert_floored_log_10_with_power(E_20 - 1, 19, E_19);
+        assert_floored_log_10_with_power(E_21 - 1, 20, E_20);
+        assert_floored_log_10_with_power(E_22 - 1, 21, E_21);
+        assert_floored_log_10_with_power(E_23 - 1, 22, E_22);
+        assert_floored_log_10_with_power(E_24 - 1, 23, E_23);
+        assert_floored_log_10_with_power(E_25 - 1, 24, E_24);
+        assert_floored_log_10_with_power(E_26 - 1, 25, E_25);
+        assert_floored_log_10_with_power(E_27 - 1, 26, E_26);
+        assert_floored_log_10_with_power(E_28 - 1, 27, E_27);
+        assert_floored_log_10_with_power(E_29 - 1, 28, E_28);
+        assert_floored_log_10_with_power(E_30 - 1, 29, E_29);
+        assert_floored_log_10_with_power(E_31 - 1, 30, E_30);
+        assert_floored_log_10_with_power(E_32 - 1, 31, E_31);
+        assert_floored_log_10_with_power(E_33 - 1, 32, E_32);
+        assert_floored_log_10_with_power(E_34 - 1, 33, E_33);
+        assert_floored_log_10_with_power(E_35 - 1, 34, E_34);
+        assert_floored_log_10_with_power(E_36 - 1, 35, E_35);
+        assert_floored_log_10_with_power(E_37 - 1, 36, E_36);
+        assert_floored_log_10_with_power(E_38 - 1, 37, E_37);
 
         // Test max value that can fit in a u128.
-        assert_floored_log_10(U128_MAX, 38, E_38_U128);
+        assert_floored_log_10_with_power(MAX_U128, 38, E_38);
     }
 }
