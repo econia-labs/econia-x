@@ -59,6 +59,46 @@ module price::price {
     const E_37: u128 = 10_000_000_000_000_000_000_000_000_000_000_000_000;
     const E_38: u128 = 100_000_000_000_000_000_000_000_000_000_000_000_000;
 
+    const N_0: u32 = 0;
+    const N_1: u32 = 1;
+    const N_2: u32 = 2;
+    const N_3: u32 = 3;
+    const N_4: u32 = 4;
+    const N_5: u32 = 5;
+    const N_6: u32 = 6;
+    const N_7: u32 = 7;
+    const N_8: u32 = 8;
+    const N_9: u32 = 9;
+    const N_10: u32 = 10;
+    const N_11: u32 = 11;
+    const N_12: u32 = 12;
+    const N_13: u32 = 13;
+    const N_14: u32 = 14;
+    const N_15: u32 = 15;
+    const N_16: u32 = 16;
+    const N_17: u32 = 17;
+    const N_18: u32 = 18;
+    const N_19: u32 = 19;
+    const N_20: u32 = 20;
+    const N_21: u32 = 21;
+    const N_22: u32 = 22;
+    const N_23: u32 = 23;
+    const N_24: u32 = 24;
+    const N_25: u32 = 25;
+    const N_26: u32 = 26;
+    const N_27: u32 = 27;
+    const N_28: u32 = 28;
+    const N_29: u32 = 29;
+    const N_30: u32 = 30;
+    const N_31: u32 = 31;
+    const N_32: u32 = 32;
+    const N_33: u32 = 33;
+    const N_34: u32 = 34;
+    const N_35: u32 = 35;
+    const N_36: u32 = 36;
+    const N_37: u32 = 37;
+    const N_38: u32 = 38;
+
     /// Base term is 0.
     const E_BASE_ZERO: u64 = 1;
     /// Logarithm of 0 is undefined.
