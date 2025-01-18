@@ -179,32 +179,32 @@ module price::price {
                 if (value < E_4) { // 0 <= n < 4.
                     if (value < E_2) { // 0 <= n < 2.
                         if (value < E_1) { // 0 <= n < 1.
-                            (0, E_0)
+                            (N_0, E_0)
                         } else {
-                            (1, E_1)
+                            (N_1, E_1)
                         }
                     } else { // 2 <= n < 4.
                         if (value < E_3) { // 2 <= n < 3.
-                            (2, E_2)
+                            (N_2, E_2)
                         } else {
-                            (3, E_3)
+                            (N_3, E_3)
                         }
                     }
                 } else { // 4 <= n < 9.
                     if (value < E_6) { // 4 <= n < 6.
                         if (value < E_5) { // 4 <= n < 5.
-                            (4, E_4)
+                            (N_4, E_4)
                         } else {
-                            (5, E_5)
+                            (N_5, E_5)
                         }
                     } else { // 6 <= n < 9.
                         if (value < E_7) { // 6 <= n < 7.
-                            (6, E_6)
+                            (N_6, E_6)
                         } else { // 7 <= n < 9.
                             if (value < E_8) { // 7 <= n < 8.
-                                (7, E_7)
+                                (N_7, E_7)
                             } else {
-                                (8, E_8)
+                                (N_8, E_8)
                             }
                         }
                     }
@@ -213,36 +213,36 @@ module price::price {
                 if (value < E_14) { // 9 <= n < 14.
                     if (value < E_11) { // 9 <= n < 11.
                         if (value < E_10) { // 9 <= n < 10.
-                            (9, E_9)
+                            (N_9, E_9)
                         } else {
-                            (10, E_10)
+                            (N_10, E_10)
                         }
                     } else { // 11 <= n < 14.
                         if (value < E_12) { // 11 <= n < 12.
-                            (11, E_11)
+                            (N_11, E_11)
                         } else {
                             if (value < E_13) { // 12 <= n < 13.
-                                (12, E_12)
+                                (N_12, E_12)
                             } else {
-                                (13, E_13)
+                                (N_13, E_13)
                             }
                         }
                     }
                 } else { // 14 <= n < 19.
                     if (value < E_16) { // 14 <= n < 16.
                         if (value < E_15) { // 14 <= n < 15.
-                            (14, E_14)
+                            (N_14, E_14)
                         } else {
-                            (15, E_15)
+                            (N_15, E_15)
                         }
                     } else { // 16 <= n < 19.
                         if (value < E_17) { // 16 <= n < 17.
-                            (16, E_16)
+                            (N_16, E_16)
                         } else { // 17 <= n < 19.
                             if (value < E_18) { // 17 <= n < 18.
-                                (17, E_17)
+                                (N_17, E_17)
                             } else {
-                                (18, E_18)
+                                (N_18, E_18)
                             }
                         }
                     }
@@ -253,36 +253,36 @@ module price::price {
                 if (value < E_24) { // 19 <= n < 24.
                     if (value < E_21) { // 19 <= n < 21.
                         if (value < E_20) { // 19 <= n < 20.
-                            (19, E_19)
+                            (N_19, E_19)
                         } else {
-                            (20, E_20)
+                            (N_20, E_20)
                         }
                     } else { // 21 <= n < 24.
                         if (value < E_22) { // 21 <= n < 22.
-                            (21, E_21)
+                            (N_21, E_21)
                         } else { // 22 <= n < 24.
                             if (value < E_23) { // 22 <= n < 23.
-                                (22, E_22)
+                                (N_22, E_22)
                             } else {
-                                (23, E_23)
+                                (N_23, E_23)
                             }
                         }
                     }
                 } else { // 24 <= n < 29.
                     if (value < E_26) { // 24 <= n < 26.
                         if (value < E_25) { // 24 <= n < 25.
-                            (24, E_24)
+                            (N_24, E_24)
                         } else {
-                            (25, E_25)
+                            (N_25, E_25)
                         }
                     } else { // 26 <= n < 29.
                         if (value < E_27) { // 26 <= n < 27.
-                            (26, E_26)
+                            (N_26, E_26)
                         } else { // 27 <= n < 29.
                             if (value < E_28) { // 27 <= n < 28.
-                                (27, E_27)
+                                (N_27, E_27)
                             } else {
-                                (28, E_28)
+                                (N_28, E_28)
                             }
                         }
                     }
@@ -291,36 +291,36 @@ module price::price {
                 if (value < E_34) { // 29 <= n < 34.
                     if (value < E_31) { // 29 <= n < 31.
                         if (value < E_30) { // 29 <= n < 30.
-                            (29, E_29)
+                            (N_29, E_29)
                         } else {
-                            (30, E_30)
+                            (N_30, E_30)
                         }
                     } else { // 31 <= n < 34.
                         if (value < E_32) { // 31 <= n < 32.
-                            (31, E_31)
+                            (N_31, E_31)
                         } else { // 32 <= n < 34.
                             if (value < E_33) { // 32 <= n < 33.
-                                (32, E_32)
+                                (N_32, E_32)
                             } else {
-                                (33, E_33)
+                                (N_33, E_33)
                             }
                         }
                     }
                 } else { // 34 <= n < 39.
                     if (value < E_36) { // 34 <= n < 36.
                         if (value < E_35) { // 34 <= n < 35.
-                            (34, E_34)
+                            (N_34, E_34)
                         } else {
-                            (35, E_35)
+                            (N_35, E_35)
                         }
                     } else { // 36 <= n < 39.
                         if (value < E_37) { // 36 <= n < 37.
-                            (36, E_36)
+                            (N_36, E_36)
                         } else { // 37 <= n < 39.
                             if (value < E_38) { // 37 <= n < 38.
-                                (37, E_37)
+                                (N_37, E_37)
                             } else {
-                                (38, E_38)
+                                (N_38, E_38)
                             }
                         }
                     }
@@ -341,128 +341,128 @@ module price::price {
     #[test]
     fun test_floored_log_10_with_power() {
         // Test all powers of 10.
-        assert_floored_log_10_with_power(E_0, 0, E_0);
-        assert_floored_log_10_with_power(E_1, 1, E_1);
-        assert_floored_log_10_with_power(E_2, 2, E_2);
-        assert_floored_log_10_with_power(E_3, 3, E_3);
-        assert_floored_log_10_with_power(E_4, 4, E_4);
-        assert_floored_log_10_with_power(E_5, 5, E_5);
-        assert_floored_log_10_with_power(E_6, 6, E_6);
-        assert_floored_log_10_with_power(E_7, 7, E_7);
-        assert_floored_log_10_with_power(E_8, 8, E_8);
-        assert_floored_log_10_with_power(E_9, 9, E_9);
-        assert_floored_log_10_with_power(E_10, 10, E_10);
-        assert_floored_log_10_with_power(E_11, 11, E_11);
-        assert_floored_log_10_with_power(E_12, 12, E_12);
-        assert_floored_log_10_with_power(E_13, 13, E_13);
-        assert_floored_log_10_with_power(E_14, 14, E_14);
-        assert_floored_log_10_with_power(E_15, 15, E_15);
-        assert_floored_log_10_with_power(E_16, 16, E_16);
-        assert_floored_log_10_with_power(E_17, 17, E_17);
-        assert_floored_log_10_with_power(E_18, 18, E_18);
-        assert_floored_log_10_with_power(E_19, 19, E_19);
-        assert_floored_log_10_with_power(E_20, 20, E_20);
-        assert_floored_log_10_with_power(E_21, 21, E_21);
-        assert_floored_log_10_with_power(E_22, 22, E_22);
-        assert_floored_log_10_with_power(E_23, 23, E_23);
-        assert_floored_log_10_with_power(E_24, 24, E_24);
-        assert_floored_log_10_with_power(E_25, 25, E_25);
-        assert_floored_log_10_with_power(E_26, 26, E_26);
-        assert_floored_log_10_with_power(E_27, 27, E_27);
-        assert_floored_log_10_with_power(E_28, 28, E_28);
-        assert_floored_log_10_with_power(E_29, 29, E_29);
-        assert_floored_log_10_with_power(E_30, 30, E_30);
-        assert_floored_log_10_with_power(E_31, 31, E_31);
-        assert_floored_log_10_with_power(E_32, 32, E_32);
-        assert_floored_log_10_with_power(E_33, 33, E_33);
-        assert_floored_log_10_with_power(E_34, 34, E_34);
-        assert_floored_log_10_with_power(E_35, 35, E_35);
-        assert_floored_log_10_with_power(E_36, 36, E_36);
-        assert_floored_log_10_with_power(E_37, 37, E_37);
-        assert_floored_log_10_with_power(E_38, 38, E_38);
+        assert_floored_log_10_with_power(E_0, N_0, E_0);
+        assert_floored_log_10_with_power(E_1, N_1, E_1);
+        assert_floored_log_10_with_power(E_2, N_2, E_2);
+        assert_floored_log_10_with_power(E_3, N_3, E_3);
+        assert_floored_log_10_with_power(E_4, N_4, E_4);
+        assert_floored_log_10_with_power(E_5, N_5, E_5);
+        assert_floored_log_10_with_power(E_6, N_6, E_6);
+        assert_floored_log_10_with_power(E_7, N_7, E_7);
+        assert_floored_log_10_with_power(E_8, N_8, E_8);
+        assert_floored_log_10_with_power(E_9, N_9, E_9);
+        assert_floored_log_10_with_power(E_10, N_10, E_10);
+        assert_floored_log_10_with_power(E_11, N_11, E_11);
+        assert_floored_log_10_with_power(E_12, N_12, E_12);
+        assert_floored_log_10_with_power(E_13, N_13, E_13);
+        assert_floored_log_10_with_power(E_14, N_14, E_14);
+        assert_floored_log_10_with_power(E_15, N_15, E_15);
+        assert_floored_log_10_with_power(E_16, N_16, E_16);
+        assert_floored_log_10_with_power(E_17, N_17, E_17);
+        assert_floored_log_10_with_power(E_18, N_18, E_18);
+        assert_floored_log_10_with_power(E_19, N_19, E_19);
+        assert_floored_log_10_with_power(E_20, N_20, E_20);
+        assert_floored_log_10_with_power(E_21, N_21, E_21);
+        assert_floored_log_10_with_power(E_22, N_22, E_22);
+        assert_floored_log_10_with_power(E_23, N_23, E_23);
+        assert_floored_log_10_with_power(E_24, N_24, E_24);
+        assert_floored_log_10_with_power(E_25, N_25, E_25);
+        assert_floored_log_10_with_power(E_26, N_26, E_26);
+        assert_floored_log_10_with_power(E_27, N_27, E_27);
+        assert_floored_log_10_with_power(E_28, N_28, E_28);
+        assert_floored_log_10_with_power(E_29, N_29, E_29);
+        assert_floored_log_10_with_power(E_30, N_30, E_30);
+        assert_floored_log_10_with_power(E_31, N_31, E_31);
+        assert_floored_log_10_with_power(E_32, N_32, E_32);
+        assert_floored_log_10_with_power(E_33, N_33, E_33);
+        assert_floored_log_10_with_power(E_34, N_34, E_34);
+        assert_floored_log_10_with_power(E_35, N_35, E_35);
+        assert_floored_log_10_with_power(E_36, N_36, E_36);
+        assert_floored_log_10_with_power(E_37, N_37, E_37);
+        assert_floored_log_10_with_power(E_38, N_38, E_38);
 
         // Test one more than each power of 10.
-        assert_floored_log_10_with_power(E_0 + 1, 0, E_0);
-        assert_floored_log_10_with_power(E_1 + 1, 1, E_1);
-        assert_floored_log_10_with_power(E_2 + 1, 2, E_2);
-        assert_floored_log_10_with_power(E_3 + 1, 3, E_3);
-        assert_floored_log_10_with_power(E_4 + 1, 4, E_4);
-        assert_floored_log_10_with_power(E_5 + 1, 5, E_5);
-        assert_floored_log_10_with_power(E_6 + 1, 6, E_6);
-        assert_floored_log_10_with_power(E_7 + 1, 7, E_7);
-        assert_floored_log_10_with_power(E_8 + 1, 8, E_8);
-        assert_floored_log_10_with_power(E_9 + 1, 9, E_9);
-        assert_floored_log_10_with_power(E_10 + 1, 10, E_10);
-        assert_floored_log_10_with_power(E_11 + 1, 11, E_11);
-        assert_floored_log_10_with_power(E_12 + 1, 12, E_12);
-        assert_floored_log_10_with_power(E_13 + 1, 13, E_13);
-        assert_floored_log_10_with_power(E_14 + 1, 14, E_14);
-        assert_floored_log_10_with_power(E_15 + 1, 15, E_15);
-        assert_floored_log_10_with_power(E_16 + 1, 16, E_16);
-        assert_floored_log_10_with_power(E_17 + 1, 17, E_17);
-        assert_floored_log_10_with_power(E_18 + 1, 18, E_18);
-        assert_floored_log_10_with_power(E_19 + 1, 19, E_19);
-        assert_floored_log_10_with_power(E_20 + 1, 20, E_20);
-        assert_floored_log_10_with_power(E_21 + 1, 21, E_21);
-        assert_floored_log_10_with_power(E_22 + 1, 22, E_22);
-        assert_floored_log_10_with_power(E_23 + 1, 23, E_23);
-        assert_floored_log_10_with_power(E_24 + 1, 24, E_24);
-        assert_floored_log_10_with_power(E_25 + 1, 25, E_25);
-        assert_floored_log_10_with_power(E_26 + 1, 26, E_26);
-        assert_floored_log_10_with_power(E_27 + 1, 27, E_27);
-        assert_floored_log_10_with_power(E_28 + 1, 28, E_28);
-        assert_floored_log_10_with_power(E_29 + 1, 29, E_29);
-        assert_floored_log_10_with_power(E_30 + 1, 30, E_30);
-        assert_floored_log_10_with_power(E_31 + 1, 31, E_31);
-        assert_floored_log_10_with_power(E_32 + 1, 32, E_32);
-        assert_floored_log_10_with_power(E_33 + 1, 33, E_33);
-        assert_floored_log_10_with_power(E_34 + 1, 34, E_34);
-        assert_floored_log_10_with_power(E_35 + 1, 35, E_35);
-        assert_floored_log_10_with_power(E_36 + 1, 36, E_36);
-        assert_floored_log_10_with_power(E_37 + 1, 37, E_37);
-        assert_floored_log_10_with_power(E_38 + 1, 38, E_38);
+        assert_floored_log_10_with_power(E_0 + 1, N_0, E_0);
+        assert_floored_log_10_with_power(E_1 + 1, N_1, E_1);
+        assert_floored_log_10_with_power(E_2 + 1, N_2, E_2);
+        assert_floored_log_10_with_power(E_3 + 1, N_3, E_3);
+        assert_floored_log_10_with_power(E_4 + 1, N_4, E_4);
+        assert_floored_log_10_with_power(E_5 + 1, N_5, E_5);
+        assert_floored_log_10_with_power(E_6 + 1, N_6, E_6);
+        assert_floored_log_10_with_power(E_7 + 1, N_7, E_7);
+        assert_floored_log_10_with_power(E_8 + 1, N_8, E_8);
+        assert_floored_log_10_with_power(E_9 + 1, N_9, E_9);
+        assert_floored_log_10_with_power(E_10 + 1, N_10, E_10);
+        assert_floored_log_10_with_power(E_11 + 1, N_11, E_11);
+        assert_floored_log_10_with_power(E_12 + 1, N_12, E_12);
+        assert_floored_log_10_with_power(E_13 + 1, N_13, E_13);
+        assert_floored_log_10_with_power(E_14 + 1, N_14, E_14);
+        assert_floored_log_10_with_power(E_15 + 1, N_15, E_15);
+        assert_floored_log_10_with_power(E_16 + 1, N_16, E_16);
+        assert_floored_log_10_with_power(E_17 + 1, N_17, E_17);
+        assert_floored_log_10_with_power(E_18 + 1, N_18, E_18);
+        assert_floored_log_10_with_power(E_19 + 1, N_19, E_19);
+        assert_floored_log_10_with_power(E_20 + 1, N_20, E_20);
+        assert_floored_log_10_with_power(E_21 + 1, N_21, E_21);
+        assert_floored_log_10_with_power(E_22 + 1, N_22, E_22);
+        assert_floored_log_10_with_power(E_23 + 1, N_23, E_23);
+        assert_floored_log_10_with_power(E_24 + 1, N_24, E_24);
+        assert_floored_log_10_with_power(E_25 + 1, N_25, E_25);
+        assert_floored_log_10_with_power(E_26 + 1, N_26, E_26);
+        assert_floored_log_10_with_power(E_27 + 1, N_27, E_27);
+        assert_floored_log_10_with_power(E_28 + 1, N_28, E_28);
+        assert_floored_log_10_with_power(E_29 + 1, N_29, E_29);
+        assert_floored_log_10_with_power(E_30 + 1, N_30, E_30);
+        assert_floored_log_10_with_power(E_31 + 1, N_31, E_31);
+        assert_floored_log_10_with_power(E_32 + 1, N_32, E_32);
+        assert_floored_log_10_with_power(E_33 + 1, N_33, E_33);
+        assert_floored_log_10_with_power(E_34 + 1, N_34, E_34);
+        assert_floored_log_10_with_power(E_35 + 1, N_35, E_35);
+        assert_floored_log_10_with_power(E_36 + 1, N_36, E_36);
+        assert_floored_log_10_with_power(E_37 + 1, N_37, E_37);
+        assert_floored_log_10_with_power(E_38 + 1, N_38, E_38);
 
         // Test one less than each power of 10.
-        assert_floored_log_10_with_power(E_1 - 1, 0, E_0);
-        assert_floored_log_10_with_power(E_2 - 1, 1, E_1);
-        assert_floored_log_10_with_power(E_3 - 1, 2, E_2);
-        assert_floored_log_10_with_power(E_4 - 1, 3, E_3);
-        assert_floored_log_10_with_power(E_5 - 1, 4, E_4);
-        assert_floored_log_10_with_power(E_6 - 1, 5, E_5);
-        assert_floored_log_10_with_power(E_7 - 1, 6, E_6);
-        assert_floored_log_10_with_power(E_8 - 1, 7, E_7);
-        assert_floored_log_10_with_power(E_9 - 1, 8, E_8);
-        assert_floored_log_10_with_power(E_10 - 1, 9, E_9);
-        assert_floored_log_10_with_power(E_11 - 1, 10, E_10);
-        assert_floored_log_10_with_power(E_12 - 1, 11, E_11);
-        assert_floored_log_10_with_power(E_13 - 1, 12, E_12);
-        assert_floored_log_10_with_power(E_14 - 1, 13, E_13);
-        assert_floored_log_10_with_power(E_15 - 1, 14, E_14);
-        assert_floored_log_10_with_power(E_16 - 1, 15, E_15);
-        assert_floored_log_10_with_power(E_17 - 1, 16, E_16);
-        assert_floored_log_10_with_power(E_18 - 1, 17, E_17);
-        assert_floored_log_10_with_power(E_19 - 1, 18, E_18);
-        assert_floored_log_10_with_power(E_20 - 1, 19, E_19);
-        assert_floored_log_10_with_power(E_21 - 1, 20, E_20);
-        assert_floored_log_10_with_power(E_22 - 1, 21, E_21);
-        assert_floored_log_10_with_power(E_23 - 1, 22, E_22);
-        assert_floored_log_10_with_power(E_24 - 1, 23, E_23);
-        assert_floored_log_10_with_power(E_25 - 1, 24, E_24);
-        assert_floored_log_10_with_power(E_26 - 1, 25, E_25);
-        assert_floored_log_10_with_power(E_27 - 1, 26, E_26);
-        assert_floored_log_10_with_power(E_28 - 1, 27, E_27);
-        assert_floored_log_10_with_power(E_29 - 1, 28, E_28);
-        assert_floored_log_10_with_power(E_30 - 1, 29, E_29);
-        assert_floored_log_10_with_power(E_31 - 1, 30, E_30);
-        assert_floored_log_10_with_power(E_32 - 1, 31, E_31);
-        assert_floored_log_10_with_power(E_33 - 1, 32, E_32);
-        assert_floored_log_10_with_power(E_34 - 1, 33, E_33);
-        assert_floored_log_10_with_power(E_35 - 1, 34, E_34);
-        assert_floored_log_10_with_power(E_36 - 1, 35, E_35);
-        assert_floored_log_10_with_power(E_37 - 1, 36, E_36);
-        assert_floored_log_10_with_power(E_38 - 1, 37, E_37);
+        assert_floored_log_10_with_power(E_1 - 1, N_0, E_0);
+        assert_floored_log_10_with_power(E_2 - 1, N_1, E_1);
+        assert_floored_log_10_with_power(E_3 - 1, N_2, E_2);
+        assert_floored_log_10_with_power(E_4 - 1, N_3, E_3);
+        assert_floored_log_10_with_power(E_5 - 1, N_4, E_4);
+        assert_floored_log_10_with_power(E_6 - 1, N_5, E_5);
+        assert_floored_log_10_with_power(E_7 - 1, N_6, E_6);
+        assert_floored_log_10_with_power(E_8 - 1, N_7, E_7);
+        assert_floored_log_10_with_power(E_9 - 1, N_8, E_8);
+        assert_floored_log_10_with_power(E_10 - 1, N_9, E_9);
+        assert_floored_log_10_with_power(E_11 - 1, N_10, E_10);
+        assert_floored_log_10_with_power(E_12 - 1, N_11, E_11);
+        assert_floored_log_10_with_power(E_13 - 1, N_12, E_12);
+        assert_floored_log_10_with_power(E_14 - 1, N_13, E_13);
+        assert_floored_log_10_with_power(E_15 - 1, N_14, E_14);
+        assert_floored_log_10_with_power(E_16 - 1, N_15, E_15);
+        assert_floored_log_10_with_power(E_17 - 1, N_16, E_16);
+        assert_floored_log_10_with_power(E_18 - 1, N_17, E_17);
+        assert_floored_log_10_with_power(E_19 - 1, N_18, E_18);
+        assert_floored_log_10_with_power(E_20 - 1, N_19, E_19);
+        assert_floored_log_10_with_power(E_21 - 1, N_20, E_20);
+        assert_floored_log_10_with_power(E_22 - 1, N_21, E_21);
+        assert_floored_log_10_with_power(E_23 - 1, N_22, E_22);
+        assert_floored_log_10_with_power(E_24 - 1, N_23, E_23);
+        assert_floored_log_10_with_power(E_25 - 1, N_24, E_24);
+        assert_floored_log_10_with_power(E_26 - 1, N_25, E_25);
+        assert_floored_log_10_with_power(E_27 - 1, N_26, E_26);
+        assert_floored_log_10_with_power(E_28 - 1, N_27, E_27);
+        assert_floored_log_10_with_power(E_29 - 1, N_28, E_28);
+        assert_floored_log_10_with_power(E_30 - 1, N_29, E_29);
+        assert_floored_log_10_with_power(E_31 - 1, N_30, E_30);
+        assert_floored_log_10_with_power(E_32 - 1, N_31, E_31);
+        assert_floored_log_10_with_power(E_33 - 1, N_32, E_32);
+        assert_floored_log_10_with_power(E_34 - 1, N_33, E_33);
+        assert_floored_log_10_with_power(E_35 - 1, N_34, E_34);
+        assert_floored_log_10_with_power(E_36 - 1, N_35, E_35);
+        assert_floored_log_10_with_power(E_37 - 1, N_36, E_36);
+        assert_floored_log_10_with_power(E_38 - 1, N_37, E_37);
 
-        // Test max value that can fit in a u128.
-        assert_floored_log_10_with_power(MAX_U128, 38, E_38);
+        // Test max value that can fit in a `u128`.
+        assert_floored_log_10_with_power(MAX_U128, N_38, E_38);
     }
 }
