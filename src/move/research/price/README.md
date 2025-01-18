@@ -11,7 +11,9 @@ $$
 
 Prices are denoted using an unsigned [normalized number] format, so at current
 market prices as of the time of this writing, for example, the ratio of $9.79$
-`USD` per $1$ `APT` would be denoted $p = 9.79 \cdot 10^1$:
+`USD` per $1$ `APT` would be denoted $p = 9.79 \cdot 10^1$. (This example
+assumes a hypothetical `USD` asset with the same number of `Coin` decimals as
+`APT`, since the implementation operates on indivisible subunits).
 
 $$
 p = \frac{9.79}{1} = 9.79 \cdot 10^1
@@ -77,7 +79,7 @@ Thus, the price $987 = 9.87 \cdot 10^2$ is encoded as follows:
 >                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^ significand bits
 > ```
 
-## Exponent range selection
+## Appendix: exponent range selection
 
 With 5 `u32` bits allocated for $n_e$, there are thus $2^5 = 32$ possible
 exponents. Since $n=0$ exhausts one representable exponent, the selection of a
