@@ -8,6 +8,16 @@ module price::price {
     /// In Python: `hex(int('1' * 27, 2))`.
     const HI_SIGNIFICAND: u32 = 0x7ffffff;
 
+    /// Special price zero.
+    const P_ZERO: u32 = 0;
+    /// Special price infinity, all bits set in `u32`. In Python: `hex(int('1' * 32, 2))`
+    const P_INFINITY: u32 = 0xffffffff;
+
+    /// Maximum allowed significand for a finite, nonzero price.
+    const M_MAX: u32 = 99_999_999;
+    /// Minimum allowed significand for a finite, nonzero price.
+    const M_MIN: u32 = 10_000_000;
+
     const E_0: u128 = 1;
     const E_1: u128 = 10;
     const E_2: u128 = 100;
@@ -103,7 +113,7 @@ module price::price {
     }
 
     #[view]
-    public fun encoded_price(price: u32): u32 {
+    public fun encoded_significand(price: u32): u32 {
         price & HI_SIGNIFICAND
     }
 
@@ -275,6 +285,32 @@ module price::price {
                 }
             }
         }
+    }
+
+    #[view]
+    public fun is_canonical(price: u32): bool {
+        is_regular(price) || is_regular(price)
+    }
+
+    #[view]
+    public fun is_infinity(price: u32): bool {
+        price == P_INFINITY
+    }
+
+    #[view]
+    public fun is_regular(price: u32): bool {
+        let significand = encoded_significand(price);
+        significand >= M_MIN && significand <= M_MAX
+    }
+
+    #[view]
+    public fun is_special(price: u32): bool {
+        is_infinity(price) || is_zero(price)
+    }
+
+    #[view]
+    public fun is_zero(price: u32): bool {
+        price == P_ZERO
     }
 
     #[view]
@@ -468,42 +504,42 @@ module price::price {
         let quote = 294_837_500_000;
         let price = price(base, quote);
         assert!(encoded_exponent(price) == N_16 + 7);
-        assert!(encoded_price(price) == 12_500_000);
+        assert!(encoded_significand(price) == 12_500_000);
 
         // Price 8.7654321 * 10^-12
         base = 10_000_000_000_000_000_000;
         quote = 87_654_321;
         price = price(base, quote);
         assert!(encoded_exponent(price) == N_16 - 12);
-        assert!(encoded_price(price) == 87_654_321);
+        assert!(encoded_significand(price) == 87_654_321);
 
         // Price 5.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
         quote = 1_000;
         price = price(base, quote);
         assert!(encoded_exponent(price) == N_16 - 16);
-        assert!(encoded_price(price) == 50_000_000);
+        assert!(encoded_significand(price) == 50_000_000);
 
         // Price 9.9999999 * 10^15
         base = 1_000;
         quote = 9_999_999_900_000_000_000;
         price = price(base, quote);
         assert!(encoded_exponent(price) == N_16 + 15);
-        assert!(encoded_price(price) == 99_999_999);
+        assert!(encoded_significand(price) == 99_999_999);
 
         // Price 1.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
         quote = 200;
         price = price(base, quote);
         assert!(encoded_exponent(price) == N_16 - 16);
-        assert!(encoded_price(price) == 10_000_000);
+        assert!(encoded_significand(price) == 10_000_000);
 
         // Price 9.7900000 * 10^1
         base = 2_000_000;
         quote = 195_800_000;
         price = price(base, quote);
         assert!(encoded_exponent(price) == N_16 + 1);
-        assert!(encoded_price(price) == 97_900_000);
+        assert!(encoded_significand(price) == 97_900_000);
     }
 
     #[test]
