@@ -33,6 +33,13 @@ $$
 p = m \cdot 10^n
 $$
 
+The minimum and maximum representable nonzero prices are thus:
+
+| Extrema | Symbol    | Value                     |
+| ------- | --------- | ------------------------- |
+| Minimum | $p_{min}$ | $1 \cdot 10^{-16}$        |
+| Maximum | $p_{max}$ | $9.9999999 \cdot 10^{15}$ |
+
 ## Encoding
 
 The 27 significand bits can theoretically encode any natural number $n$ for
@@ -86,18 +93,18 @@ exponents. Since $n=0$ exhausts one representable exponent, the selection of a
 symmetric range across different orders of magnitude requires choosing between
 two options:
 
-| Option | Lower bound     | Upper bound     | Range                   |
-| ------ | --------------- | --------------- | ----------------------- |
-| 1      | $n_{min} = -16$ | $n_{max} = +15$ | $ -16 \leq n \leq +15 $ |
-| 2      | $n_{min} = -15$ | $n_{max} = +16$ | $ -15 \leq n \leq +16 $ |
+| Option | Lower bound     | Upper bound     | Range                 |
+| ------ | --------------- | --------------- | --------------------- |
+| 1      | $n_{min} = -16$ | $n_{max} = +15$ | $-16 \leq n \leq +15$ |
+| 2      | $n_{min} = -15$ | $n_{max} = +16$ | $-15 \leq n \leq +16$ |
 
 To simplify the decision making process, consider an analogous 2-bit exponent
 with options A and B:
 
-| Option | Lower bound    | Upper bound    | Range                 |
-| ------ | -------------- | -------------- | --------------------- |
-| A      | $n_{min} = -2$ | $n_{max} = +1$ | $ -2 \leq n \leq +1 $ |
-| B      | $n_{min} = -1$ | $n_{max} = +2$ | $ -1 \leq n \leq +2 $ |
+| Option | Lower bound    | Upper bound    | Range               |
+| ------ | -------------- | -------------- | ------------------- |
+| A      | $n_{min} = -2$ | $n_{max} = +1$ | $-2 \leq n \leq +1$ |
+| B      | $n_{min} = -1$ | $n_{max} = +2$ | $-1 \leq n \leq +2$ |
 
 Now consider the lowest possible significand $m_{min} = 1.0$ and the highest
 possible significand $m_{max} = 9.99$ (for 3 significant digits). For option A:
@@ -115,10 +122,10 @@ And for option B:
 
 <!-- markdownlint-disable MD013 -->
 
-|                      | Smallest exponent                       | Largest exponent                       |
-| -------------------- | --------------------------------------- | -------------------------------------- |
-| Smallest significand | $1.00 \cdot 10^{-1} = 0.1$              | $1.00 \cdot 10^{2} = 100$              |
-| Largest significand  | $9.99 \cdot 10^{-1} = 0.999 \approx 1 $ | $9.99 \cdot 10^{2} = 999 \approx 1000$ |
+|                      | Smallest exponent                      | Largest exponent                       |
+| -------------------- | -------------------------------------- | -------------------------------------- |
+| Smallest significand | $1.00 \cdot 10^{-1} = 0.1$             | $1.00 \cdot 10^{2} = 100$              |
+| Largest significand  | $9.99 \cdot 10^{-1} = 0.999 \approx 1$ | $9.99 \cdot 10^{2} = 999 \approx 1000$ |
 
 <!-- markdownlint-enable MD013 -->
 
@@ -140,8 +147,8 @@ Option A ($|n_{min}| = |n_{max}| + 1$) presents several advantages:
 Hence option A is the more practical choice, and by extension for the current
 implementation, option 1, which also has $|n_{min}| = |n_{max}| + 1$:
 
-| Lower bound     | Upper bound     | Range                   |
-| --------------- | --------------- | ----------------------- |
-| $n_{min} = -16$ | $n_{max} = +15$ | $ -16 \leq n \leq +15 $ |
+| Lower bound     | Upper bound     | Range                 |
+| --------------- | --------------- | --------------------- |
+| $n_{min} = -16$ | $n_{max} = +15$ | $-16 \leq n \leq +15$ |
 
 [normalized number]: https://en.wikipedia.org/wiki/Normalized_number
