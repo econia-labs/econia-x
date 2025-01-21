@@ -3,7 +3,7 @@
 # Econia X Architecture Specification
 
 The key words `MUST`, `MUST NOT`, `REQUIRED`, `SHALL`, `SHALL NOT`, `SHOULD`,
-`SHOULD NOT`, `RECOMMENDED`,  `MAY`, and `OPTIONAL` in this document are to be
+`SHOULD NOT`, `RECOMMENDED`, `MAY`, and `OPTIONAL` in this document are to be
 interpreted as described in [RFC 2119].
 
 These keywords `SHALL` be in `monospace` for ease of identification.
