@@ -1,7 +1,9 @@
 module price::price {
 
-    /// The largest `u128` value. In Python: `f"{int('1' * 128, 2):_}"`
+    /// The largest `u128` value. In Python: `f"{int('1' * 128, 2):_}"`.
     const MAX_U128: u128 = 340_282_366_920_938_463_463_374_607_431_768_211_455;
+    /// The largest `u64` value. In Python: `f"{int('1' * 64, 2):_}"`.
+    const MAX_U64: u128 = 18_446_744_073_709_551_615;
     /// Number of bits to shift the exponent to the left in the canonical price encoding.
     const SHIFT_EXPONENT_BITS: u8 = 27;
     /// All bits set in integer of width required to encode significand.
@@ -10,7 +12,7 @@ module price::price {
 
     /// Special price zero.
     const P_ZERO: u32 = 0;
-    /// Special price infinity, all bits set in `u32`. In Python: `hex(int('1' * 32, 2))`
+    /// Special price infinity, all bits set in `u32`. In Python: `hex(int('1' * 32, 2))`.
     const P_INFINITY: u32 = 0xffffffff;
 
     /// Maximum allowed significand for a finite, nonzero price.
@@ -98,7 +100,7 @@ module price::price {
     const N_37: u32 = 37;
     const N_38: u32 = 38;
 
-    /// Base term is 0.
+    /// Base argument is 0.
     const E_BASE_ZERO: u64 = 1;
     /// Logarithm of 0 is undefined.
     const E_LOG_0_UNDEFINED: u64 = 2;
@@ -106,6 +108,12 @@ module price::price {
     const E_TOO_SMALL_TO_REPRESENT: u64 = 3;
     /// Price is too large to represent.
     const E_TOO_LARGE_TO_REPRESENT: u64 = 4;
+    /// Price is invalid.
+    const E_INVALID_PRICE: u64 = 5;
+    /// Result overflows a `u64`.
+    const E_OVERFLOW: u64 = 6;
+    /// Exponent is not canonical.
+    const E_INVALID_EXPONENT: u64 = 7;
 
     #[view]
     public fun encoded_exponent(price: u32): u32 {
@@ -288,13 +296,23 @@ module price::price {
     }
 
     #[view]
+    public fun infinity(): u32 {
+        P_INFINITY
+    }
+
+    #[view]
     public fun is_canonical(price: u32): bool {
-        is_regular(price) || is_regular(price)
+        is_regular(price) || is_special(price)
     }
 
     #[view]
     public fun is_infinity(price: u32): bool {
         price == P_INFINITY
+    }
+
+    #[view]
+    public fun is_finite(price: u32): bool {
+        is_regular(price) || is_zero(price)
     }
 
     #[view]
@@ -352,6 +370,92 @@ module price::price {
             };
 
         (exponent_encoded << SHIFT_EXPONENT_BITS) | (significand_encoded as u32)
+    }
+
+    #[view]
+    /// Returns the power of 10 for a canonical exponent, using similar binary search as
+    /// `floored_log_10_with_max_power_leq()`.
+    public fun power_of_10(exponent: u32): u128 {
+        assert!(exponent <= N_16, E_INVALID_EXPONENT);
+        // 0 <= n < 17.
+        if (exponent < N_8) { // 0 <= n < 8.
+            if (exponent < N_4) { // 0 <= n < 4.
+                if (exponent < N_2) { // 0 <= n < 2.
+                    if (exponent < N_1) { // 0 <= n < 1.
+                        E_0
+                    } else { E_1 }
+                } else { // 2 <= n < 4.
+                    if (exponent < N_3) { // 2 <= n < 3.
+                        E_2
+                    } else { E_3 }
+                }
+            } else { // 4 <= n < 8.
+                if (exponent < N_6) { // 4 <= n < 6.
+                    if (exponent < N_5) { // 4 <= n < 5.
+                        E_4
+                    } else { E_5 }
+                } else { // 6 <= n < 8.
+                    if (exponent < N_7) { // 6 <= n < 7.
+                        E_6
+                    } else { E_7 }
+                }
+            }
+        } else { // 9 <= n < 17.
+            0
+        }
+    }
+
+    #[view]
+    public fun quote(base: u64, price: u32): u64 {
+
+        // Check inputs, returning early for 0 result.
+        let is_zero_price = is_zero(price);
+        assert!(is_regular(price) || is_zero_price, E_INVALID_PRICE);
+        if (is_zero_price || base == 0) return 0;
+
+        // Extract inner values.
+        let significand = encoded_significand(price);
+        let exponent = encoded_exponent(price);
+
+        // If the encoded exponent is less than the bias (16), then the normalized exponent is
+        // negative and the result requires dividing by the corresponding power of 10. Otherwise,
+        // the normalized exponent is positive and the result requires multiplying by the
+        // corresponding power of 10.
+        //
+        // Since the encoded significand is 10^7 times the normalized significand, the final result
+        // requires a division by `E_7` in either case.
+        if (exponent < N_16) {
+            exponent = N_16 - exponent; // Correct for bias.
+
+            // Even if the intermediate multiplication overflows a `u64` into a `u128`, the final
+            // result will not overflow a `u64` because a price with a negative exponent is
+            // necessarily less than 1. That is, `power_of_10(exponent) * E_7` > significand`.
+            ((base as u128) * (significand as u128) / (power_of_10(exponent) * E_7) as u64)
+
+        } else { // The normalized exponent is positive.
+            exponent -= N_16; // Correct for bias.
+
+            // Consolidate division by `E_7` (the significand normalization operation) and
+            // multiplication by the normalized exponent into one step. This avoids the need to cast
+            // into a `u256`, which would be necessary if the division and multiplication were
+            // performed in separate operations, because for example `MAX_U64 * M_MAX * 10^15`
+            // overflows a `u128`. However `MAX_U64 * M_MAX * 10^8` (the worst case) does not.
+            let result =
+                if (exponent < N_7) {
+                    (base as u128) * (significand as u128) / (power_of_10(N_7 - exponent))
+                } else {
+                    (base as u128) * (significand as u128) * (power_of_10(exponent - N_7))
+                };
+
+            // Check for overflow, return result.
+            assert!(result <= MAX_U64, E_OVERFLOW);
+            (result as u64)
+        }
+    }
+
+    #[view]
+    public fun zero(): u32 {
+        P_ZERO
     }
 
     #[test_only]
