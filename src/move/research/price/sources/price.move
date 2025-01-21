@@ -376,7 +376,7 @@ module price::price {
     /// Returns the power of 10 for a canonical exponent, using similar binary search as
     /// `floored_log_10_with_max_power_leq()`.
     public fun power_of_10(exponent: u32): u128 {
-        assert!(exponent <= N_16, E_INVALID_EXPONENT);
+        assert!(exponent < N_17, E_INVALID_EXPONENT);
         // 0 <= n < 17.
         if (exponent < N_8) { // 0 <= n < 8.
             if (exponent < N_4) { // 0 <= n < 4.
@@ -400,8 +400,32 @@ module price::price {
                     } else { E_7 }
                 }
             }
-        } else { // 9 <= n < 17.
-            0
+        } else { // 8 <= n < 17.
+            if (exponent < N_12) { // 8 <= n < 12.
+                if (exponent < N_10) { // 8 <= n < 10.
+                    if (exponent < N_9) { // 8 <= n < 9.
+                        E_8
+                    } else { E_9 }
+                } else { // 10 <= n < 12.
+                    if (exponent < N_11) { // 10 <= n < 11.
+                        E_10
+                    } else { E_11 }
+                }
+            } else { // 12 <= n < 17.
+                if (exponent < N_14) { // 12 <= n < 14.
+                    if (exponent < N_13) { // 12 <= n < 13.
+                        E_12
+                    } else { E_13 }
+                } else { // 14 <= n < 17.
+                    if (exponent < N_15) { // 14 <= n < 15.
+                        E_14
+                    } else { // 15 <= n < 17.
+                        if (exponent < N_16) { // 15 <= n < 16.
+                            E_15
+                        } else { E_16 }
+                    }
+                }
+            }
         }
     }
 
