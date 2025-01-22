@@ -17,7 +17,7 @@ module price::price {
 
     /// Maximum allowed significand for a regular price.
     const M_MAX: u32 = 99_999_999;
-    /// Minimum allowed significand for a regular price.
+    /// Minimum allowed significand for a regular price. Same as `E_7` but as a `u32` for speed.
     const M_MIN: u32 = 10_000_000;
 
     const E_0: u128 = 1;
@@ -701,6 +701,18 @@ module price::price {
         assert!(is_regular(price));
         assert!(!is_special(price));
         assert!(!is_zero(price));
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_INVALID_PRICE)]
+    public fun test_normlized_exponent_magnitude_invalid_price() {
+        normalized_exponent_magnitude(infinity());
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_INVALID_PRICE)]
+    public fun test_normlized_exponent_is_positive_invalid_price() {
+        normalized_exponent_is_positive(infinity());
     }
 
     #[test]
