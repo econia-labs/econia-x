@@ -1,3 +1,5 @@
+<!--- cspell:word infty -->
+
 # Econia canonical price
 
 ## General

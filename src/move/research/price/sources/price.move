@@ -705,13 +705,13 @@ module price::price {
 
     #[test]
     #[expected_failure(abort_code = E_INVALID_PRICE)]
-    public fun test_normlized_exponent_magnitude_invalid_price() {
+    public fun test_normalized_exponent_magnitude_invalid_price() {
         normalized_exponent_magnitude(infinity());
     }
 
     #[test]
     #[expected_failure(abort_code = E_INVALID_PRICE)]
-    public fun test_normlized_exponent_is_positive_invalid_price() {
+    public fun test_normalized_exponent_is_positive_invalid_price() {
         normalized_exponent_is_positive(infinity());
     }
 
