@@ -15,9 +15,9 @@ module price::price {
     /// Special price infinity, all bits set in `u32`. In Python: `hex(int('1' * 32, 2))`.
     const P_INFINITY: u32 = 0xffffffff;
 
-    /// Maximum allowed significand for a finite, nonzero price.
+    /// Maximum allowed significand for a regular price.
     const M_MAX: u32 = 99_999_999;
-    /// Minimum allowed significand for a finite, nonzero price.
+    /// Minimum allowed significand for a regular price.
     const M_MIN: u32 = 10_000_000;
 
     const E_0: u128 = 1;
@@ -114,6 +114,14 @@ module price::price {
     const E_OVERFLOW: u64 = 6;
     /// Exponent is not canonical.
     const E_INVALID_EXPONENT: u64 = 7;
+    /// Positive exponent is not canonical.
+    const E_INVALID_EXPONENT_POSITIVE: u64 = 8;
+    /// Negative exponent is not canonical.
+    const E_INVALID_EXPONENT_NEGATIVE: u64 = 9;
+    /// Significand is too large.
+    const E_INVALID_SIGNIFICAND_HI: u64 = 10;
+    /// Significand is too small.
+    const E_INVALID_SIGNIFICAND_LO: u64 = 11;
 
     #[view]
     public fun encoded_exponent(price: u32): u32 {
@@ -311,11 +319,6 @@ module price::price {
     }
 
     #[view]
-    public fun is_finite(price: u32): bool {
-        is_regular(price) || is_zero(price)
-    }
-
-    #[view]
     public fun is_regular(price: u32): bool {
         let significand = encoded_significand(price);
         significand >= M_MIN && significand <= M_MAX
@@ -332,44 +335,20 @@ module price::price {
     }
 
     #[view]
-    /// Return the canonical price encoding for a given ratio of base and quote.
-    public fun price(base: u64, quote: u64): u32 {
-        assert!(base > 0, E_BASE_ZERO);
+    public fun normalized_exponent_magnitude(price: u32): u32 {
+        assert!(is_regular(price), E_INVALID_PRICE);
+        let exponent = encoded_exponent(price);
+        if (exponent > N_16) {
+            exponent - N_16
+        } else {
+            N_16 - exponent
+        }
+    }
 
-        // Get the ratio of quote to base, scaling up by the maximum power of ten that can fit in a
-        // `u64` (19), to avoid precision loss.
-        let ratio_e19 = ((quote as u128) * E_19) / (base as u128);
-
-        // Get the floored base-10 logarithm of the scaled ratio, and the maximum power of 10 less
-        // than or equal to the scaled ratio.
-        let (floored_log_10_ratio_e19, max_power_10_leq_ratio_e19) =
-            floored_log_10_with_max_power_leq(ratio_e19);
-
-        // The floored base-10 logarithm of the scaled ratio must be at least 3, because otherwise
-        // the nominal price (once scaled back down) would have an exponent less than
-        // `(3 - 19) = -16`, which is the smallest exponent that can be represented.
-        assert!(floored_log_10_ratio_e19 >= N_3, E_TOO_SMALL_TO_REPRESENT);
-
-        // The floored base-10 logarithm of the scaled ratio must be at most 34, because otherwise
-        // the nominal price (once scaled back down) would have an exponent greater than
-        //  `(34 - 19) = 15`, which is the largest exponent that can be represented.
-        assert!(floored_log_10_ratio_e19 <= N_34, E_TOO_LARGE_TO_REPRESENT);
-
-        // The encoded exponent is the floored base-10 logarithm of the scaled ratio, incremented
-        // by the bias (16), then decremented by the maximum power of 10 that can fit in a `u64`
-        // (19). This is equivalent to decrementing by 3.
-        let exponent_encoded = floored_log_10_ratio_e19 - N_3;
-
-        // If scaled ratio is smaller than `E_7`, it must be right-padded to yield a canonicalized
-        // significand with 8 significant digits.
-        let significand_encoded =
-            if (ratio_e19 < E_7) {
-                ratio_e19 * (E_7 / max_power_10_leq_ratio_e19)
-            } else { // Otherwise it must be truncated to 8 significant digits.
-                ratio_e19 / (max_power_10_leq_ratio_e19 / E_7)
-            };
-
-        (exponent_encoded << SHIFT_EXPONENT_BITS) | (significand_encoded as u32)
+    #[view]
+    public fun normalized_exponent_is_positive(price: u32): bool {
+        assert!(is_regular(price), E_INVALID_PRICE);
+        encoded_exponent(price) > N_16
     }
 
     #[view]
@@ -427,6 +406,78 @@ module price::price {
                 }
             }
         }
+    }
+
+    #[view]
+    /// Return the canonical price encoding for a given ratio of base and quote.
+    public fun price(base: u64, quote: u64): u32 {
+        assert!(base > 0, E_BASE_ZERO);
+
+        // Get the ratio of quote to base, scaling up by the maximum power of ten that can fit in a
+        // `u64` (19), to avoid precision loss.
+        let ratio_e19 = ((quote as u128) * E_19) / (base as u128);
+
+        // Get the floored base-10 logarithm of the scaled ratio, and the maximum power of 10 less
+        // than or equal to the scaled ratio.
+        let (floored_log_10_ratio_e19, max_power_10_leq_ratio_e19) =
+            floored_log_10_with_max_power_leq(ratio_e19);
+
+        // The floored base-10 logarithm of the scaled ratio must be at least 3, because otherwise
+        // the nominal price (once scaled back down) would have an exponent less than
+        // `(3 - 19) = -16`, which is the smallest exponent that can be represented.
+        assert!(floored_log_10_ratio_e19 >= N_3, E_TOO_SMALL_TO_REPRESENT);
+
+        // The floored base-10 logarithm of the scaled ratio must be at most 34, because otherwise
+        // the nominal price (once scaled back down) would have an exponent greater than
+        //  `(34 - 19) = 15`, which is the largest exponent that can be represented.
+        assert!(floored_log_10_ratio_e19 <= N_34, E_TOO_LARGE_TO_REPRESENT);
+
+        // The encoded exponent is the floored base-10 logarithm of the scaled ratio, incremented
+        // by the bias (16), then decremented by the maximum power of 10 that can fit in a `u64`
+        // (19). This is equivalent to decrementing by 3.
+        let exponent_encoded = floored_log_10_ratio_e19 - N_3;
+
+        // If scaled ratio is smaller than `E_7`, it must be right-padded to yield a canonicalized
+        // significand with 8 significant digits.
+        let significand_encoded =
+            if (ratio_e19 < E_7) {
+                ratio_e19 * (E_7 / max_power_10_leq_ratio_e19)
+            } else { // Otherwise it must be truncated to 8 significant digits.
+                ratio_e19 / (max_power_10_leq_ratio_e19 / E_7)
+            };
+
+        (exponent_encoded << SHIFT_EXPONENT_BITS) | (significand_encoded as u32)
+    }
+
+    #[view]
+    /// Encode terms into a regular price.
+    ///
+    /// `normalized_exponent_magnitude` of `0` can accept `exponent_is_positive` as `true` or
+    /// `false`, even though `0` is technically not positive.
+    public fun price_from_terms(
+        significand_digits: u32,
+        normalized_exponent_magnitude: u32,
+        normalized_exponent_is_positive: bool
+    ): u32 {
+        // Encode bias.
+        let encoded_exponent =
+            if (normalized_exponent_is_positive) {
+                assert!(
+                    normalized_exponent_magnitude <= N_15, E_INVALID_EXPONENT_POSITIVE
+                );
+                N_16 + normalized_exponent_magnitude
+            } else {
+                assert!(
+                    normalized_exponent_magnitude <= N_16, E_INVALID_EXPONENT_NEGATIVE
+                );
+                N_16 - normalized_exponent_magnitude
+            };
+
+        // Verify significand is in bounds.
+        assert!(significand_digits <= M_MAX, E_INVALID_SIGNIFICAND_HI);
+        assert!(significand_digits >= M_MIN, E_INVALID_SIGNIFICAND_LO);
+
+        (encoded_exponent << SHIFT_EXPONENT_BITS) | significand_digits
     }
 
     #[view]
@@ -626,48 +677,57 @@ module price::price {
     }
 
     #[test]
-    public fun test_price() {
-        // Price 1.25 * 10^7
-        let base = 23_587;
-        let quote = 294_837_500_000;
-        let price = price(base, quote);
-        assert!(encoded_exponent(price) == N_16 + 7);
-        assert!(encoded_significand(price) == 12_500_000);
+    public fun test_helpers() {
+        // Infinity.
+        assert!(infinity() == P_INFINITY);
+        assert!(is_canonical(infinity()));
+        assert!(is_infinity(infinity()));
+        assert!(!is_regular(infinity()));
+        assert!(is_special(infinity()));
+        assert!(!is_zero(infinity()));
 
-        // Price 8.7654321 * 10^-12
-        base = 10_000_000_000_000_000_000;
-        quote = 87_654_321;
-        price = price(base, quote);
-        assert!(encoded_exponent(price) == N_16 - 12);
-        assert!(encoded_significand(price) == 87_654_321);
+        // Zero.
+        assert!(zero() == P_ZERO);
+        assert!(is_canonical(zero()));
+        assert!(!is_infinity(zero()));
+        assert!(!is_regular(zero()));
+        assert!(is_special(zero()));
+        assert!(is_zero(zero()));
 
-        // Price 5.0000000 * 10^-16
-        base = 2_000_000_000_000_000_000;
-        quote = 1_000;
-        price = price(base, quote);
-        assert!(encoded_exponent(price) == N_16 - 16);
-        assert!(encoded_significand(price) == 50_000_000);
+        // Regular.
+        let price = price_from_terms((E_7 as u32), 0, false); // Price p = 1.
+        assert!(is_canonical(price));
+        assert!(!is_infinity(price));
+        assert!(is_regular(price));
+        assert!(!is_special(price));
+        assert!(!is_zero(price));
+    }
 
-        // Price 9.9999999 * 10^15
-        base = 1_000;
-        quote = 9_999_999_900_000_000_000;
-        price = price(base, quote);
-        assert!(encoded_exponent(price) == N_16 + 15);
-        assert!(encoded_significand(price) == 99_999_999);
+    #[test]
+    public fun test_power_of_10() {
+        assert!(power_of_10(N_0) == E_0);
+        assert!(power_of_10(N_1) == E_1);
+        assert!(power_of_10(N_2) == E_2);
+        assert!(power_of_10(N_3) == E_3);
+        assert!(power_of_10(N_4) == E_4);
+        assert!(power_of_10(N_5) == E_5);
+        assert!(power_of_10(N_6) == E_6);
+        assert!(power_of_10(N_7) == E_7);
+        assert!(power_of_10(N_8) == E_8);
+        assert!(power_of_10(N_9) == E_9);
+        assert!(power_of_10(N_10) == E_10);
+        assert!(power_of_10(N_11) == E_11);
+        assert!(power_of_10(N_12) == E_12);
+        assert!(power_of_10(N_13) == E_13);
+        assert!(power_of_10(N_14) == E_14);
+        assert!(power_of_10(N_15) == E_15);
+        assert!(power_of_10(N_16) == E_16);
+    }
 
-        // Price 1.0000000 * 10^-16
-        base = 2_000_000_000_000_000_000;
-        quote = 200;
-        price = price(base, quote);
-        assert!(encoded_exponent(price) == N_16 - 16);
-        assert!(encoded_significand(price) == 10_000_000);
-
-        // Price 9.7900000 * 10^1
-        base = 2_000_000;
-        quote = 195_800_000;
-        price = price(base, quote);
-        assert!(encoded_exponent(price) == N_16 + 1);
-        assert!(encoded_significand(price) == 97_900_000);
+    #[test]
+    #[expected_failure(abort_code = E_INVALID_EXPONENT)]
+    public fun test_power_of_10_invalid_exponent() {
+        power_of_10(N_17);
     }
 
     #[test]
@@ -692,5 +752,157 @@ module price::price {
         let base = 2_000_000_000_000_000_000;
         let quote = 20;
         price(base, quote);
+    }
+
+    #[test]
+    public fun test_prices_assorted() {
+        // Price 1.25 * 10^7
+        let base = 23_587;
+        let quote = 294_837_500_000;
+        let price = price(base, quote);
+        let normalized_exponent_magnitude = 7;
+        let normalized_exponent_is_positive = true;
+        let significand_digits = 12_500_000;
+        assert!(
+            encoded_exponent(price) == N_16 + normalized_exponent_magnitude
+        );
+        assert!(encoded_significand(price) == significand_digits);
+        assert!(quote(base, price) == quote);
+        assert!(
+            price_from_terms(
+                significand_digits,
+                normalized_exponent_magnitude,
+                normalized_exponent_is_positive
+            ) == price
+        );
+
+        // Price 8.7654321 * 10^-12
+        base = 10_000_000_000_000_000_000;
+        quote = 87_654_321;
+        price = price(base, quote);
+        normalized_exponent_magnitude = 12;
+        normalized_exponent_is_positive = false;
+        significand_digits = 87_654_321;
+        assert!(
+            encoded_exponent(price) == N_16 - normalized_exponent_magnitude
+        );
+        assert!(encoded_significand(price) == significand_digits);
+        assert!(quote(base, price) == quote);
+        assert!(
+            price_from_terms(
+                significand_digits,
+                normalized_exponent_magnitude,
+                normalized_exponent_is_positive
+            ) == price
+        );
+
+        // Price 5.0000000 * 10^-16
+        base = 2_000_000_000_000_000_000;
+        quote = 1_000;
+        price = price(base, quote);
+        normalized_exponent_magnitude = 16;
+        normalized_exponent_is_positive = false;
+        significand_digits = 50_000_000;
+        assert!(
+            encoded_exponent(price) == N_16 - normalized_exponent_magnitude
+        );
+        assert!(encoded_significand(price) == significand_digits);
+        assert!(quote(base, price) == quote);
+        assert!(
+            price_from_terms(
+                significand_digits,
+                normalized_exponent_magnitude,
+                normalized_exponent_is_positive
+            ) == price
+        );
+
+        // Price 9.9999999 * 10^15
+        base = 1_000;
+        quote = 9_999_999_900_000_000_000;
+        price = price(base, quote);
+        normalized_exponent_magnitude = 15;
+        normalized_exponent_is_positive = true;
+        significand_digits = 99_999_999;
+        assert!(encoded_exponent(price) == N_16 + 15);
+        assert!(encoded_significand(price) == significand_digits);
+        assert!(quote(base, price) == quote);
+        assert!(
+            price_from_terms(
+                significand_digits,
+                normalized_exponent_magnitude,
+                normalized_exponent_is_positive
+            ) == price
+        );
+
+        // Price 1.0000000 * 10^-16
+        base = 2_000_000_000_000_000_000;
+        quote = 200;
+        price = price(base, quote);
+        normalized_exponent_magnitude = 16;
+        normalized_exponent_is_positive = false;
+        significand_digits = 10_000_000;
+        assert!(
+            encoded_exponent(price) == N_16 - normalized_exponent_magnitude
+        );
+        assert!(encoded_significand(price) == significand_digits);
+        assert!(quote(base, price) == quote);
+        assert!(
+            price_from_terms(
+                significand_digits,
+                normalized_exponent_magnitude,
+                normalized_exponent_is_positive
+            ) == price
+        );
+
+        // Price 9.7900000 * 10^1
+        base = 2_000_000;
+        quote = 195_800_000;
+        price = price(base, quote);
+        normalized_exponent_magnitude = 1;
+        normalized_exponent_is_positive = true;
+        significand_digits = 97_900_000;
+        assert!(
+            encoded_exponent(price) == N_16 + normalized_exponent_magnitude
+        );
+        assert!(encoded_significand(price) == significand_digits);
+        assert!(quote(base, price) == quote);
+        assert!(
+            price_from_terms(
+                significand_digits,
+                normalized_exponent_magnitude,
+                normalized_exponent_is_positive
+            ) == price
+        );
+
+    }
+
+    #[test]
+    public fun test_quote_early_returns() {
+        // Price is zero.
+        let price = zero();
+        let base = 1;
+        assert!(quote(base, price) == 0);
+
+        // Base is zero.
+        let quote = 25;
+        price = price(base, quote);
+        base = 0;
+        assert!(quote(base, price) == 0);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_INVALID_PRICE)]
+    public fun test_quote_invalid_price() {
+        let price = infinity();
+        let base = 4;
+        quote(base, price);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_OVERFLOW)]
+    public fun test_quote_overflow() {
+        let price = price(100, 101);
+        let base = (MAX_U64 as u64);
+        quote(base, price);
     }
 }
