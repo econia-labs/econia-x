@@ -737,6 +737,30 @@ module price::price {
     }
 
     #[test]
+    #[expected_failure(abort_code = E_INVALID_EXPONENT_NEGATIVE)]
+    public fun test_price_from_terms_invalid_exponent_negative() {
+        price_from_terms((E_7 as u32), N_17, false);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_INVALID_EXPONENT_POSITIVE)]
+    public fun test_price_from_terms_invalid_exponent_positive() {
+        price_from_terms((E_7 as u32), N_16, true);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_INVALID_SIGNIFICAND_HI)]
+    public fun test_price_from_terms_invalid_significand_hi() {
+        price_from_terms(M_MAX + 1, N_15, true);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_INVALID_SIGNIFICAND_LO)]
+    public fun test_price_from_terms_invalid_significand_lo() {
+        price_from_terms(M_MIN - 1, N_15, true);
+    }
+
+    #[test]
     #[expected_failure(abort_code = E_TOO_LARGE_TO_REPRESENT)]
     public fun test_price_too_large_to_represent() {
         // Price 9.9999999 * 10^16
@@ -775,6 +799,10 @@ module price::price {
                 normalized_exponent_is_positive
             ) == price
         );
+        assert!(normalized_exponent_magnitude(price) == normalized_exponent_magnitude);
+        assert!(
+            normalized_exponent_is_positive(price) == normalized_exponent_is_positive
+        );
 
         // Price 8.7654321 * 10^-12
         base = 10_000_000_000_000_000_000;
@@ -794,6 +822,10 @@ module price::price {
                 normalized_exponent_magnitude,
                 normalized_exponent_is_positive
             ) == price
+        );
+        assert!(normalized_exponent_magnitude(price) == normalized_exponent_magnitude);
+        assert!(
+            normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
 
         // Price 5.0000000 * 10^-16
@@ -815,6 +847,10 @@ module price::price {
                 normalized_exponent_is_positive
             ) == price
         );
+        assert!(normalized_exponent_magnitude(price) == normalized_exponent_magnitude);
+        assert!(
+            normalized_exponent_is_positive(price) == normalized_exponent_is_positive
+        );
 
         // Price 9.9999999 * 10^15
         base = 1_000;
@@ -832,6 +868,10 @@ module price::price {
                 normalized_exponent_magnitude,
                 normalized_exponent_is_positive
             ) == price
+        );
+        assert!(normalized_exponent_magnitude(price) == normalized_exponent_magnitude);
+        assert!(
+            normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
 
         // Price 1.0000000 * 10^-16
@@ -853,6 +893,10 @@ module price::price {
                 normalized_exponent_is_positive
             ) == price
         );
+        assert!(normalized_exponent_magnitude(price) == normalized_exponent_magnitude);
+        assert!(
+            normalized_exponent_is_positive(price) == normalized_exponent_is_positive
+        );
 
         // Price 9.7900000 * 10^1
         base = 2_000_000;
@@ -872,6 +916,10 @@ module price::price {
                 normalized_exponent_magnitude,
                 normalized_exponent_is_positive
             ) == price
+        );
+        assert!(normalized_exponent_magnitude(price) == normalized_exponent_magnitude);
+        assert!(
+            normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
 
     }
