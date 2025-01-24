@@ -124,6 +124,15 @@ module price::price {
     const E_INVALID_SIGNIFICAND_LO: u64 = 11;
 
     #[view]
+    public fun base(quote: u64, price: u32): u64 {
+        assert!(is_regular(price), E_INVALID_PRICE);
+
+        let significand_digits = encoded_significand(price);
+        let encoded_exponent = encoded_exponent(price);
+        100
+    }
+
+    #[view]
     public fun encoded_exponent(price: u32): u32 {
         price >> SHIFT_EXPONENT_BITS
     }
@@ -320,8 +329,8 @@ module price::price {
 
     #[view]
     public fun is_regular(price: u32): bool {
-        let significand = encoded_significand(price);
-        significand >= M_MIN && significand <= M_MAX
+        let encoded_significand = encoded_significand(price);
+        encoded_significand >= M_MIN && significand <= M_MAX
     }
 
     #[view]
@@ -337,11 +346,11 @@ module price::price {
     #[view]
     public fun normalized_exponent_magnitude(price: u32): u32 {
         assert!(is_regular(price), E_INVALID_PRICE);
-        let exponent = encoded_exponent(price);
-        if (exponent > N_16) {
-            exponent - N_16
+        let encoded_exponent = encoded_exponent(price);
+        if (encoded_exponent > N_16) {
+            encoded_exponent - N_16
         } else {
-            N_16 - exponent
+            N_16 - encoded_exponent
         }
     }
 
@@ -435,18 +444,18 @@ module price::price {
         // The encoded exponent is the floored base-10 logarithm of the scaled ratio, incremented
         // by the bias (16), then decremented by the maximum power of 10 that can fit in a `u64`
         // (19). This is equivalent to decrementing by 3.
-        let exponent_encoded = floored_log_10_ratio_e19 - N_3;
+        let encoded_exponent = floored_log_10_ratio_e19 - N_3;
 
         // If scaled ratio is smaller than `E_7`, it must be right-padded to yield a canonicalized
         // significand with 8 significant digits.
-        let significand_encoded =
+        let encoded_significand =
             if (ratio_e19 < E_7) {
                 ratio_e19 * (E_7 / max_power_10_leq_ratio_e19)
             } else { // Otherwise it must be truncated to 8 significant digits.
                 ratio_e19 / (max_power_10_leq_ratio_e19 / E_7)
             };
 
-        (exponent_encoded << SHIFT_EXPONENT_BITS) | (significand_encoded as u32)
+        (encoded_exponent << SHIFT_EXPONENT_BITS) | (encoded_significand as u32)
     }
 
     #[view]
@@ -489,8 +498,8 @@ module price::price {
         if (is_zero_price || base == 0) return 0;
 
         // Extract inner values.
-        let significand = encoded_significand(price);
-        let exponent = encoded_exponent(price);
+        let encoded_significand = encoded_significand(price);
+        let encoded_exponent = encoded_exponent(price);
 
         // If the encoded exponent is less than the bias (16), then the normalized exponent is
         // negative and the result requires dividing by the corresponding power of 10. Otherwise,
@@ -499,16 +508,18 @@ module price::price {
         //
         // Since the encoded significand is 10^7 times the normalized significand, the final result
         // requires a division by `E_7` in either case.
-        if (exponent < N_16) {
-            exponent = N_16 - exponent; // Correct for bias.
+        if (encoded_exponent < N_16) {
+            let normalized_exponent = N_16 - encoded_exponent; // Correct for bias.
 
             // Even if the intermediate multiplication overflows a `u64` into a `u128`, the final
             // result will not overflow a `u64` because a price with a negative exponent is
-            // necessarily less than 1. That is, `power_of_10(exponent) * E_7` > significand`.
-            ((base as u128) * (significand as u128) / (power_of_10(exponent) * E_7) as u64)
+            // necessarily less than 1. That is,
+            // `power_of_10(normalized_exponent) * E_7` > encoded_significand`.
+            ((base as u128) * (encoded_significand as u128)
+                / (power_of_10(normalized_exponent) * E_7) as u64)
 
         } else { // The normalized exponent is positive.
-            exponent -= N_16; // Correct for bias.
+            let normalized_exponent = encoded_exponent - N_16; // Correct for bias.
 
             // Consolidate division by `E_7` (the significand normalization operation) and
             // multiplication by the normalized exponent into one step. This avoids the need to cast
@@ -516,10 +527,12 @@ module price::price {
             // performed in separate operations, because for example `MAX_U64 * M_MAX * 10^15`
             // overflows a `u128`. However `MAX_U64 * M_MAX * 10^8` (the worst case) does not.
             let result =
-                if (exponent < N_7) {
-                    (base as u128) * (significand as u128) / (power_of_10(N_7 - exponent))
+                if (normalized_exponent < N_7) {
+                    (base as u128) * (encoded_significand as u128)
+                        / (power_of_10(N_7 - normalized_exponent))
                 } else {
-                    (base as u128) * (significand as u128) * (power_of_10(exponent - N_7))
+                    (base as u128) * (encoded_significand as u128)
+                        * (power_of_10(normalized_exponent - N_7))
                 };
 
             // Check for overflow, return result.
