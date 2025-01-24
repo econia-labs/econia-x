@@ -1,3 +1,5 @@
+<!--- cspell:word infty -->
+
 # Econia canonical price
 
 ## General
@@ -39,6 +41,17 @@ The minimum and maximum representable nonzero prices are thus:
 | ------- | --------- | ------------------------- |
 | Minimum | $p_{min}$ | $1 \cdot 10^{-16}$        |
 | Maximum | $p_{max}$ | $9.9999999 \cdot 10^{15}$ |
+
+## Special versus regular values
+
+$0$ and $\infty$ are considered "special" values and are represented as follows:
+
+| Value    | Symbol       | Encoding     |
+| -------- | ------------ | ------------ |
+| $0$      | $p_0$        | `0x0`        |
+| $\infty$ | $p_{\infty}$ | `0xffffffff` |
+
+This contrasts with all other representable values, which are denoted "regular".
 
 ## Encoding
 
