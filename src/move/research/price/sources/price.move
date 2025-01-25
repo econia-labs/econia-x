@@ -124,11 +124,14 @@ module price::price {
     /// Significand is too small.
     const E_INVALID_SIGNIFICAND_LO: u64 = 11;
     /// Intermediate result overflows a `u128`.
-    const E_OVERFLOW_INTERMEDIATE: u64 = 6;
+    const E_OVERFLOW_INTERMEDIATE: u64 = 12;
 
     #[view]
     public fun base(quote: u64, price: u32): u64 {
+
+        // Check inputs, returning early for 0 result.
         assert!(is_regular(price), E_INVALID_PRICE);
+        if (quote == 0) return 0;
 
         let encoded_significand = encoded_significand(price);
         let encoded_exponent = encoded_exponent(price);
@@ -592,7 +595,7 @@ module price::price {
             // into a `u256`, which would be necessary if the division and multiplication were
             // performed in separate operations, because for example `MAX_U64 * M_MAX * 10^15`
             // overflows a `u128`. However `MAX_U64 * M_MAX * 10^8` (the worst case) does not.
-            let result =
+            let quote =
                 if (normalized_exponent < N_7) {
                     (base as u128) * (encoded_significand as u128)
                         / (power_of_10(N_7 - normalized_exponent))
@@ -602,8 +605,8 @@ module price::price {
                 };
 
             // Check for overflow, return result.
-            assert!(result <= MAX_U64, E_OVERFLOW);
-            (result as u64)
+            assert!(quote <= MAX_U64, E_OVERFLOW);
+            (quote as u64)
         }
     }
 
@@ -642,6 +645,13 @@ module price::price {
         base(
             (MAX_U64 as u64),
             price_from_terms(M_MIN, N_16, false)
+        );
+    }
+
+    #[test]
+    fun test_base_early_return_0() {
+        assert!(
+            base(0, price_from_terms(M_MIN, N_16, false)) == 0
         );
     }
 
