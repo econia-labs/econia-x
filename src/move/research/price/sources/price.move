@@ -123,6 +123,8 @@ module price::price {
     const E_INVALID_SIGNIFICAND_HI: u64 = 10;
     /// Significand is too small.
     const E_INVALID_SIGNIFICAND_LO: u64 = 11;
+    /// Intermediate result overflows a `u128`.
+    const E_OVERFLOW_INTERMEDIATE: u64 = 6;
 
     #[view]
     public fun base(quote: u64, price: u32): u64 {
@@ -158,12 +160,11 @@ module price::price {
             // a value this is in excess of `MAX_U128` to a value less than or equal to `MAX_U64`.
             assert!(
                 quote_as_u128 <= MAX_U128 / power_of_10,
-                E_OVERFLOW
+                E_OVERFLOW_INTERMEDIATE
             );
 
-            let base = (power_of_10 * quote_as_u128) / (encoded_significand as u128);
-
             // The intermediate check does not rule out overflow on the final result.
+            let base = (power_of_10 * quote_as_u128) / (encoded_significand as u128);
             assert!(base <= MAX_U64, E_OVERFLOW);
             (base as u64)
         }
@@ -398,56 +399,84 @@ module price::price {
     }
 
     #[view]
-    /// Returns the power of 10 for a canonical exponent, using similar binary search as
-    /// `floored_log_10_with_max_power_leq()`.
+    /// Returns the power of 10 for an exponent less than or equal to 23, the largest possible power
+    /// required by `base()`, using similar binary search as `floored_log_10_with_max_power_leq()`.
     public fun power_of_10(exponent: u32): u128 {
-        assert!(exponent < N_17, E_INVALID_EXPONENT);
-        // 0 <= n < 17.
-        if (exponent < N_8) { // 0 <= n < 8.
-            if (exponent < N_4) { // 0 <= n < 4.
-                if (exponent < N_2) { // 0 <= n < 2.
+        assert!(exponent < N_24, E_INVALID_EXPONENT);
+        // 0 <= n < 24.
+        if (exponent < N_12) { // 0 <= n < 12.
+            if (exponent < N_6) { // 0 <= n < 6.
+                if (exponent < N_3) { // 0 <= n < 3.
                     if (exponent < N_1) { // 0 <= n < 1.
                         E_0
-                    } else { E_1 }
-                } else { // 2 <= n < 4.
-                    if (exponent < N_3) { // 2 <= n < 3.
-                        E_2
-                    } else { E_3 }
+                    } else { // 1 <= n < 3.
+                        if (exponent < N_2) { // 1 <= n < 2.
+                            E_1
+                        } else { E_2 }
+                    }
+                } else { // 3 <= n < 6.
+                    if (exponent < N_4) { // 3 <= n < 4.
+                        E_3
+                    } else { // 4 <= n < 6.
+                        if (exponent < N_5) { // 4 <= n < 5.
+                            E_4
+                        } else { E_5 }
+                    }
                 }
-            } else { // 4 <= n < 8.
-                if (exponent < N_6) { // 4 <= n < 6.
-                    if (exponent < N_5) { // 4 <= n < 5.
-                        E_4
-                    } else { E_5 }
-                } else { // 6 <= n < 8.
+            } else { // 6 <= n < 12.
+                if (exponent < N_9) { // 6 <= n < 9.
                     if (exponent < N_7) { // 6 <= n < 7.
                         E_6
-                    } else { E_7 }
+                    } else { // 7 <= n < 9.
+                        if (exponent < N_8) { // 7 <= n < 8.
+                            E_7
+                        } else { E_8 }
+                    }
+                } else { // 9 <= n < 12.
+                    if (exponent < N_10) { // 9 <= n < 10.
+                        E_9
+                    } else { // 10 <= n < 12.
+                        if (exponent < N_11) { // 10 <= n < 11.
+                            E_10
+                        } else { E_11 }
+                    }
                 }
             }
-        } else { // 8 <= n < 17.
-            if (exponent < N_12) { // 8 <= n < 12.
-                if (exponent < N_10) { // 8 <= n < 10.
-                    if (exponent < N_9) { // 8 <= n < 9.
-                        E_8
-                    } else { E_9 }
-                } else { // 10 <= n < 12.
-                    if (exponent < N_11) { // 10 <= n < 11.
-                        E_10
-                    } else { E_11 }
-                }
-            } else { // 12 <= n < 17.
-                if (exponent < N_14) { // 12 <= n < 14.
+        } else { // 12 <= n < 24.
+            if (exponent < N_18) { // 12 <= n < 18.
+                if (exponent < N_15) { // 12 <= n < 15.
                     if (exponent < N_13) { // 12 <= n < 13.
                         E_12
-                    } else { E_13 }
-                } else { // 14 <= n < 17.
-                    if (exponent < N_15) { // 14 <= n < 15.
-                        E_14
-                    } else { // 15 <= n < 17.
-                        if (exponent < N_16) { // 15 <= n < 16.
-                            E_15
-                        } else { E_16 }
+                    } else { // 13 <= n < 15.
+                        if (exponent < N_14) { // 13 <= n < 14.
+                            E_13
+                        } else { E_14 }
+                    }
+                } else { // 15 <= n < 18.
+                    if (exponent < N_16) { // 15 <= n < 16.
+                        E_15
+                    } else { // 16 <= n < 18.
+                        if (exponent < N_17) { // 16 <= n < 17.
+                            E_16
+                        } else { E_17 }
+                    }
+                }
+            } else { // 18 <= n < 24.
+                if (exponent < N_21) { // 18 <= n < 21.
+                    if (exponent < N_19) { // 18 <= n < 19.
+                        E_18
+                    } else { // 19 <= n < 21.
+                        if (exponent < N_20) { // 19 <= n < 20.
+                            E_19
+                        } else { E_20 }
+                    }
+                } else { // 21 <= n < 24.
+                    if (exponent < N_22) { // 21 <= n < 22.
+                        E_21
+                    } else { // 22 <= n < 24.
+                        if (exponent < N_23) { // 22 <= n < 23.
+                            E_22
+                        } else { E_23 }
                     }
                 }
             }
@@ -590,6 +619,30 @@ module price::price {
         let (log, power) = floored_log_10_with_max_power_leq(value);
         assert!(log == expected_log);
         assert!(power == expected_power);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_INVALID_PRICE)]
+    fun test_base_invalid_price() {
+        base(0, zero());
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_OVERFLOW)]
+    fun test_base_overflow() {
+        base(
+            (MAX_U64 as u64),
+            price_from_terms(M_MAX, N_1, false)
+        );
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_OVERFLOW_INTERMEDIATE)]
+    fun test_base_overflow_intermediate() {
+        base(
+            (MAX_U64 as u64),
+            price_from_terms(M_MIN, N_16, false)
+        );
     }
 
     #[test]
@@ -784,12 +837,19 @@ module price::price {
         assert!(power_of_10(N_14) == E_14);
         assert!(power_of_10(N_15) == E_15);
         assert!(power_of_10(N_16) == E_16);
+        assert!(power_of_10(N_17) == E_17);
+        assert!(power_of_10(N_18) == E_18);
+        assert!(power_of_10(N_19) == E_19);
+        assert!(power_of_10(N_20) == E_20);
+        assert!(power_of_10(N_21) == E_21);
+        assert!(power_of_10(N_22) == E_22);
+        assert!(power_of_10(N_23) == E_23);
     }
 
     #[test]
     #[expected_failure(abort_code = E_INVALID_EXPONENT)]
     public fun test_power_of_10_invalid_exponent() {
-        power_of_10(N_17);
+        power_of_10(N_24);
     }
 
     #[test]
@@ -865,6 +925,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
         // Price 8.7654321 * 10^-12
         base = 10_000_000_000_000_000_000;
@@ -889,6 +950,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
         // Price 5.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
@@ -913,6 +975,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
         // Price 9.9999999 * 10^15
         base = 1_000;
@@ -935,6 +998,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
         // Price 1.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
@@ -959,6 +1023,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
         // Price 9.7900000 * 10^1
         base = 2_000_000;
@@ -983,6 +1048,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
     }
 
