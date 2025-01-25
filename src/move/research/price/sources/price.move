@@ -127,6 +127,7 @@ module price::price {
     const E_OVERFLOW_INTERMEDIATE: u64 = 12;
 
     #[view]
+    /// Return base amount corresponding to `quote` and `price` amounts.
     public fun base(quote: u64, price: u32): u64 {
 
         // Check inputs, returning early for 0 result.
@@ -174,17 +175,19 @@ module price::price {
     }
 
     #[view]
+    /// Return the encoded exponent value of a price.
     public fun encoded_exponent(price: u32): u32 {
         price >> SHIFT_EXPONENT_BITS
     }
 
     #[view]
+    /// Return the encoded significand value of a price.
     public fun encoded_significand(price: u32): u32 {
         price & HI_SIGNIFICAND
     }
 
     #[view]
-    /// Returns the floored base-10 logarithm of `value`, and 10 raised to that power (equal to the
+    /// Return the floored base-10 logarithm of `value`, and 10 raised to that power (equal to the
     /// maximum power of 10 less than or equal to `value`).
     ///
     /// The algorithm uses a binary search for speed, with each new branch of the search bisecting
@@ -359,6 +362,7 @@ module price::price {
     }
 
     #[view]
+    /// Return `true` if the price is either a finite, nonzero representation or a special value.
     public fun is_canonical(price: u32): bool {
         is_regular(price) || is_special(price)
     }
@@ -369,6 +373,7 @@ module price::price {
     }
 
     #[view]
+    /// Return `true` if the price is a canonical finite, nonzero representation.
     public fun is_regular(price: u32): bool {
         let encoded_significand = encoded_significand(price);
         encoded_significand >= M_MIN && encoded_significand <= M_MAX
@@ -385,6 +390,7 @@ module price::price {
     }
 
     #[view]
+    /// Return the magnitude of the normalized exponent of a regular price.
     public fun normalized_exponent_magnitude(price: u32): u32 {
         assert!(is_regular(price), E_INVALID_PRICE);
         let encoded_exponent = encoded_exponent(price);
@@ -396,13 +402,14 @@ module price::price {
     }
 
     #[view]
+    /// Return `true` if the normalized exponent of a regular price is positive.
     public fun normalized_exponent_is_positive(price: u32): bool {
         assert!(is_regular(price), E_INVALID_PRICE);
         encoded_exponent(price) > N_16
     }
 
     #[view]
-    /// Returns the power of 10 for an exponent less than or equal to 23, the largest possible power
+    /// Return the power of 10 for an exponent less than or equal to 23, the largest possible power
     /// required by `base()`, using similar binary search as `floored_log_10_with_max_power_leq()`.
     public fun power_of_10(exponent: u32): u128 {
         assert!(exponent < N_24, E_INVALID_EXPONENT);
@@ -559,6 +566,7 @@ module price::price {
     }
 
     #[view]
+    /// Return the quote amount corresponding to `base` and `price` amounts.
     public fun quote(base: u64, price: u32): u64 {
 
         // Check inputs, returning early for 0 result.
