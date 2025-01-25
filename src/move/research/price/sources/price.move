@@ -15,9 +15,10 @@ module price::price {
     /// Special price infinity, all bits set in `u32`. In Python: `hex(int('1' * 32, 2))`.
     const P_INFINITY: u32 = 0xffffffff;
 
-    /// Maximum allowed significand for a regular price.
+    /// Maximum allowed encoded significand for a regular price.
     const M_MAX: u32 = 99_999_999;
-    /// Minimum allowed significand for a regular price. Same as `E_7` but as a `u32` for speed.
+    /// Minimum allowed encoded significand for a regular price. Same as `E_7` but as a `u32` for
+    /// speed.
     const M_MIN: u32 = 10_000_000;
 
     const E_0: u128 = 1;
@@ -127,9 +128,45 @@ module price::price {
     public fun base(quote: u64, price: u32): u64 {
         assert!(is_regular(price), E_INVALID_PRICE);
 
-        let significand_digits = encoded_significand(price);
+        let encoded_significand = encoded_significand(price);
         let encoded_exponent = encoded_exponent(price);
-        100
+
+        // Base is the ratio of quote to price:
+        // base = quote / price
+        //
+        // Substitute normalized price terms:
+        // base = quote / (m * 10^n)
+        //
+        // Substitute encoded terms:
+        // base = quote / ((encoded_significand * 10^-7) * 10^(encoded_exponent - 16))
+        //
+        // Rearrange, yielding minimally-truncating solution for `encoded_exponent` > 22:
+        // base = quote / (encoded_significand * 10^(encoded_exponent - 23))
+        if (encoded_exponent > N_22) {
+            quote
+                / ((encoded_significand as u64)
+                    * (power_of_10(encoded_exponent - N_23) as u64))
+            // Alternatively, for encoded_exponent <= 22:
+            // base = 10^(23 - encoded_exponent) * quote / encoded_significand
+        } else {
+            let power_of_10 = power_of_10(N_23 - encoded_exponent);
+            let quote_as_u128 = quote as u128;
+
+            // If the intermediate result `power_of_10 * quote_as_u128` overflows a `u128`, then the
+            // final result will overflow a `u64` after division by `encoded_significand`, since
+            // `encoded_significand` is less than `E_8` and thus not large enough to reduce
+            // a value this is in excess of `MAX_U128` to a value less than or equal to `MAX_U64`.
+            assert!(
+                quote_as_u128 <= MAX_U128 / power_of_10,
+                E_OVERFLOW
+            );
+
+            let base = (power_of_10 * quote_as_u128) / (encoded_significand as u128);
+
+            // The intermediate check does not rule out overflow on the final result.
+            assert!(base <= MAX_U64, E_OVERFLOW);
+            (base as u64)
+        }
     }
 
     #[view]
@@ -330,7 +367,7 @@ module price::price {
     #[view]
     public fun is_regular(price: u32): bool {
         let encoded_significand = encoded_significand(price);
-        encoded_significand >= M_MIN && significand <= M_MAX
+        encoded_significand >= M_MIN && encoded_significand <= M_MAX
     }
 
     #[view]
