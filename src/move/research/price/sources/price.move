@@ -15,9 +15,10 @@ module price::price {
     /// Special price infinity, all bits set in `u32`. In Python: `hex(int('1' * 32, 2))`.
     const P_INFINITY: u32 = 0xffffffff;
 
-    /// Maximum allowed significand for a regular price.
+    /// Maximum allowed encoded significand for a regular price.
     const M_MAX: u32 = 99_999_999;
-    /// Minimum allowed significand for a regular price. Same as `E_7` but as a `u32` for speed.
+    /// Minimum allowed encoded significand for a regular price. Same as `E_7` but as a `u32` for
+    /// speed.
     const M_MIN: u32 = 10_000_000;
 
     const E_0: u128 = 1;
@@ -122,19 +123,71 @@ module price::price {
     const E_INVALID_SIGNIFICAND_HI: u64 = 10;
     /// Significand is too small.
     const E_INVALID_SIGNIFICAND_LO: u64 = 11;
+    /// Intermediate result overflows a `u128`.
+    const E_OVERFLOW_INTERMEDIATE: u64 = 12;
 
     #[view]
+    /// Return base amount corresponding to `quote` and `price` amounts.
+    public fun base(quote: u64, price: u32): u64 {
+
+        // Check inputs, returning early for 0 result.
+        assert!(is_regular(price), E_INVALID_PRICE);
+        if (quote == 0) return 0;
+
+        let encoded_significand = encoded_significand(price);
+        let encoded_exponent = encoded_exponent(price);
+
+        // Base is the ratio of quote to price:
+        // base = quote / price
+        //
+        // Substitute normalized price terms:
+        // base = quote / (m * 10^n)
+        //
+        // Substitute encoded terms:
+        // base = quote / ((encoded_significand * 10^-7) * 10^(encoded_exponent - 16))
+        //
+        // Rearrange, yielding minimally-truncating solution for `encoded_exponent` > 22:
+        // base = quote / (encoded_significand * 10^(encoded_exponent - 23))
+        if (encoded_exponent > N_22) {
+            quote
+                / ((encoded_significand as u64)
+                    * (power_of_10(encoded_exponent - N_23) as u64))
+            // Alternatively, for encoded_exponent <= 22:
+            // base = 10^(23 - encoded_exponent) * quote / encoded_significand
+        } else {
+            let power_of_10 = power_of_10(N_23 - encoded_exponent);
+            let quote_as_u128 = quote as u128;
+
+            // If the intermediate result `power_of_10 * quote_as_u128` overflows a `u128`, then the
+            // final result will overflow a `u64` after division by `encoded_significand`, since
+            // `encoded_significand` is less than `E_8` and thus not large enough to reduce
+            // a value this is in excess of `MAX_U128` to a value less than or equal to `MAX_U64`.
+            assert!(
+                quote_as_u128 <= MAX_U128 / power_of_10,
+                E_OVERFLOW_INTERMEDIATE
+            );
+
+            // The intermediate check does not rule out overflow on the final result.
+            let base = (power_of_10 * quote_as_u128) / (encoded_significand as u128);
+            assert!(base <= MAX_U64, E_OVERFLOW);
+            (base as u64)
+        }
+    }
+
+    #[view]
+    /// Return the encoded exponent value of a price.
     public fun encoded_exponent(price: u32): u32 {
         price >> SHIFT_EXPONENT_BITS
     }
 
     #[view]
+    /// Return the encoded significand value of a price.
     public fun encoded_significand(price: u32): u32 {
         price & HI_SIGNIFICAND
     }
 
     #[view]
-    /// Returns the floored base-10 logarithm of `value`, and 10 raised to that power (equal to the
+    /// Return the floored base-10 logarithm of `value`, and 10 raised to that power (equal to the
     /// maximum power of 10 less than or equal to `value`).
     ///
     /// The algorithm uses a binary search for speed, with each new branch of the search bisecting
@@ -309,6 +362,7 @@ module price::price {
     }
 
     #[view]
+    /// Return `true` if the price is either a finite, nonzero representation or a special value.
     public fun is_canonical(price: u32): bool {
         is_regular(price) || is_special(price)
     }
@@ -319,9 +373,10 @@ module price::price {
     }
 
     #[view]
+    /// Return `true` if the price is a canonical finite, nonzero representation.
     public fun is_regular(price: u32): bool {
-        let significand = encoded_significand(price);
-        significand >= M_MIN && significand <= M_MAX
+        let encoded_significand = encoded_significand(price);
+        encoded_significand >= M_MIN && encoded_significand <= M_MAX
     }
 
     #[view]
@@ -335,73 +390,103 @@ module price::price {
     }
 
     #[view]
+    /// Return the magnitude of the normalized exponent of a regular price.
     public fun normalized_exponent_magnitude(price: u32): u32 {
         assert!(is_regular(price), E_INVALID_PRICE);
-        let exponent = encoded_exponent(price);
-        if (exponent > N_16) {
-            exponent - N_16
+        let encoded_exponent = encoded_exponent(price);
+        if (encoded_exponent > N_16) {
+            encoded_exponent - N_16
         } else {
-            N_16 - exponent
+            N_16 - encoded_exponent
         }
     }
 
     #[view]
+    /// Return `true` if the normalized exponent of a regular price is positive.
     public fun normalized_exponent_is_positive(price: u32): bool {
         assert!(is_regular(price), E_INVALID_PRICE);
         encoded_exponent(price) > N_16
     }
 
     #[view]
-    /// Returns the power of 10 for a canonical exponent, using similar binary search as
-    /// `floored_log_10_with_max_power_leq()`.
+    /// Return the power of 10 for an exponent less than or equal to 23, the largest possible power
+    /// required by `base()`, using similar binary search as `floored_log_10_with_max_power_leq()`.
     public fun power_of_10(exponent: u32): u128 {
-        assert!(exponent < N_17, E_INVALID_EXPONENT);
-        // 0 <= n < 17.
-        if (exponent < N_8) { // 0 <= n < 8.
-            if (exponent < N_4) { // 0 <= n < 4.
-                if (exponent < N_2) { // 0 <= n < 2.
+        assert!(exponent < N_24, E_INVALID_EXPONENT);
+        // 0 <= n < 24.
+        if (exponent < N_12) { // 0 <= n < 12.
+            if (exponent < N_6) { // 0 <= n < 6.
+                if (exponent < N_3) { // 0 <= n < 3.
                     if (exponent < N_1) { // 0 <= n < 1.
                         E_0
-                    } else { E_1 }
-                } else { // 2 <= n < 4.
-                    if (exponent < N_3) { // 2 <= n < 3.
-                        E_2
-                    } else { E_3 }
+                    } else { // 1 <= n < 3.
+                        if (exponent < N_2) { // 1 <= n < 2.
+                            E_1
+                        } else { E_2 }
+                    }
+                } else { // 3 <= n < 6.
+                    if (exponent < N_4) { // 3 <= n < 4.
+                        E_3
+                    } else { // 4 <= n < 6.
+                        if (exponent < N_5) { // 4 <= n < 5.
+                            E_4
+                        } else { E_5 }
+                    }
                 }
-            } else { // 4 <= n < 8.
-                if (exponent < N_6) { // 4 <= n < 6.
-                    if (exponent < N_5) { // 4 <= n < 5.
-                        E_4
-                    } else { E_5 }
-                } else { // 6 <= n < 8.
+            } else { // 6 <= n < 12.
+                if (exponent < N_9) { // 6 <= n < 9.
                     if (exponent < N_7) { // 6 <= n < 7.
                         E_6
-                    } else { E_7 }
+                    } else { // 7 <= n < 9.
+                        if (exponent < N_8) { // 7 <= n < 8.
+                            E_7
+                        } else { E_8 }
+                    }
+                } else { // 9 <= n < 12.
+                    if (exponent < N_10) { // 9 <= n < 10.
+                        E_9
+                    } else { // 10 <= n < 12.
+                        if (exponent < N_11) { // 10 <= n < 11.
+                            E_10
+                        } else { E_11 }
+                    }
                 }
             }
-        } else { // 8 <= n < 17.
-            if (exponent < N_12) { // 8 <= n < 12.
-                if (exponent < N_10) { // 8 <= n < 10.
-                    if (exponent < N_9) { // 8 <= n < 9.
-                        E_8
-                    } else { E_9 }
-                } else { // 10 <= n < 12.
-                    if (exponent < N_11) { // 10 <= n < 11.
-                        E_10
-                    } else { E_11 }
-                }
-            } else { // 12 <= n < 17.
-                if (exponent < N_14) { // 12 <= n < 14.
+        } else { // 12 <= n < 24.
+            if (exponent < N_18) { // 12 <= n < 18.
+                if (exponent < N_15) { // 12 <= n < 15.
                     if (exponent < N_13) { // 12 <= n < 13.
                         E_12
-                    } else { E_13 }
-                } else { // 14 <= n < 17.
-                    if (exponent < N_15) { // 14 <= n < 15.
-                        E_14
-                    } else { // 15 <= n < 17.
-                        if (exponent < N_16) { // 15 <= n < 16.
-                            E_15
-                        } else { E_16 }
+                    } else { // 13 <= n < 15.
+                        if (exponent < N_14) { // 13 <= n < 14.
+                            E_13
+                        } else { E_14 }
+                    }
+                } else { // 15 <= n < 18.
+                    if (exponent < N_16) { // 15 <= n < 16.
+                        E_15
+                    } else { // 16 <= n < 18.
+                        if (exponent < N_17) { // 16 <= n < 17.
+                            E_16
+                        } else { E_17 }
+                    }
+                }
+            } else { // 18 <= n < 24.
+                if (exponent < N_21) { // 18 <= n < 21.
+                    if (exponent < N_19) { // 18 <= n < 19.
+                        E_18
+                    } else { // 19 <= n < 21.
+                        if (exponent < N_20) { // 19 <= n < 20.
+                            E_19
+                        } else { E_20 }
+                    }
+                } else { // 21 <= n < 24.
+                    if (exponent < N_22) { // 21 <= n < 22.
+                        E_21
+                    } else { // 22 <= n < 24.
+                        if (exponent < N_23) { // 22 <= n < 23.
+                            E_22
+                        } else { E_23 }
                     }
                 }
             }
@@ -435,18 +520,18 @@ module price::price {
         // The encoded exponent is the floored base-10 logarithm of the scaled ratio, incremented
         // by the bias (16), then decremented by the maximum power of 10 that can fit in a `u64`
         // (19). This is equivalent to decrementing by 3.
-        let exponent_encoded = floored_log_10_ratio_e19 - N_3;
+        let encoded_exponent = floored_log_10_ratio_e19 - N_3;
 
         // If scaled ratio is smaller than `E_7`, it must be right-padded to yield a canonicalized
         // significand with 8 significant digits.
-        let significand_encoded =
+        let encoded_significand =
             if (ratio_e19 < E_7) {
                 ratio_e19 * (E_7 / max_power_10_leq_ratio_e19)
             } else { // Otherwise it must be truncated to 8 significant digits.
                 ratio_e19 / (max_power_10_leq_ratio_e19 / E_7)
             };
 
-        (exponent_encoded << SHIFT_EXPONENT_BITS) | (significand_encoded as u32)
+        (encoded_exponent << SHIFT_EXPONENT_BITS) | (encoded_significand as u32)
     }
 
     #[view]
@@ -481,6 +566,7 @@ module price::price {
     }
 
     #[view]
+    /// Return the quote amount corresponding to `base` and `price` amounts.
     public fun quote(base: u64, price: u32): u64 {
 
         // Check inputs, returning early for 0 result.
@@ -489,8 +575,8 @@ module price::price {
         if (is_zero_price || base == 0) return 0;
 
         // Extract inner values.
-        let significand = encoded_significand(price);
-        let exponent = encoded_exponent(price);
+        let encoded_significand = encoded_significand(price);
+        let encoded_exponent = encoded_exponent(price);
 
         // If the encoded exponent is less than the bias (16), then the normalized exponent is
         // negative and the result requires dividing by the corresponding power of 10. Otherwise,
@@ -499,32 +585,36 @@ module price::price {
         //
         // Since the encoded significand is 10^7 times the normalized significand, the final result
         // requires a division by `E_7` in either case.
-        if (exponent < N_16) {
-            exponent = N_16 - exponent; // Correct for bias.
+        if (encoded_exponent < N_16) {
+            let normalized_exponent = N_16 - encoded_exponent; // Correct for bias.
 
             // Even if the intermediate multiplication overflows a `u64` into a `u128`, the final
             // result will not overflow a `u64` because a price with a negative exponent is
-            // necessarily less than 1. That is, `power_of_10(exponent) * E_7` > significand`.
-            ((base as u128) * (significand as u128) / (power_of_10(exponent) * E_7) as u64)
+            // necessarily less than 1. That is,
+            // `power_of_10(normalized_exponent) * E_7` > encoded_significand`.
+            ((base as u128) * (encoded_significand as u128)
+                / (power_of_10(normalized_exponent) * E_7) as u64)
 
         } else { // The normalized exponent is positive.
-            exponent -= N_16; // Correct for bias.
+            let normalized_exponent = encoded_exponent - N_16; // Correct for bias.
 
             // Consolidate division by `E_7` (the significand normalization operation) and
             // multiplication by the normalized exponent into one step. This avoids the need to cast
             // into a `u256`, which would be necessary if the division and multiplication were
             // performed in separate operations, because for example `MAX_U64 * M_MAX * 10^15`
             // overflows a `u128`. However `MAX_U64 * M_MAX * 10^8` (the worst case) does not.
-            let result =
-                if (exponent < N_7) {
-                    (base as u128) * (significand as u128) / (power_of_10(N_7 - exponent))
+            let quote =
+                if (normalized_exponent < N_7) {
+                    (base as u128) * (encoded_significand as u128)
+                        / (power_of_10(N_7 - normalized_exponent))
                 } else {
-                    (base as u128) * (significand as u128) * (power_of_10(exponent - N_7))
+                    (base as u128) * (encoded_significand as u128)
+                        * (power_of_10(normalized_exponent - N_7))
                 };
 
             // Check for overflow, return result.
-            assert!(result <= MAX_U64, E_OVERFLOW);
-            (result as u64)
+            assert!(quote <= MAX_U64, E_OVERFLOW);
+            (quote as u64)
         }
     }
 
@@ -540,6 +630,37 @@ module price::price {
         let (log, power) = floored_log_10_with_max_power_leq(value);
         assert!(log == expected_log);
         assert!(power == expected_power);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_INVALID_PRICE)]
+    fun test_base_invalid_price() {
+        base(0, zero());
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_OVERFLOW)]
+    fun test_base_overflow() {
+        base(
+            (MAX_U64 as u64),
+            price_from_terms(M_MAX, N_1, false)
+        );
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_OVERFLOW_INTERMEDIATE)]
+    fun test_base_overflow_intermediate() {
+        base(
+            (MAX_U64 as u64),
+            price_from_terms(M_MIN, N_16, false)
+        );
+    }
+
+    #[test]
+    fun test_base_early_return_0() {
+        assert!(
+            base(0, price_from_terms(M_MIN, N_16, false)) == 0
+        );
     }
 
     #[test]
@@ -734,12 +855,19 @@ module price::price {
         assert!(power_of_10(N_14) == E_14);
         assert!(power_of_10(N_15) == E_15);
         assert!(power_of_10(N_16) == E_16);
+        assert!(power_of_10(N_17) == E_17);
+        assert!(power_of_10(N_18) == E_18);
+        assert!(power_of_10(N_19) == E_19);
+        assert!(power_of_10(N_20) == E_20);
+        assert!(power_of_10(N_21) == E_21);
+        assert!(power_of_10(N_22) == E_22);
+        assert!(power_of_10(N_23) == E_23);
     }
 
     #[test]
     #[expected_failure(abort_code = E_INVALID_EXPONENT)]
     public fun test_power_of_10_invalid_exponent() {
-        power_of_10(N_17);
+        power_of_10(N_24);
     }
 
     #[test]
@@ -815,6 +943,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
         // Price 8.7654321 * 10^-12
         base = 10_000_000_000_000_000_000;
@@ -839,6 +968,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
         // Price 5.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
@@ -863,6 +993,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
         // Price 9.9999999 * 10^15
         base = 1_000;
@@ -885,6 +1016,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
         // Price 1.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
@@ -909,6 +1041,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
         // Price 9.7900000 * 10^1
         base = 2_000_000;
@@ -933,6 +1066,7 @@ module price::price {
         assert!(
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
+        assert!(base(quote, price) == base);
 
     }
 
