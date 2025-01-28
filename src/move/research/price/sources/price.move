@@ -40,6 +40,7 @@ module price::price {
     const E_16: u128 = 10_000_000_000_000_000;
     const E_17: u128 = 100_000_000_000_000_000;
     const E_18: u128 = 1_000_000_000_000_000_000;
+    /// The largest power of 10 that can fit in a `u64`.
     const E_19: u128 = 10_000_000_000_000_000_000;
     const E_20: u128 = 100_000_000_000_000_000_000;
     const E_21: u128 = 1_000_000_000_000_000_000_000;
@@ -59,6 +60,7 @@ module price::price {
     const E_35: u128 = 100_000_000_000_000_000_000_000_000_000_000_000;
     const E_36: u128 = 1_000_000_000_000_000_000_000_000_000_000_000_000;
     const E_37: u128 = 10_000_000_000_000_000_000_000_000_000_000_000_000;
+    /// The largest power of 10 that can fit in a `u128`.
     const E_38: u128 = 100_000_000_000_000_000_000_000_000_000_000_000_000;
 
     const N_0: u32 = 0;
@@ -125,6 +127,8 @@ module price::price {
     const E_INVALID_SIGNIFICAND_LO: u64 = 11;
     /// Intermediate result overflows a `u128`.
     const E_OVERFLOW_INTERMEDIATE: u64 = 12;
+    /// Ratio calculation results in precision loss.
+    const E_PRECISION_LOSS: u64 = 13;
 
     #[view]
     /// Return base amount corresponding to `quote` and `price` amounts.
@@ -161,7 +165,7 @@ module price::price {
             // If the intermediate result `power_of_10 * quote_as_u128` overflows a `u128`, then the
             // final result will overflow a `u64` after division by `encoded_significand`, since
             // `encoded_significand` is less than `E_8` and thus not large enough to reduce
-            // a value this is in excess of `MAX_U128` to a value less than or equal to `MAX_U64`.
+            // a value that is in excess of `MAX_U128` to a value less than or equal to `MAX_U64`.
             assert!(
                 quote_as_u128 <= MAX_U128 / power_of_10,
                 E_OVERFLOW_INTERMEDIATE
@@ -619,6 +623,58 @@ module price::price {
     }
 
     #[view]
+    /// Return a ratio of base and quote amounts corresponding to the given price.
+    public fun ratio(price: u32, allow_precision_loss: bool): (u64, u64) {
+
+        // Check inputs, returning early for 0 result.
+        assert!(is_regular(price), E_INVALID_PRICE);
+
+        let encoded_significand = encoded_significand(price);
+        let encoded_exponent = encoded_exponent(price);
+
+        // Quote is the product of base and price:
+        // quote = base * price
+        //
+        // Substitute normalized price terms:
+        // quote = base * m * 10^n
+        //
+        // Substitute encoded terms:
+        // quote = base * (encoded_significand * 10^-7) * 10^(encoded_exponent - 16)
+        //
+        // Rearrange, yielding purely-multiplicative solution for `encoded_exponent` > 22:
+        // quote = base * encoded_significand * 10^(encoded_exponent - 23)
+        let (base, quote);
+        if (encoded_exponent > N_22) {
+            base = 1;
+            // Note `encoded_significand < E_8` for a regular price and
+            // `power_of_10(encoded_exponent - 23) < E_10` (since `encoded_exponent <= 32`), so the
+            // product is less than `MAX_U64`.
+            quote = (encoded_significand as u64)
+                * (power_of_10(encoded_exponent - N_23) as u64);
+            // Alternatively, for encoded_exponent <= 22:
+            // quote * 10^(23 - encoded_exponent) / base = encoded_significand
+        } else {
+            if (encoded_exponent > N_3) {
+                quote = encoded_significand;
+                base = power_of_10(N_23 - encoded_exponent);
+                if (base > MAX_U64) {
+                    // If the base value does not fit in a `u64`, then get the greatest common
+                    // denominator of the base and quote values, to attempt reducing the ratio.
+
+                    // Then, if base value is still too large, check if precision loss is allowed.
+                    assert!(allow_precision_loss, E_PRECISION_LOSS);
+
+                    // Then if that does not work, bitshift the base value to fit in a `u64`.
+                    // Alternatively, could divide the starting values by requisite power of 10 to
+                    // get the base value to fit in a u64.
+                    //
+                    // Or could just return base as a u128.
+                }
+        };
+        (base, quote)
+    }
+
+    #[view]
     public fun zero(): u32 {
         P_ZERO
     }
@@ -944,6 +1000,9 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        let (base_ratio, quote_ratio) = ratio(price, false);
+        assert!(base_ratio == 1);
+        assert!(quote_ratio == quote(base_ratio, price));
 
         // Price 8.7654321 * 10^-12
         base = 10_000_000_000_000_000_000;
@@ -969,6 +1028,9 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        let (base_ratio, quote_ratio) = ratio(price, false);
+        assert!(base_ratio == (E_19 as u64));
+        assert!(quote_ratio == quote(base_ratio, price));
 
         // Price 5.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
@@ -994,6 +1056,9 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        let (base_ratio, quote_ratio) = ratio(price, false);
+        assert!(base_ratio == (E_19 as u64));
+        assert!(quote_ratio == quote(base_ratio, price));
 
         // Price 9.9999999 * 10^15
         base = 1_000;
@@ -1017,6 +1082,9 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        let (base_ratio, quote_ratio) = ratio(price, false);
+        assert!(base_ratio == 1);
+        assert!(quote_ratio == quote(base_ratio, price));
 
         // Price 1.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
@@ -1042,6 +1110,9 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        let (base_ratio, quote_ratio) = ratio(price, false);
+        assert!(base_ratio == (E_19 as u64));
+        assert!(quote_ratio == quote(base_ratio, price));
 
         // Price 9.7900000 * 10^1
         base = 2_000_000;
@@ -1067,6 +1138,9 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        let (base_ratio, quote_ratio) = ratio(price, false);
+        assert!(base_ratio == (E_19 as u64));
+        assert!(quote_ratio == quote(base_ratio, price));
 
     }
 
