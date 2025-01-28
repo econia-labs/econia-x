@@ -148,13 +148,13 @@ module price::price {
         // Substitute encoded terms:
         // base = quote / ((encoded_significand * 10^-7) * 10^(encoded_exponent - 16))
         //
-        // Rearrange, yielding minimally-truncating solution for `encoded_exponent` > 22:
+        // Rearrange, yielding minimally-truncating solution for `encoded_exponent > 22`:
         // base = quote / (encoded_significand * 10^(encoded_exponent - 23))
         if (encoded_exponent > N_22) {
             quote
                 / ((encoded_significand as u64)
                     * (power_of_10(encoded_exponent - N_23) as u64))
-            // Alternatively, for encoded_exponent <= 22:
+            // Alternatively, for `encoded_exponent <= 22`:
             // base = 10^(23 - encoded_exponent) * quote / encoded_significand
         } else {
             let power_of_10 = power_of_10(N_23 - encoded_exponent);
@@ -164,6 +164,8 @@ module price::price {
             // final result will overflow a `u64` after division by `encoded_significand`, since
             // `encoded_significand` is less than `E_8` and thus not large enough to reduce
             // a value that is in excess of `MAX_U128` to a value less than or equal to `MAX_U64`.
+            // This check could be dropped in lieu of the final overflow check, but then
+            // intermediate operations would have to rely on more expensive `u256` arithmetic.
             assert!(
                 quote_as_u128 <= MAX_U128 / power_of_10,
                 E_OVERFLOW_INTERMEDIATE
@@ -576,48 +578,30 @@ module price::price {
         assert!(is_regular(price) || is_zero_price, E_INVALID_PRICE);
         if (is_zero_price || base == 0) return 0;
 
-        // Extract inner values.
-        let encoded_significand = encoded_significand(price);
-        let encoded_exponent = encoded_exponent(price);
-
-        // If the encoded exponent is less than the bias (16), then the normalized exponent is
-        // negative and the result requires dividing by the corresponding power of 10. Otherwise,
-        // the normalized exponent is positive and the result requires multiplying by the
-        // corresponding power of 10.
+        // Quote is the product of base and price:
+        // quote = base * price
         //
-        // Since the encoded significand is 10^7 times the normalized significand, the final result
-        // requires a division by `E_7` in either case.
-        if (encoded_exponent < N_16) {
-            let normalized_exponent = N_16 - encoded_exponent; // Correct for bias.
-
-            // Even if the intermediate multiplication overflows a `u64` into a `u128`, the final
-            // result will not overflow a `u64` because a price with a negative exponent is
-            // necessarily less than 1. That is,
-            // `power_of_10(normalized_exponent) * E_7` > encoded_significand`.
-            ((base as u128) * (encoded_significand as u128)
-                / (power_of_10(normalized_exponent) * E_7) as u64)
-
-        } else { // The normalized exponent is positive.
-            let normalized_exponent = encoded_exponent - N_16; // Correct for bias.
-
-            // Consolidate division by `E_7` (the significand normalization operation) and
-            // multiplication by the normalized exponent into one step. This avoids the need to cast
-            // into a `u256`, which would be necessary if the division and multiplication were
-            // performed in separate operations, because for example `MAX_U64 * M_MAX * 10^15`
-            // overflows a `u128`. However `MAX_U64 * M_MAX * 10^8` (the worst case) does not.
-            let quote =
-                if (normalized_exponent < N_7) {
-                    (base as u128) * (encoded_significand as u128)
-                        / (power_of_10(N_7 - normalized_exponent))
-                } else {
-                    (base as u128) * (encoded_significand as u128)
-                        * (power_of_10(normalized_exponent - N_7))
-                };
-
-            // Check for overflow, return result.
-            assert!(quote <= MAX_U64, E_OVERFLOW);
-            (quote as u64)
-        }
+        // Substitute normalized price terms:
+        // quote = base * m * 10^n
+        //
+        // Substitute encoded terms:
+        // quote = base * (encoded_significand * 10^-7) * 10^(encoded_exponent - 16)
+        //
+        // Rearrange, yielding solution for `encoded_exponent > 22`:
+        // quote = base * encoded_significand * 10^(encoded_exponent - 23)
+        let encoded_exponent = encoded_exponent(price);
+        let scalar = (base as u128) * (encoded_significand(price) as u128);
+        let quote =
+            if (encoded_exponent > N_22) {
+                scalar * power_of_10(encoded_exponent - N_23)
+                // Alternatively, for `encoded_exponent <= 22`:
+                // quote = base * encoded_significand / 10^(23 - encoded_exponent)
+            } else {
+                scalar / power_of_10(N_23 - encoded_exponent)
+            };
+        // Check for overflow, return result.
+        assert!(quote <= MAX_U64, E_OVERFLOW);
+        (quote as u64)
     }
 
     #[view]
@@ -642,13 +626,13 @@ module price::price {
         // Substitute encoded terms:
         // quote = base * (encoded_significand * 10^-7) * 10^(encoded_exponent - 16)
         //
-        // Rearrange, yielding purely-multiplicative solution for `encoded_exponent` > 22:
+        // Rearrange, yielding purely-multiplicative solution for `encoded_exponent > 22`:
         // quote = base * encoded_significand * 10^(encoded_exponent - 23)
         let (base, quote);
         if (encoded_exponent > N_22) {
             base = 1;
             quote = encoded_significand * power_of_10(encoded_exponent - N_23);
-            // Alternatively, for encoded_exponent <= 22:
+            // Alternatively, for `encoded_exponent <= 22`:
             // quote * 10^(23 - encoded_exponent) / base = encoded_significand
         } else {
             base = power_of_10(N_23 - encoded_exponent);
