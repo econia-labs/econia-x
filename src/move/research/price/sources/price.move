@@ -1182,4 +1182,59 @@ module price::price {
     public fun test_ratio_invalid_price() {
         ratio(infinity());
     }
+
+    #[test]
+    public fun test_total_order() {
+        // Verify zero is taken as less than the smallest representable term.
+        assert!(zero() < price_from_terms(M_MIN, N_16, false));
+        // For every possible encoded exponent in a regular price:
+        for (encoded_exponent in 0..N_32) {
+            // Get the normalized exponent terms.
+            let (normalized_exponent_magnitude, normalized_exponent_is_positive) =
+                if (encoded_exponent < N_16) {
+                    (N_16 - encoded_exponent, false)
+                } else {
+                    (encoded_exponent - N_16, true)
+                };
+            // For every exponent except the first, check total order for the boundary with the last
+            // exponent.
+            if (encoded_exponent > 0) {
+                let last_encoded_exponent = encoded_exponent - 1;
+                let (
+                    last_normalized_exponent_magnitude,
+                    last_normalized_exponent_is_positive
+                ) =
+                    if (last_encoded_exponent < N_16) {
+                        (N_16 - last_encoded_exponent, false)
+                    } else {
+                        (last_encoded_exponent - N_16, true)
+                    };
+                assert!(
+                    price_from_terms(
+                        M_MAX,
+                        last_normalized_exponent_magnitude,
+                        last_normalized_exponent_is_positive
+                    ) < price_from_terms(
+                        M_MIN,
+                        normalized_exponent_magnitude,
+                        normalized_exponent_is_positive
+                    )
+                );
+            };
+            // Check total order for significands within the current exponent.
+            assert!(
+                price_from_terms(
+                    M_MIN,
+                    normalized_exponent_magnitude,
+                    normalized_exponent_is_positive
+                ) < price_from_terms(
+                    M_MAX,
+                    normalized_exponent_magnitude,
+                    normalized_exponent_is_positive
+                )
+            );
+        };
+        // Verify the largest representable term is taken as less than infinity.
+        assert!(price_from_terms(M_MAX, N_15, true) < infinity());
+    }
 }
