@@ -1,5 +1,7 @@
 module price::price {
 
+    use aptos_std::math128;
+
     /// The largest `u128` value. In Python: `f"{int('1' * 128, 2):_}"`.
     const MAX_U128: u128 = 340_282_366_920_938_463_463_374_607_431_768_211_455;
     /// The largest `u64` value. In Python: `f"{int('1' * 64, 2):_}"`.
@@ -642,6 +644,14 @@ module price::price {
     }
 
     #[view]
+    /// Like `ratio()`, but irreducibly reduced.
+    public fun ratio_irreducible(price: u32): (u128, u128) {
+        let (base, quote) = ratio(price);
+        let greatest_common_denominator = math128::gcd(base, quote);
+        (base / greatest_common_denominator, quote / greatest_common_denominator)
+    }
+
+    #[view]
     public fun zero(): u32 {
         P_ZERO
     }
@@ -972,6 +982,9 @@ module price::price {
         assert!(
             quote_ratio == (quote((base_ratio as u64), price) as u128)
         );
+        let (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == base_ratio);
+        assert!(quote_ratio_irreducible == quote_ratio);
 
         // Price 8.7654321 * 10^-12
         base = 10_000_000_000_000_000_000;
@@ -997,11 +1010,14 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
-        let (base_ratio, quote_ratio) = ratio(price);
+        (base_ratio, quote_ratio) = ratio(price);
         assert!(base_ratio == E_19);
         assert!(
             quote_ratio == (quote((base_ratio as u64), price) as u128)
         );
+        (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == base_ratio);
+        assert!(quote_ratio_irreducible == quote_ratio);
 
         // Price 5.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
@@ -1030,6 +1046,9 @@ module price::price {
         let (base_ratio, quote_ratio) = ratio(price);
         assert!(base_ratio == E_23);
         assert!(quote_ratio == (significand_digits as u128));
+        (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == 2 * E_15);
+        assert!(quote_ratio_irreducible == 1);
 
         // Price 9.9999999 * 10^15
         base = 1_000;
@@ -1058,6 +1077,9 @@ module price::price {
         assert!(
             quote_ratio == (quote((base_ratio as u64), price) as u128)
         );
+        (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == base_ratio);
+        assert!(quote_ratio_irreducible == quote_ratio);
 
         // Price 1.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
@@ -1086,6 +1108,9 @@ module price::price {
         let (base_ratio, quote_ratio) = ratio(price);
         assert!(base_ratio == E_23);
         assert!(quote_ratio == (significand_digits as u128));
+        (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == E_16);
+        assert!(quote_ratio_irreducible == 1);
 
         // Price 9.7900000 * 10^1
         base = 2_000_000;
@@ -1116,6 +1141,9 @@ module price::price {
         assert!(
             quote_ratio == (quote((base_ratio as u64), price) as u128)
         );
+        (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == E_1);
+        assert!(quote_ratio_irreducible == 979);
 
     }
 
