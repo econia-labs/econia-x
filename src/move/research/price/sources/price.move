@@ -1176,4 +1176,10 @@ module price::price {
         let base = (MAX_U64 as u64);
         quote(base, price);
     }
+
+    #[test]
+    #[expected_failure(abort_code = E_INVALID_PRICE)]
+    public fun test_ratio_invalid_price() {
+        ratio(infinity());
+    }
 }
