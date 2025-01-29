@@ -15,7 +15,8 @@ Prices are denoted using an unsigned [normalized number] format, so at current
 market prices as of the time of this writing, for example, the ratio of $9.79$
 `USD` per $1$ `APT` would be denoted $p = 9.79 \cdot 10^1$. (This example
 assumes a hypothetical `USD` asset with the same number of `Coin` decimals as
-`APT`, since the implementation operates on indivisible subunits).
+`APT`, since the implementation operates on indivisible subunits, e.g.
+`Coin.value`).
 
 $$
 p = \frac{9.79}{1} = 9.79 \cdot 10^1

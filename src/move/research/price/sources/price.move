@@ -1,5 +1,7 @@
 module price::price {
 
+    use aptos_std::math128;
+
     /// The largest `u128` value. In Python: `f"{int('1' * 128, 2):_}"`.
     const MAX_U128: u128 = 340_282_366_920_938_463_463_374_607_431_768_211_455;
     /// The largest `u64` value. In Python: `f"{int('1' * 64, 2):_}"`.
@@ -40,6 +42,7 @@ module price::price {
     const E_16: u128 = 10_000_000_000_000_000;
     const E_17: u128 = 100_000_000_000_000_000;
     const E_18: u128 = 1_000_000_000_000_000_000;
+    /// The largest power of 10 that can fit in a `u64`.
     const E_19: u128 = 10_000_000_000_000_000_000;
     const E_20: u128 = 100_000_000_000_000_000_000;
     const E_21: u128 = 1_000_000_000_000_000_000_000;
@@ -59,6 +62,7 @@ module price::price {
     const E_35: u128 = 100_000_000_000_000_000_000_000_000_000_000_000;
     const E_36: u128 = 1_000_000_000_000_000_000_000_000_000_000_000_000;
     const E_37: u128 = 10_000_000_000_000_000_000_000_000_000_000_000_000;
+    /// The largest power of 10 that can fit in a `u128`.
     const E_38: u128 = 100_000_000_000_000_000_000_000_000_000_000_000_000;
 
     const N_0: u32 = 0;
@@ -146,13 +150,13 @@ module price::price {
         // Substitute encoded terms:
         // base = quote / ((encoded_significand * 10^-7) * 10^(encoded_exponent - 16))
         //
-        // Rearrange, yielding minimally-truncating solution for `encoded_exponent` > 22:
+        // Rearrange, yielding minimally-truncating solution for `encoded_exponent > 22`:
         // base = quote / (encoded_significand * 10^(encoded_exponent - 23))
         if (encoded_exponent > N_22) {
             quote
                 / ((encoded_significand as u64)
                     * (power_of_10(encoded_exponent - N_23) as u64))
-            // Alternatively, for encoded_exponent <= 22:
+            // Alternatively, for `encoded_exponent <= 22`:
             // base = 10^(23 - encoded_exponent) * quote / encoded_significand
         } else {
             let power_of_10 = power_of_10(N_23 - encoded_exponent);
@@ -161,7 +165,9 @@ module price::price {
             // If the intermediate result `power_of_10 * quote_as_u128` overflows a `u128`, then the
             // final result will overflow a `u64` after division by `encoded_significand`, since
             // `encoded_significand` is less than `E_8` and thus not large enough to reduce
-            // a value this is in excess of `MAX_U128` to a value less than or equal to `MAX_U64`.
+            // a value that is in excess of `MAX_U128` to a value less than or equal to `MAX_U64`.
+            // This check could be dropped in lieu of the final overflow check, but then
+            // intermediate operations would have to rely on more expensive `u256` arithmetic.
             assert!(
                 quote_as_u128 <= MAX_U128 / power_of_10,
                 E_OVERFLOW_INTERMEDIATE
@@ -518,12 +524,12 @@ module price::price {
         assert!(floored_log_10_ratio_e19 <= N_34, E_TOO_LARGE_TO_REPRESENT);
 
         // The encoded exponent is the floored base-10 logarithm of the scaled ratio, incremented
-        // by the bias (16), then decremented by the maximum power of 10 that can fit in a `u64`
-        // (19). This is equivalent to decrementing by 3.
+        // by the bias (16), then decremented by the scalar from earlier, the maximum power of 10
+        // that can fit in a `u64` (19). This is equivalent to decrementing by 3.
         let encoded_exponent = floored_log_10_ratio_e19 - N_3;
 
-        // If scaled ratio is smaller than `E_7`, it must be right-padded to yield a canonicalized
-        // significand with 8 significant digits.
+        // If scaled ratio is smaller than `E_7`, it must be right-padded with zeroes to yield a
+        // canonicalized significand with 8 significant digits.
         let encoded_significand =
             if (ratio_e19 < E_7) {
                 ratio_e19 * (E_7 / max_power_10_leq_ratio_e19)
@@ -574,48 +580,75 @@ module price::price {
         assert!(is_regular(price) || is_zero_price, E_INVALID_PRICE);
         if (is_zero_price || base == 0) return 0;
 
-        // Extract inner values.
-        let encoded_significand = encoded_significand(price);
+        // Quote is the product of base and price:
+        // quote = base * price
+        //
+        // Substitute normalized price terms:
+        // quote = base * m * 10^n
+        //
+        // Substitute encoded terms:
+        // quote = base * (encoded_significand * 10^-7) * 10^(encoded_exponent - 16)
+        //
+        // Rearrange, yielding solution for `encoded_exponent > 22`:
+        // quote = base * encoded_significand * 10^(encoded_exponent - 23)
+        let encoded_exponent = encoded_exponent(price);
+        let scalar = (base as u128) * (encoded_significand(price) as u128);
+        let quote =
+            if (encoded_exponent > N_22) {
+                scalar * power_of_10(encoded_exponent - N_23)
+                // Alternatively, for `encoded_exponent <= 22`:
+                // quote = base * encoded_significand / 10^(23 - encoded_exponent)
+            } else {
+                scalar / power_of_10(N_23 - encoded_exponent)
+            };
+        // Check for overflow, return result.
+        assert!(quote <= MAX_U64, E_OVERFLOW);
+        (quote as u64)
+    }
+
+    #[view]
+    /// Return a ratio of base and quote amounts exactly corresponding to the given price.
+    ///
+    /// To retain precision, `base` might need to be so large that it does not fit in a `u64`, hence
+    /// for consistency both `base` and `quote` values are returned as `u128`.
+    public fun ratio(price: u32): (u128, u128) {
+
+        // Check inputs, returning early for 0 result.
+        assert!(is_regular(price), E_INVALID_PRICE);
+
+        let encoded_significand = (encoded_significand(price) as u128);
         let encoded_exponent = encoded_exponent(price);
 
-        // If the encoded exponent is less than the bias (16), then the normalized exponent is
-        // negative and the result requires dividing by the corresponding power of 10. Otherwise,
-        // the normalized exponent is positive and the result requires multiplying by the
-        // corresponding power of 10.
+        // Quote is the product of base and price:
+        // quote = base * price
         //
-        // Since the encoded significand is 10^7 times the normalized significand, the final result
-        // requires a division by `E_7` in either case.
-        if (encoded_exponent < N_16) {
-            let normalized_exponent = N_16 - encoded_exponent; // Correct for bias.
+        // Substitute normalized price terms:
+        // quote = base * m * 10^n
+        //
+        // Substitute encoded terms:
+        // quote = base * (encoded_significand * 10^-7) * 10^(encoded_exponent - 16)
+        //
+        // Rearrange, yielding purely-multiplicative solution for `encoded_exponent > 22`:
+        // quote = base * encoded_significand * 10^(encoded_exponent - 23)
+        let (base, quote);
+        if (encoded_exponent > N_22) {
+            base = 1;
+            quote = encoded_significand * power_of_10(encoded_exponent - N_23);
+            // Alternatively, for `encoded_exponent <= 22`:
+            // quote * 10^(23 - encoded_exponent) / base = encoded_significand
+        } else {
+            base = power_of_10(N_23 - encoded_exponent);
+            quote = encoded_significand;
+        };
+        (base, quote)
+    }
 
-            // Even if the intermediate multiplication overflows a `u64` into a `u128`, the final
-            // result will not overflow a `u64` because a price with a negative exponent is
-            // necessarily less than 1. That is,
-            // `power_of_10(normalized_exponent) * E_7` > encoded_significand`.
-            ((base as u128) * (encoded_significand as u128)
-                / (power_of_10(normalized_exponent) * E_7) as u64)
-
-        } else { // The normalized exponent is positive.
-            let normalized_exponent = encoded_exponent - N_16; // Correct for bias.
-
-            // Consolidate division by `E_7` (the significand normalization operation) and
-            // multiplication by the normalized exponent into one step. This avoids the need to cast
-            // into a `u256`, which would be necessary if the division and multiplication were
-            // performed in separate operations, because for example `MAX_U64 * M_MAX * 10^15`
-            // overflows a `u128`. However `MAX_U64 * M_MAX * 10^8` (the worst case) does not.
-            let quote =
-                if (normalized_exponent < N_7) {
-                    (base as u128) * (encoded_significand as u128)
-                        / (power_of_10(N_7 - normalized_exponent))
-                } else {
-                    (base as u128) * (encoded_significand as u128)
-                        * (power_of_10(normalized_exponent - N_7))
-                };
-
-            // Check for overflow, return result.
-            assert!(quote <= MAX_U64, E_OVERFLOW);
-            (quote as u64)
-        }
+    #[view]
+    /// Like `ratio()`, but irreducibly reduced.
+    public fun ratio_irreducible(price: u32): (u128, u128) {
+        let (base, quote) = ratio(price);
+        let greatest_common_denominator = math128::gcd(base, quote);
+        (base / greatest_common_denominator, quote / greatest_common_denominator)
     }
 
     #[view]
@@ -944,6 +977,14 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        let (base_ratio, quote_ratio) = ratio(price);
+        assert!(base_ratio == 1);
+        assert!(
+            quote_ratio == (quote((base_ratio as u64), price) as u128)
+        );
+        let (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == base_ratio);
+        assert!(quote_ratio_irreducible == quote_ratio);
 
         // Price 8.7654321 * 10^-12
         base = 10_000_000_000_000_000_000;
@@ -969,6 +1010,14 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        (base_ratio, quote_ratio) = ratio(price);
+        assert!(base_ratio == E_19);
+        assert!(
+            quote_ratio == (quote((base_ratio as u64), price) as u128)
+        );
+        (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == base_ratio);
+        assert!(quote_ratio_irreducible == quote_ratio);
 
         // Price 5.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
@@ -994,6 +1043,12 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        let (base_ratio, quote_ratio) = ratio(price);
+        assert!(base_ratio == E_23);
+        assert!(quote_ratio == (significand_digits as u128));
+        (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == 2 * E_15);
+        assert!(quote_ratio_irreducible == 1);
 
         // Price 9.9999999 * 10^15
         base = 1_000;
@@ -1017,6 +1072,14 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        let (base_ratio, quote_ratio) = ratio(price);
+        assert!(base_ratio == 1);
+        assert!(
+            quote_ratio == (quote((base_ratio as u64), price) as u128)
+        );
+        (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == base_ratio);
+        assert!(quote_ratio_irreducible == quote_ratio);
 
         // Price 1.0000000 * 10^-16
         base = 2_000_000_000_000_000_000;
@@ -1042,6 +1105,12 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        let (base_ratio, quote_ratio) = ratio(price);
+        assert!(base_ratio == E_23);
+        assert!(quote_ratio == (significand_digits as u128));
+        (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == E_16);
+        assert!(quote_ratio_irreducible == 1);
 
         // Price 9.7900000 * 10^1
         base = 2_000_000;
@@ -1067,6 +1136,14 @@ module price::price {
             normalized_exponent_is_positive(price) == normalized_exponent_is_positive
         );
         assert!(base(quote, price) == base);
+        let (base_ratio, quote_ratio) = ratio(price);
+        assert!(base_ratio == E_6);
+        assert!(
+            quote_ratio == (quote((base_ratio as u64), price) as u128)
+        );
+        (base_ratio_irreducible, quote_ratio_irreducible) = ratio_irreducible(price);
+        assert!(base_ratio_irreducible == E_1);
+        assert!(quote_ratio_irreducible == 979);
 
     }
 
@@ -1098,5 +1175,66 @@ module price::price {
         let price = price(100, 101);
         let base = (MAX_U64 as u64);
         quote(base, price);
+    }
+
+    #[test]
+    #[expected_failure(abort_code = E_INVALID_PRICE)]
+    public fun test_ratio_invalid_price() {
+        ratio(infinity());
+    }
+
+    #[test]
+    public fun test_total_order() {
+        // Verify zero is taken as less than the smallest representable term.
+        assert!(zero() < price_from_terms(M_MIN, N_16, false));
+        // For every possible encoded exponent in a regular price:
+        for (encoded_exponent in 0..N_32) {
+            // Get the normalized exponent terms.
+            let (normalized_exponent_magnitude, normalized_exponent_is_positive) =
+                if (encoded_exponent < N_16) {
+                    (N_16 - encoded_exponent, false)
+                } else {
+                    (encoded_exponent - N_16, true)
+                };
+            // For every exponent except the first, check total order for the boundary with the last
+            // exponent.
+            if (encoded_exponent > 0) {
+                let last_encoded_exponent = encoded_exponent - 1;
+                let (
+                    last_normalized_exponent_magnitude,
+                    last_normalized_exponent_is_positive
+                ) =
+                    if (last_encoded_exponent < N_16) {
+                        (N_16 - last_encoded_exponent, false)
+                    } else {
+                        (last_encoded_exponent - N_16, true)
+                    };
+                assert!(
+                    price_from_terms(
+                        M_MAX,
+                        last_normalized_exponent_magnitude,
+                        last_normalized_exponent_is_positive
+                    ) < price_from_terms(
+                        M_MIN,
+                        normalized_exponent_magnitude,
+                        normalized_exponent_is_positive
+                    )
+                );
+            };
+            // Check total order for minimum and maximum significand at current exponent.
+            assert!(
+                price_from_terms(
+                    M_MIN,
+                    normalized_exponent_magnitude,
+                    normalized_exponent_is_positive
+                ) < price_from_terms(
+                    M_MAX,
+                    normalized_exponent_magnitude,
+                    normalized_exponent_is_positive
+                )
+            );
+        };
+        // Verify the largest representable term is taken as less than infinity.
+        assert!(price_from_terms(M_MAX, N_15, true) < infinity());
     }
 }
