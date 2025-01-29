@@ -524,12 +524,12 @@ module price::price {
         assert!(floored_log_10_ratio_e19 <= N_34, E_TOO_LARGE_TO_REPRESENT);
 
         // The encoded exponent is the floored base-10 logarithm of the scaled ratio, incremented
-        // by the bias (16), then decremented by the maximum power of 10 that can fit in a `u64`
-        // (19). This is equivalent to decrementing by 3.
+        // by the bias (16), then decremented by the scalar from earlier, the maximum power of 10
+        // that can fit in a `u64` (19). This is equivalent to decrementing by 3.
         let encoded_exponent = floored_log_10_ratio_e19 - N_3;
 
-        // If scaled ratio is smaller than `E_7`, it must be right-padded to yield a canonicalized
-        // significand with 8 significant digits.
+        // If scaled ratio is smaller than `E_7`, it must be right-padded with zeroes to yield a
+        // canonicalized significand with 8 significant digits.
         let encoded_significand =
             if (ratio_e19 < E_7) {
                 ratio_e19 * (E_7 / max_power_10_leq_ratio_e19)
