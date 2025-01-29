@@ -1221,7 +1221,7 @@ module price::price {
                     )
                 );
             };
-            // Check total order for significands within the current exponent.
+            // Check total order for minimum and maximum significand at current exponent.
             assert!(
                 price_from_terms(
                     M_MIN,
