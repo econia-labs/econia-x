@@ -13,8 +13,8 @@ asset ("a posteriori fee").
 This implementation measures fee rates in $\frac{1}{100}$ of a basis point. For
 example a $1$% fee rate $f_p = 1$ corresponds to an integer fee rate of
 $f_i = 10,000$. Notably, fee rates can thus be encoded as a `u16` with a maximum
-rate of $\frac{2^{16} - 1}{10,000} = 6.5535$%, with the conversion from fee rate
-percentage to integer fee rate as follows:
+rate of $\frac{2^{16} - 1}{10,000} =$ $6.5535$%, with the conversion from fee
+rate percentage to integer fee rate as follows:
 
 $$
 \begin{aligned}
