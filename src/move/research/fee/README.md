@@ -25,6 +25,15 @@ $$
 f = \frac{f_{\%}}{100} V = \frac{f_i}{1,000,000} V
 $$
 
+Note the following definition of volume:
+
+> Volume is defined as the change in asset holdings experienced by the liquidity
+> provider (maker) of a trade, independent of fees paid by the swapper (taker).
+> This assumes makers do not pay a fee on provided liquidity.
+
+For example if a taker's quote input amount is 105 quote subunits, 5 of which is
+charged as fees and 100 of which is credited to the maker, quote volume is 100.
+
 ## Input and output assets
 
 The input and output asset for a taker order (simple swap) is as follows:
