@@ -36,8 +36,8 @@ Note the following definition of volume:
 > This assumes makers do not pay a fee on provided liquidity.
 
 For example if a taker's quote input amount is 105 quote subunits, 5 of which
-are charged as fees and 100 of which are credited to the maker, quote volume is
-100. Since fees are set aside *before* matching, this is an a priori fee.
+are charged as fees and 100 of which are credited to the maker, the quote volume
+is 100. Since fees are set aside *before* matching, this is an a priori fee.
 
 Conversely, if filling against a maker yields 100 base subunits, 5 of which are
 charged as fees and 95 of which are credited to the taker, base volume is 100.
