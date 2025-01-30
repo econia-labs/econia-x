@@ -5,8 +5,8 @@
 Fees can be assessed as a proportion of either base volume or quote volume
 depending on the fee collector's preferred asset. As such there are two
 equations for determining the fee assessed on any given trade, based on whether
-the source asset (base or quote) is the input asset ("a priori fees") or output
-asset ("a posteriori fees").
+the source asset (base or quote) is the input asset ("a priori fee") or output
+asset ("a posteriori fee").
 
 ## Notation and units
 
@@ -57,7 +57,7 @@ The input and output asset for a taker order (simple swap) is as follows:
 The output asset is the fee source for the two following scenarios:
 
 1. A swap sell with fees assessed in the quote asset.
-1. A swap buy with fees denominated in the base asset.
+1. A swap buy with fees assessed in the base asset.
 
 That is, all of the input asset is credited to the maker, then a portion of the
 asset yielded by the maker (volume) is taken as a fee. Consider volume $V$
@@ -115,7 +115,7 @@ The same solution holds for a swap buy with fees assessed in the base asset.
 The input asset is the fee source for the two following scenarios:
 
 1. A swap buy with fees assessed in the quote asset.
-1. A swap sell with fees denominated in the base asset.
+1. A swap sell with fees assessed in the base asset.
 
 That is, a portion of the input asset must be set aside to cover fees, then the
 remainder (volume) can be used to fill against a maker position. Consider input
