@@ -6,8 +6,8 @@ collateralized
 econia
 forall
 octas
-precommit
 posteriori
+precommit
 significand
 struct
 structs
