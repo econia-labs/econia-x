@@ -11,22 +11,22 @@ asset ("a posteriori fee").
 ## Notation and units
 
 This implementation measures fee rates in $\frac{1}{100}$ of a basis point. For
-example a $ 1\% $ nominal fee percentage $f_{\%} = 1\%$ corresponds to an integer
+example a $1$ percent nominal fee percentage $f_p = 1$ corresponds to an integer
 fee rate of $f_i = 10,000$. Notably, fee rates can thus be encoded as a `u16`
-with a maximum rate of $\frac{2^{16} - 1}{10,000} = 6.5535\%$, with the
+with a maximum rate of $\frac{2^{16} - 1}{10,000} = 6.5535$ percent, with the
 conversion from nominal fee rate percentage to integer fee rate as follows:
 
 $$
 \begin{aligned}
-f_{\%} &= \frac{f_i}{10,000} \\
-f_i &= 10,000 f_{\%}
+f_p &= \frac{f_i}{10,000} \\
+f_i &= 10,000 f_p
 \end{aligned}
 $$
 
 Thus to assess a fee $f$ on some volume $V$:
 
 $$
-f = \frac{f_{\%}}{100} V = \frac{f_i}{1,000,000} V
+f = \frac{f_p}{100} V = \frac{f_i}{1,000,000} V
 $$
 
 Note the following definition of volume:
@@ -76,13 +76,13 @@ $$
 
 #### Example
 
-Consider a swap sell with $f_{\%} = 0.5\%$ fees assessed in the quote asset,
+Consider a swap sell with $f_p = 0.5$ percent fees assessed in the quote asset,
 where the maker yields $V = 40,000$ quote subunits after filling against the
 base input from the swapper. The integer fee rate $f_i$:
 
 $$
 \begin{aligned}
-f_i &= 10,000 f_{\%} \\
+f_i &= 10,000 f_p \\
 f_i &= 10,000 \cdot 0.5 \\
 f_i &= 5,000
 \end{aligned}
@@ -144,13 +144,13 @@ $$
 
 #### Example
 
-Consider a swap buy with $f_{\%} = 1.5\%$ fees assessed in the quote asset,
-where the swapper has $I = 20,300$ subunits available as an input.
-The integer fee rate $f_i$:
+Consider a swap buy with $f_p = 1.5$ percent fees assessed in the quote asset,
+where the swapper has $I = 20,300$ subunits available as an input. The integer
+fee rate $f_i$:
 
 $$
 \begin{aligned}
-f_i &= 10,000 f_{\%} \\
+f_i &= 10,000 f_p \\
 f_i &= 10,000 \cdot 1.5 \\
 f_i &= 15,000
 \end{aligned}
