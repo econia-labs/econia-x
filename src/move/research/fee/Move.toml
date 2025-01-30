@@ -1,5 +1,5 @@
 [addresses]
-price = '_'
+fee = '_'
 
 [dependencies.AptosFramework]
 git = "https://github.com/aptos-labs/aptos-framework.git"
@@ -7,12 +7,12 @@ rev = "mainnet"
 subdir = "aptos-framework"
 
 [dev-addresses]
-price = '0xabc'
+fee = '0xabc'
 
 [dev-dependencies]
 
 [package]
 authors = ["Econia Labs (developers@econialabs.com)"]
-name = "Price"
+name = "Fee"
 upgrade_policy = "compatible"
 version = "0.1.0"
