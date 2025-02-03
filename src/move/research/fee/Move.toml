@@ -1,0 +1,18 @@
+[addresses]
+fee = '_'
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-addresses]
+fee = '0xabc'
+
+[dev-dependencies]
+
+[package]
+authors = ["Econia Labs (developers@econialabs.com)"]
+name = "Fee"
+upgrade_policy = "compatible"
+version = "0.1.0"
