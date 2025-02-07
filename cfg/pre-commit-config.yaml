@@ -2,12 +2,14 @@
 # cspell:word autoflake
 # cspell:word autoref
 # cspell:word chktex
+# cspell:word chktexrc
 # cspell:word cleveref
 # cspell:word csquotes
-# cspell:word isort
 # cspell:word frontmatter
+# cspell:word isort
 # cspell:word lacheck
 # cspell:word latexindent
+# cspell:word localrc
 # cspell:word markdownlint
 # cspell:word mdformat
 # cspell:word shfmt
