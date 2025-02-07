@@ -1,6 +1,7 @@
 # cspell:word latexmk
 # cspell:word synctex
 *.aux
+*.bak0
 *.fdb_latexmk
 *.fls
 *.log
