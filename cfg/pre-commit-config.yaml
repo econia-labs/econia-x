@@ -6,6 +6,7 @@
 # cspell:word csquotes
 # cspell:word isort
 # cspell:word frontmatter
+# cspell:word lacheck
 # cspell:word latexindent
 # cspell:word markdownlint
 # cspell:word mdformat
@@ -189,6 +190,12 @@ repos:
     id: 'chktex'
     language: 'system'
     name: 'chktex'
+    types:
+    - 'tex'
+  - entry: 'lacheck'
+    id: 'lacheck'
+    language: 'system'
+    name: 'lacheck'
     types:
     - 'tex'
   repo: 'local'
