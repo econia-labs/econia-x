@@ -1,7 +1,12 @@
 # cspell:word autofix
 # cspell:word autoflake
+# cspell:word autoref
+# cspell:word chktex
+# cspell:word cleveref
+# cspell:word csquotes
 # cspell:word isort
 # cspell:word frontmatter
+# cspell:word latexindent
 # cspell:word markdownlint
 # cspell:word mdformat
 # cspell:word shfmt
@@ -164,4 +169,27 @@ repos:
     id: 'cspell'
   repo: 'https://github.com/streetsidesoftware/cspell-cli'
   rev: 'v8.6.0'
+- hooks:
+  - id: 'latexindent'
+  repo: 'https://github.com/cmhughes/latexindent.pl.git'
+  rev: 'V3.24.4'
+- hooks:
+  - id: 'american-eg-ie'
+  - id: 'cleveref-capitalization'
+  - id: 'csquotes'
+  - id: 'ensure-labels-for-sections'
+  - id: 'no-space-in-cite'
+  - id: 'tilde-cite'
+  - id: 'unique-labels'
+  - id: 'cleveref-instead-of-autoref'
+  repo: 'https://github.com/jonasbb/pre-commit-latex-hooks'
+  rev: 'v1.4.3'
+- hooks:
+  - entry: 'chktex'
+    id: 'chktex'
+    language: 'system'
+    name: 'chktex'
+    types:
+    - 'tex'
+  repo: 'local'
 ...

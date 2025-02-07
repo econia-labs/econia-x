@@ -1,4 +1,10 @@
-# cspell:words snok, virtualenvs, pydeps, venv, Pylint, pylint
+# cspell:word chktex
+# cspell:word pydeps
+# cspell:word pylint
+# cspell:word snok
+# cspell:word texlive
+# cspell:word venv
+# cspell:word virtualenvs
 ---
 env:
   POETRY_VERSION: '1.8.2'
@@ -41,6 +47,10 @@ jobs:
         key: |
           pydeps-${{ hashFiles('./src/python/hooks/poetry.lock') }}
         path: './src/python/hooks/.venv'
+    - name: 'Install LaTeX and ChkTeX'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chktex texlive-base
     - uses: 'pre-commit/action@v3.0.0'
       with:
         extra_args: '--all-files --config cfg/pre-commit-config.yaml --verbose'

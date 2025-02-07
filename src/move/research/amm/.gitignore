@@ -1,3 +1,5 @@
+# cspell:word latexmk
+# cspell:word synctex
 *.aux
 *.fdb_latexmk
 *.fls
