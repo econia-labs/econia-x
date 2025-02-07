@@ -30,7 +30,10 @@ repos:
   repo: 'https://github.com/jonasbb/pre-commit-latex-hooks'
   rev: 'v1.4.3'
 - hooks:
-  - entry: 'chktex'
+  - args:
+    - '--localrc'
+    - 'cfg/chktex-config.chktexrc'
+    entry: 'chktex'
     id: 'chktex'
     language: 'system'
     name: 'chktex'
