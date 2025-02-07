@@ -5,8 +5,8 @@
 Fees can be assessed as a proportion of either base volume or quote volume
 depending on the fee collector's preferred asset. As such there are two
 equations for determining the fee assessed on any given trade, based on whether
-the source asset (base or quote) is the input asset ("a priori fee") or output
-asset ("a posteriori fee").
+the source asset (base or quote) is the input asset ("pre-match fee") or output
+asset ("post-match fee") of the swap.
 
 ## Notation and units
 
@@ -37,11 +37,11 @@ Note the following definition of volume:
 
 For example if a taker's quote input amount is 105 quote subunits, 5 of which
 are charged as fees and 100 of which are credited to the maker, the quote volume
-is 100. Since fees are set aside *before* matching, this is an a priori fee.
+is 100. Since fees are set aside *before* matching, this is a pre-match fee.
 
 Conversely, if filling against a maker yields 100 base subunits, 5 of which are
 charged as fees and 95 of which are credited to the taker, base volume is 100.
-Since fees are assessed *after* matching, this is an a posteriori fee.
+Since fees are assessed *after* matching, this is a post-match fee.
 
 ## Input and output assets
 
@@ -52,7 +52,7 @@ The input and output asset for a taker order (simple swap) is as follows:
 | Buy  | Quote       | Base         |
 | Sell | Base        | Quote        |
 
-### A posteriori fees
+### Post-match fees
 
 The output asset is the fee source for the two following scenarios:
 
@@ -110,7 +110,7 @@ $$
 
 The same solution holds for a swap buy with fees assessed in the base asset.
 
-### A priori fees
+### Pre-match fees
 
 The input asset is the fee source for the two following scenarios:
 
