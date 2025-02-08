@@ -40,11 +40,13 @@ repos:
   # to the directory containing the file, and then run lacheck on the file
   # directly so that it can incorporate relative references to other files.
   # Show all warnings and fail if any are found.
+  # yamllint disable rule:indentation
   - entry: |
       sh -c '
         cd $(dirname "$1") && \
         lacheck $(basename "$1") | tee /dev/stderr | grep -q "." && exit 1
       ' --
+    # yamllint enable rule:indentation
     id: 'lacheck'
     language: 'system'
     name: 'lacheck'

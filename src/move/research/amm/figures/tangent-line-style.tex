@@ -5,10 +5,10 @@
 	\tikzset{label node/.style = {#1}}
 \def\nodetext{#2}
 }
-\tikzset{
-	add node at x/.style 2 args = {
+\tikzset{%
+	add node at x/.style 2 args = {%
 			name path global = plot line,
-			/pgfplots/execute at end plot visualization/.append = {
+			/pgfplots/execute at end plot visualization/.append = {%
 					\begingroup
 					\@ifnextchar[{\parsenode}{\parsenode[]}#2\pgf@nil % chktex 1
 					\path[name path global = position line #1-1]
