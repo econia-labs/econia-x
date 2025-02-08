@@ -38,13 +38,22 @@ repos:
     - 'tex'
   # Before running lacheck on an individual file, change the working directory
   # to the directory containing the file, and then run lacheck on the file
-  # directly so that it can incorporate relative references to other files.
-  # Show all warnings and fail if any are found.
+  # directly so that lacheck can incorporate relative references to imports.
+  # Show all warnings and fail if any are found, but ignore:
+  # - Lines starting with ** (input file notifications).
+  # - Warnings about @ in LaTeX macro names.
+  # See https://tex.stackexchange.com/a/155451
   # yamllint disable rule:indentation
   - entry: |
       sh -c '
         cd $(dirname "$1") && \
-        lacheck $(basename "$1") | tee /dev/stderr | grep -q "." && exit 1
+        output=$(lacheck $(basename "$1") | \
+          grep -v "^\*\*" | \
+          grep -v "Do not use @ in LaTeX macro names" || true) && \
+        if [ -n "$output" ]; then
+          echo "$output"
+          exit 1
+        fi
       ' --
     # yamllint enable rule:indentation
     id: 'lacheck'
