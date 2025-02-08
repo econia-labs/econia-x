@@ -36,7 +36,10 @@ repos:
     name: 'chktex'
     types:
     - 'tex'
-  - entry: 'lacheck'
+  # Before running lacheck on an individual file, change the working directory
+  # to the directory containing the file, and then run lacheck on the file
+  # directly so that it can incoporate relative references to other files.
+  - entry: 'sh -c "cd $(dirname "$1") && lacheck $(basename "$1")"'
     id: 'lacheck'
     language: 'system'
     name: 'lacheck'
