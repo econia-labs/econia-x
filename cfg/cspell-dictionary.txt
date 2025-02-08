@@ -1,12 +1,13 @@
 aptos
 auid
 bitshift
+chktex
 clmm
 collateralized
+cpamm
 econia
 forall
 octas
-posteriori
 precommit
 significand
 struct
