@@ -1,13 +1,67 @@
 # cspell:word autofix
 # cspell:word autoflake
-# cspell:word isort
+# cspell:word autoref
+# cspell:word cleveref
+# cspell:word csquotes
 # cspell:word frontmatter
+# cspell:word isort
+# cspell:word lacheck
+# cspell:word latexindent
+# cspell:word localrc
 # cspell:word markdownlint
 # cspell:word mdformat
 # cspell:word shfmt
 # cspell:word mypy
 ---
 repos:
+- hooks:
+  - id: 'latexindent'
+  repo: 'https://github.com/cmhughes/latexindent.pl.git'
+  rev: 'V3.24.4'
+- hooks:
+  - id: 'american-eg-ie'
+  - id: 'cleveref-capitalization'
+  - id: 'csquotes'
+  - id: 'ensure-labels-for-sections'
+  - id: 'no-space-in-cite'
+  - id: 'tilde-cite'
+  - id: 'unique-labels'
+  - id: 'cleveref-instead-of-autoref'
+  repo: 'https://github.com/jonasbb/pre-commit-latex-hooks'
+  rev: 'v1.4.3'
+- hooks:
+  - entry: 'chktex'
+    id: 'chktex'
+    language: 'system'
+    name: 'chktex'
+    types:
+    - 'tex'
+  # Before running lacheck on an individual file, change the working directory
+  # to the directory containing the file, and then run lacheck on the file
+  # directly so that lacheck can incorporate relative references to imports.
+  # Show all warnings and fail if any are found, but ignore:
+  # - Lines starting with ** (input file notifications).
+  # - Warnings about @ in LaTeX macro names.
+  # See https://tex.stackexchange.com/a/155451
+  # yamllint disable rule:indentation
+  - entry: |
+      sh -c '
+        cd $(dirname "$1") && \
+        output=$(lacheck $(basename "$1") | \
+          grep -v "^\*\*" | \
+          grep -v "Do not use @ in LaTeX macro names" || true) && \
+        if [ -n "$output" ]; then
+          echo "$output"
+          exit 1
+        fi
+      ' --
+    # yamllint enable rule:indentation
+    id: 'lacheck'
+    language: 'system'
+    name: 'lacheck'
+    types:
+    - 'tex'
+  repo: 'local'
 -
   hooks:
   -

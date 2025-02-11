@@ -1,0 +1,53 @@
+\documentclass[table, twocolumn]{article}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage[acronym]{glossaries}
+\usepackage{pgfplots}
+\usepackage{xcolor}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{intersections}
+
+% Page options.
+\pagecolor{black}
+\color{gray!70}
+\geometry{left=35pt, top=50pt, bottom=50pt, right=35pt}
+
+% Acronyms.
+\newacronym{amm}{AMM}{Automated Market Maker}
+\newacronym{cpamm}{CPAMM}{Constant Product Automated Market Maker}
+\newacronym{lp}{LP}{Liquidity Provider}
+
+% Links.
+\hypersetup{colorlinks=true, allcolors={blue}}
+
+\title{Custom Automated Market Maker}
+\author{Econia Labs}
+\date{}
+
+% TikZ set for tangent lines.
+\input{figures/tangent-line-style.tex}
+
+\begin{document} % chktex 17
+
+\maketitle
+
+\section{Spot price}\label{sec:spot-price}
+
+In the absence of fees, the spot price of a \gls*{cpamm} is determined by the ratio of
+quote reserves $q$ to base reserves $b$ as defined in Equation~\ref{eqn:price-defined}.
+\begin{equation}\label{eqn:price-defined}
+  p = \frac{q}{b}
+\end{equation}
+
+Note that this represents the instantaneous derivative of the constant product curve
+for the given reserve amounts, as illustrated in Figure~\ref{fig:spot-price-no-fees}.
+
+\begin{figure}[!htb]
+	\centering
+	\input{figures/spot-price-simple.tex}
+	\caption{Spot price without fees}\label{fig:spot-price-no-fees}
+\end{figure}
+
+\end{document} % chktex 17

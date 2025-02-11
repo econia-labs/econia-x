@@ -1,0 +1,39 @@
+\begin{tikzpicture}
+	\begin{axis}[
+			axis lines = left,
+			xlabel = Base reserves,
+			ylabel = Quote reserves,
+			xmin = 0,
+			xmax = 3,
+			ymin = 0,
+			ymax = 3,
+			ytick=\empty,
+			xtick=\empty,
+			extra x ticks = {1},
+			extra x tick labels = {$b$},
+			extra y ticks = {1},
+			extra y tick labels = {$q$},
+			tick style = {thick, major tick length = 7pt},
+			legend style = {fill = black, draw = gray},
+			% Tangent lines on graph per https://tex.stackexchange.com/a/198046.
+			tangent/.style={%
+					add node at x={1}{[
+									sloped, minimum width = 75pt,
+									append after command =
+										{(\tikzlastnode.west) edge [thick] (\tikzlastnode.east)}
+								]}
+				}
+		]
+		\addplot [
+			domain = 0:5,
+			samples = 100,
+			color = blue,
+			thick,
+			tangent,
+		] {1 / x};
+		\node at (1.75, 1) [] {$p = -\frac{dq}{db}|_{b} = \frac{q}{b}$};
+		\node at (1, 1) [circle, fill, scale = 0.5] {};
+		\draw [dashed] (1, 0) -- (1, 1);
+		\draw [dashed] (0, 1) -- (1, 1);
+	\end{axis}
+\end{tikzpicture}
