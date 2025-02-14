@@ -35,19 +35,20 @@
 
 \section{Spot price}\label{sec:spot-price}
 
-In the absence of fees, the spot price of a \gls*{cpamm} is determined by the ratio of
-quote reserves $q$ to base reserves $b$ as defined in Equation~\ref{eqn:price-defined}.
+The spot price of a \gls*{cpamm} is determined by the ratio of quote reserves $q$ to
+base reserves $b$ per Equation~\ref{eqn:price-defined}.
+
 \begin{equation}\label{eqn:price-defined}
   p = \frac{q}{b}
 \end{equation}
 
 Note that this represents the instantaneous derivative of the constant product curve
-for the given reserve amounts, as illustrated in Figure~\ref{fig:spot-price-no-fees}.
+for the given reserve amounts, as illustrated in Figure~\ref{fig:spot-price}.
 
 \begin{figure}[!htb]
 	\centering
-	\input{figures/spot-price-simple.tex}
-	\caption{Spot price without fees}\label{fig:spot-price-no-fees}
+	\input{figures/spot-price.tex}
+	\caption{Spot price}\label{fig:spot-price}
 \end{figure}
 
 \end{document} % chktex 17
