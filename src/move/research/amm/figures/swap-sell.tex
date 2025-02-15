@@ -10,9 +10,9 @@
 			ytick=\empty,
 			xtick=\empty,
 			extra x ticks = {0.5, 2},
-			extra x tick labels = {$b_0$, $b_f$},
+			extra x tick labels = {$b_i$, $b_f$},
 			extra y ticks = {2, 0.5},
-			extra y tick labels = {$q_0$, $q_f$},
+			extra y tick labels = {$q_i$, $q_f$},
 			tick style = {thick, major tick length = 7pt},
 			legend style = {fill = black, draw = gray},
 			% Tangent lines on graph per https://tex.stackexchange.com/a/198046.
@@ -35,28 +35,17 @@
 			thick,
 			tangent,
 		] {1 / x};
-		\addlegendentry{Before reinvestment}
-		\addplot [
-			domain = 0:5,
-			samples = 100,
-			color = green,
-			thick,
-			tangent,
-		] {1.75 / x};
-		\addlegendentry{After reinvestment}
 		\node at (2, 0.5) [circle, fill, scale = 0.5] {};
-		\node at (2, 0.875) [circle, fill, scale = 0.5] {};
 		\node at (0.5, 2) [circle, fill, scale = 0.5] {};
 		\draw [dashed] (0.5, 0) -- (0.5, 2);
 		\draw [dashed] (0, 2) -- (0.5, 2);
-		\draw [dashed] (2, 0) -- (2, 0.875);
+		\draw [dashed] (2, 0) -- (2, 0.5);
 		\draw [dashed] (0, 0.5) -- (2, 0.5);
-		\draw [dashed] (0, 0.875) -- (2, 0.875);
 		\draw [arrows = {-Latex[]}] (0.5, 0.125) -- (2, 0.125);
-		\node at (1.25, 0.25) [] {$b_{in}$} ;
+		\node at (1.25, 0.25) [] {$b_{in}$};
 		\draw [arrows = {-Latex[]}] (0.125, 2) -- (0.125, 0.5);
-		\draw [arrows = {-Latex[]}] (0.625, 0.5) -- (0.625, 0.875);
-		\node at (0.3, 1.25) [] {$q_{out}$} ;
-		\node at (0.9, 0.6875) [] {$f_p \cdot q_{out}$} ;
+		\node at (0.3, 1.25) [] {$q_{out}$};
+		\node at (0.7, 2) [] {$p_i$};
+		\node at (2, 0.7) [] {$p_f$};
 	\end{axis}
 \end{tikzpicture}
