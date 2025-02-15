@@ -53,6 +53,44 @@ amounts, as illustrated in Figure~\ref{fig:spot-price}.
 
 \section{Swap prices}\label{sec:swap-prices}
 
+Since a swap involves a change in reserves, the spot price changes as well. There are
+three prices associated with a swap: the initial spot price $p_i$, the final spot price
+$p_f$, and the swap price $p_s$, representing the ratio of base and quote exchanged
+during the swap.
+
+\subsection{Swap sell}\label{subsec:swap-sell}
+
+Figure~\ref{fig:swap-sell} illustrates a swap where base input amount $b_{in}$ is sold
+for quote output amount $q_{out}$. Here, $b_f$ is a simple sum per
+Equation~\ref{eqn:swap-sell-base-final}.
+
+\begin{equation}\label{eqn:swap-sell-base-final}
+	b_f = b_i + b_{in}
+\end{equation}
+
+Given the constant production assumption, $q_f$ is thus calculated per
+Equation~\ref{eqn:swap-sell-quote-final}.
+
+\begin{align}\label{eqn:swap-sell-quote-final}
+  b_i \cdot q_i &= b_f \cdot q_f \nonumber \\
+  b_i \cdot q_i &= (b_i + b_{in}) \cdot q_f \nonumber \\
+  q_f &= \frac{b_i \cdot q_i}{b_i + b_{in}}
+\end{align}
+
+$q_{out}$ is then the difference between $q_i$ and $q_f$ per
+Equation~\ref{eqn:swap-sell-quote-output}.
+
+\begin{align}\label{eqn:swap-sell-quote-output}
+  q_{out} &= q_i - q_f \nonumber \\
+  q_{out} &= q_i - \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber \\
+  q_{out} &= q_i \left( 1 - \frac{b_i}{b_i + b_{in}} \right) \nonumber \\
+  q_{out} &= q_i \left(
+    \frac{b_i + b_{in}}{b_i + b_{in}} - \frac{b_i}{b_i + b_{in}}
+  \right) \nonumber \\
+  q_{out} &= q_i \left( \frac{b_{in}}{b_i + b_{in}} \right) \nonumber \\
+  q_{out} &= \frac{q_i \cdot b_{in}}{b_i + b_{in}}
+\end{align}
+
 \begin{figure}[!htb]
 	\centering
 	\input{figures/swap-sell.tex}
