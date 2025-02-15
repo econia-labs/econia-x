@@ -35,21 +35,21 @@
 			thick,
 			tangent,
 		] {1 / x};
-    % Initial price.
+		% Initial price.
 		\node at (0.325, 2.15) [] {$p_i$};
 		\node at (0.5, 2) [circle, fill, scale = 0.5] {};
-    % Final price.
+		% Final price.
 		\node at (2.15, 0.325) [] {$p_f$};
 		\node at (2, 0.5) [circle, fill, scale = 0.5] {};
-    % Swap price.
+		% Swap price.
 		\draw [arrows = {-Latex[]}, thick] (0.5, 2) -- (2, 0.5);
 		\node at (1.35, 1.35) [] {$p_s$};
-    % Base delta.
+		% Base delta.
 		\node at (1.25, 0.25) [] {$b_{in}$};
 		\draw [arrows = {-Latex[]}] (0.5, 0.125) -- (2, 0.125);
 		\draw [dashed] (0.5, 0) -- (0.5, 2);
 		\draw [dashed] (2, 0) -- (2, 0.5);
-    % Quote delta.
+		% Quote delta.
 		\node at (0.3, 1.25) [] {$q_{out}$};
 		\draw [arrows = {-Latex[]}] (0.125, 2) -- (0.125, 0.5);
 		\draw [dashed] (0, 2) -- (0.5, 2);
