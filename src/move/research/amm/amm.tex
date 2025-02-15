@@ -123,13 +123,15 @@ Equation~\ref{eqn:swap-sell-quote-final} yields $q_{out}(b_i, q_i, b_{in})$
 per Equation~\ref{eqn:swap-sell-quote-output}.
 
 \begin{align}\label{eqn:swap-sell-quote-output}
-	q_{out}                    & = q_i - q_f \nonumber                                       \\
-	q_{out}                    & = q_i - \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber        \\
-	q_{out}                    & = q_i \left( 1 - \frac{b_i}{b_i + b_{in}} \right) \nonumber \\
+	q_{out}                    & = q_i - q_f \nonumber                                \\
+	q_{out}                    & = q_i - \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber \\
+	q_{out}                    & =
+	q_i \left( 1 - \frac{b_i}{b_i + b_{in}} \right) \nonumber                         \\
 	q_{out}                    & = q_i \left(
 	\frac{b_i + b_{in}}{b_i + b_{in}} - \frac{b_i}{b_i + b_{in}}
-	\right) \nonumber                                                                        \\
-	q_{out}                    & = q_i \left( \frac{b_{in}}{b_i + b_{in}} \right) \nonumber  \\
+	\right) \nonumber                                                                 \\
+	q_{out}                    & =
+	q_i \left( \frac{b_{in}}{b_i + b_{in}} \right) \nonumber                          \\
 	q_{out} (b_i, q_i, b_{in}) & = \frac{q_i \cdot b_{in}}{b_i + b_{in}}
 \end{align}
 
