@@ -7,6 +7,8 @@
 # cspell:word virtualenvs
 ---
 env:
+  APTOS_CLI_ACTION: 'aptos-labs/aptos-core/.github/actions/get-latest-cli'
+  APTOS_CLI_ACTION_COMMIT: 'e035f8635bc5407339c225197e30c0e9d10a70e2'
   POETRY_VERSION: '1.8.2'
   PYTHON_VERSION: '3.9'
 jobs:
@@ -17,7 +19,7 @@ jobs:
     - uses: 'actions/setup-python@v3'
       with:
         python-version: '${{ env.PYTHON_VERSION }}'
-    - uses: 'aptos-labs/aptos-core/.github/actions/get-latest-cli@e035f8635bc5'
+    - uses: '${{ env.APTOS_CLI_ACTION }}@${{ env.APTOS_CLI_ACTION_COMMIT }}'
       with:
         destination_directory: '/usr/local/bin'
     - name: 'Install LaTeX lint dependencies'
