@@ -61,6 +61,15 @@ repos:
     name: 'lacheck'
     types:
     - 'tex'
+  -
+    entry: |
+      sh -c '
+        aptos move fmt --package-path $(dirname "$1")
+      '
+    files: 'Move\.toml$'
+    id: 'movefmt'
+    language: 'system'
+    name: 'movefmt'
   repo: 'local'
 -
   hooks:
