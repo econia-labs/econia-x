@@ -63,9 +63,7 @@ repos:
     - 'tex'
   -
     entry: |
-      sh -c '
-        aptos move fmt --package-path $(dirname "$1")
-      '
+      sh -c 'aptos move fmt --package-path $(dirname "$1")'
     files: 'Move\.toml$'
     id: 'movefmt'
     language: 'system'
