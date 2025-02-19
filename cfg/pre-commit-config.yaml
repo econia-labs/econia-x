@@ -62,9 +62,17 @@ repos:
     types:
     - 'tex'
   -
+    # Loop over each Move.toml file passed per filename batch, and format the
+    # corresponding package directory, exiting with error if any format fails.
+    # yamllint disable rule:indentation
     entry: |
-      sh -c 'aptos move fmt --package-path $(dirname "$1")'
-    files: 'Move\.toml$'
+      sh -c '
+        for f in "$@"; do
+          aptos move fmt --package-path "$(dirname "$f")" || exit 1
+        done
+      '
+    # yamllint enable rule:indentation
+    files: 'Move.toml'
     id: 'movefmt'
     language: 'system'
     name: 'movefmt'
