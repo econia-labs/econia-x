@@ -25,6 +25,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y chktex lacheck texlive-base
+    - name: 'Update movefmt'
+      run: 'aptos update movefmt'
     - name: 'Cache Poetry Install'
       uses: 'actions/cache@v3'
       with:
