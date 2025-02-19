@@ -4,7 +4,7 @@ module research::structs {
 
     struct Ratio has copy, drop {
         numerator: u64,
-        denominator: u64,
+        denominator: u64
     }
 
     /// An NFT.
@@ -16,7 +16,7 @@ module research::structs {
         /// Q128.128, representing virtual quote in pool at time of contribution.
         virtual_quote_start: u256,
         lower_price_bound: Ratio,
-        upper_price_bound: Ratio,
+        upper_price_bound: Ratio
     }
 
     struct Tick {
@@ -30,7 +30,7 @@ module research::structs {
         /// When 0, tick can be closed.
         n_referencing_positions: u64,
         base_growth_outside: u64,
-        quote_growth_outside: u64,
+        quote_growth_outside: u64
     }
 
     struct Pool {
@@ -47,7 +47,6 @@ module research::structs {
         lp_tokens_base_in: u64,
         lp_tokens_quote_in: u64,
         lp_tokens_virtual_base_last: u64,
-        lp_tokens_virtual_quote_last: u64,
+        lp_tokens_virtual_quote_last: u64
     }
-
 }
