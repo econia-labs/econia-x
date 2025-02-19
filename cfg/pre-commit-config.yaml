@@ -30,31 +30,49 @@ repos:
   repo: 'https://github.com/jonasbb/pre-commit-latex-hooks'
   rev: 'v1.4.3'
 - hooks:
-  - entry: 'chktex'
+  # Loop through each tex file passed by pre-commit (files are passed in
+  # batches). Run chktex on each file. If any check fails, exit with error.
+  - entry: |
+      sh -c '
+        for f in "$@"; do
+          chktex "$f" || exit 1
+        done
+      '
     id: 'chktex'
     language: 'system'
     name: 'chktex'
     types:
     - 'tex'
+  # Loop through each tex file passed by pre-commit (files are passed in
+  # batches). Run lacheck on each file. If any check fails, exit with error.
+  #
   # Before running lacheck on an individual file, change the working directory
   # to the directory containing the file, and then run lacheck on the file
   # directly so that lacheck can incorporate relative references to imports.
+  #
   # Show all warnings and fail if any are found, but ignore:
   # - Lines starting with ** (input file notifications).
-  # - Warnings about @ in LaTeX macro names.
-  # See https://tex.stackexchange.com/a/155451
+  # - Warnings about @ in macros per https://tex.stackexchange.com/a/155451.
+  #
   # yamllint disable rule:indentation
   - entry: |
       sh -c '
-        cd $(dirname "$1") && \
-        output=$(lacheck $(basename "$1") | \
-          grep -v "^\*\*" | \
-          grep -v "Do not use @ in LaTeX macro names" || true) && \
-        if [ -n "$output" ]; then
-          echo "$output"
-          exit 1
-        fi
-      ' --
+        # Exit on first error.
+        set -e
+        # Loop through all files passed by pre-commit.
+        for f in "$@"; do
+          cd "$(dirname "$f")" && \
+          output=$(lacheck "$(basename "$f")" | \
+            grep -v "^\*\*" | \
+            grep -v "Do not use @ in LaTeX macro names" || true) && \
+          if [ -n "$output" ]; then
+            echo "$output"
+            exit 1
+          fi
+          # Return to original directory for next file.
+          cd - > /dev/null
+        done
+      '
     # yamllint enable rule:indentation
     id: 'lacheck'
     language: 'system'
