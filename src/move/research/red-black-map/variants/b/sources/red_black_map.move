@@ -268,8 +268,8 @@ module red_black_map::red_black_map {
             // position. Note that child direction of successor position is originally right only
             // when the successor loop does not iterate past the right child of the original node,
             // e.g. when the successor is the only node in the right subtree of the original node.
-            child_direction = if (right_child_index == successor_index) RIGHT
-            else LEFT;
+            child_direction =
+                if (right_child_index == successor_index) RIGHT else LEFT;
             node_index = successor_index;
             parent_index = successor_parent_index;
             left_child_index = NIL; // Successor position has no left child.
@@ -364,11 +364,10 @@ module red_black_map::red_black_map {
                 parent_index = nodes_ref_mut[new_node_index].parent;
                 if (parent_index == NIL) break;
                 parent_ref_mut = &mut nodes_ref_mut[parent_index];
-                child_direction = if (new_node_index == parent_ref_mut.children[LEFT])
-                    LEFT
+                child_direction =
+                    if (new_node_index == parent_ref_mut.children[LEFT]) LEFT
 
-
-                else RIGHT;
+                    else RIGHT;
             }; // Case_D1.
         };
 
@@ -778,22 +777,24 @@ module red_black_map::red_black_map {
             parent_index = node_ref.parent;
             if (parent_index == NIL) continue; // From now on is black non-root leaf.
             parent_ref = &nodes_ref[parent_index];
-            child_direction = if (node_index == parent_ref.children[LEFT]) LEFT
-            else RIGHT;
+            child_direction =
+                if (node_index == parent_ref.children[LEFT]) LEFT
+                else RIGHT;
             sibling_index = parent_ref.children[1 - child_direction];
             sibling_ref = &nodes_ref[sibling_index];
             if (sibling_ref.color is Color::Black) continue; // From now on is case D3.
             close_nephew_index = sibling_ref.children[child_direction];
 
             // Simulate check that triggers Case_D6.
-            new_distant_nephew_index = nodes_ref[close_nephew_index].children[1
-                - child_direction];
+            new_distant_nephew_index =
+                nodes_ref[close_nephew_index].children[1 - child_direction];
             if (new_distant_nephew_index != NIL
                 && (nodes_ref[new_distant_nephew_index].color is Color::Red))
                 continue;
 
             // Identify Case_D5 fall through check.
-            new_close_nephew_index = nodes_ref[close_nephew_index].children[child_direction];
+            new_close_nephew_index =
+                nodes_ref[close_nephew_index].children[child_direction];
             if (new_close_nephew_index != NIL
                 && (nodes_ref[new_close_nephew_index].color is Color::Red)) {
                 return node_index;
@@ -819,8 +820,9 @@ module red_black_map::red_black_map {
             if (parent_index == NIL) continue; // From now on is black non-root leaf.
             parent_ref = &nodes_ref[parent_index];
             if (parent_ref.parent == NIL) continue; // From now on parent is not root.
-            child_direction = if (node_index == parent_ref.children[LEFT]) LEFT
-            else RIGHT;
+            child_direction =
+                if (node_index == parent_ref.children[LEFT]) LEFT
+                else RIGHT;
             sibling_index = parent_ref.children[1 - child_direction];
             sibling_ref = &nodes_ref[sibling_index];
             // If sibling is red, Case_D3 with non-root parent.
@@ -846,8 +848,9 @@ module red_black_map::red_black_map {
             parent_index = node_ref.parent;
             if (parent_index == NIL) continue; // From now on is black non-root leaf.
             parent_ref = &nodes_ref[parent_index];
-            child_direction = if (node_index == parent_ref.children[LEFT]) LEFT
-            else RIGHT;
+            child_direction =
+                if (node_index == parent_ref.children[LEFT]) LEFT
+                else RIGHT;
             sibling_index = parent_ref.children[1 - child_direction];
             sibling_ref = &nodes_ref[sibling_index];
             distant_nephew_index = sibling_ref.children[1 - child_direction];
@@ -878,8 +881,9 @@ module red_black_map::red_black_map {
             parent_index = node_ref.parent;
             if (parent_index == NIL) continue; // From now on is black non-root leaf.
             parent_ref = &nodes_ref[parent_index];
-            child_direction = if (node_index == parent_ref.children[LEFT]) LEFT
-            else RIGHT;
+            child_direction =
+                if (node_index == parent_ref.children[LEFT]) LEFT
+                else RIGHT;
             sibling_index = parent_ref.children[1 - child_direction];
             sibling_ref = &nodes_ref[sibling_index];
             distant_nephew_index = sibling_ref.children[1 - child_direction];

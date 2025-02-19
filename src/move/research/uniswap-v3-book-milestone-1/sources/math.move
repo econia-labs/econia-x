@@ -6,9 +6,8 @@ module research::math {
     const SHIFT_Q64: u8 = 64;
 
     inline fun sqrt(i: u256): u256 {
-        if (i <= 1) {
-            i
-        } else {
+        if (i <= 1) { i }
+        else {
             let estimate = 1 << ((log2_unchecked(i) / 2) + 1);
             let update;
             loop {
@@ -35,11 +34,17 @@ module research::math {
         result
     }
 
-    public(friend) inline fun u64_to_q64(x: u64): u128 { (x as u128) << SHIFT_Q64 }
+    public(friend) inline fun u64_to_q64(x: u64): u128 {
+        (x as u128) << SHIFT_Q64
+    }
 
-    public(friend) inline fun q64_to_u64(x: u128): u64 { ((x >> SHIFT_Q64) as u64) }
+    public(friend) inline fun q64_to_u64(x: u128): u64 {
+        ((x >> SHIFT_Q64) as u64)
+    }
 
-    public(friend) inline fun sqrt_q64(x: u128): u128 { (sqrt((x as u256) << SHIFT_Q64) as u128) }
+    public(friend) inline fun sqrt_q64(x: u128): u128 {
+        (sqrt((x as u256) << SHIFT_Q64) as u128)
+    }
 
     /// Does not check for overflow.
     public(friend) inline fun multiply_q64_unchecked(a: u128, b: u128): u128 {
@@ -52,10 +57,14 @@ module research::math {
     }
 
     /// Does not check for overflow.
-    public(friend) inline fun add_q64_unchecked(a: u128, b: u128): u128 { a + b }
+    public(friend) inline fun add_q64_unchecked(a: u128, b: u128): u128 {
+        a + b
+    }
 
     /// Does not check for underflow.
-    public(friend) inline fun subtract_q64_unchecked(a: u128, b: u128): u128 { a - b }
+    public(friend) inline fun subtract_q64_unchecked(a: u128, b: u128): u128 {
+        a - b
+    }
 
     #[test]
     /// Adapted from `aptos_stdlib::math128`.
@@ -90,5 +99,4 @@ module research::math {
         assert!(add_q64_unchecked(a, b) == u64_to_q64(18), 0);
         assert!(subtract_q64_unchecked(a, b) == b, 0);
     }
-
 }
