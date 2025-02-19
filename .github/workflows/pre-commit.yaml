@@ -7,6 +7,7 @@
 # cspell:word virtualenvs
 ---
 env:
+  MOVEFMT_VERSION: 'v1.0.7'
   POETRY_VERSION: '1.8.2'
   PYTHON_VERSION: '3.9'
 jobs:
@@ -26,7 +27,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y chktex lacheck texlive-base
     - name: 'Update movefmt'
-      run: 'aptos update movefmt'
+      run: 'aptos update movefmt --target-version "${{ env.MOVEFMT_VERSION }}"'
     - name: 'Cache Poetry Install'
       uses: 'actions/cache@v3'
       with:
