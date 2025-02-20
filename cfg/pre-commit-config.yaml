@@ -30,84 +30,30 @@ repos:
   repo: 'https://github.com/jonasbb/pre-commit-latex-hooks'
   rev: 'v1.4.3'
 - hooks:
-  # Loop through each tex file passed by pre-commit (files are passed in
-  # batches). Run chktex on each file. If any check fails, exit with error.
-  # yamllint disable rule:indentation
-  - entry: |
-      sh -c '
-        for f in "$@"; do
-          chktex "$f" || exit 1
-        done
-      '
-    # yamllint enable rule:indentation
+  - entry: 'sh src/sh/pre-commit-local-hooks/chktex.sh'
     id: 'chktex'
     language: 'system'
     name: 'chktex'
     types:
     - 'tex'
-  # Loop through each tex file passed by pre-commit (files are passed in
-  # batches). Run lacheck on each file. If any check fails, exit with error.
-  #
-  # Before running lacheck on an individual file, change the working directory
-  # to the directory containing the file, and then run lacheck on the file
-  # directly so that lacheck can incorporate relative references to imports.
-  #
-  # Show all warnings and fail if any are found, but ignore:
-  # - Lines starting with ** (input file notifications).
-  # - Warnings about @ in macros per https://tex.stackexchange.com/a/155451.
-  #
-  # yamllint disable rule:indentation
-  - entry: |
-      sh -c '
-        # Exit on first error.
-        set -e
-        # Loop through all files passed by pre-commit.
-        for f in "$@"; do
-          cd "$(dirname "$f")" && \
-          output=$(lacheck "$(basename "$f")" | \
-            grep -v "^\*\*" | \
-            grep -v "Do not use @ in LaTeX macro names" || true) && \
-          if [ -n "$output" ]; then
-            echo "$output"
-            exit 1
-          fi
-          # Return to original directory for next file.
-          cd - > /dev/null
-        done
-      '
-    # yamllint enable rule:indentation
+  - entry: 'sh src/sh/pre-commit-local-hooks/lacheck.sh'
     id: 'lacheck'
     language: 'system'
     name: 'lacheck'
     types:
     - 'tex'
-  -
-    # Loop over each Move.toml file passed per filename batch, and format the
-    # corresponding package directory, exiting with error if any format fails.
-    # yamllint disable rule:indentation
-    entry: |
-      sh -c '
-        for f in "$@"; do
-          aptos move fmt --package-path "$(dirname "$f")" || exit 1
-        done
-      '
-    # yamllint enable rule:indentation
+  - entry: 'sh src/sh/pre-commit-local-hooks/movefmt.sh'
     files: 'Move.toml'
     id: 'movefmt'
     language: 'system'
     name: 'movefmt'
-  repo: 'local'
--
-  hooks:
-  -
-    entry: './src/sh/ensure-shebang.sh'
+  - entry: './src/sh/pre-commit-local-hooks/ensure-shebang.sh'
     id: 'ensure-shebang'
     language: 'script'
     name: 'ensure shebang'
     types:
     - 'shell'
-  -
-    entry: './src/sh/python-lint/poetry-check.sh'
+  - entry: './src/sh/python-lint/poetry-check.sh'
     id: 'local-poetry-check'
     language: 'script'
     name: 'local poetry check'
@@ -124,8 +70,7 @@ repos:
     name: '.gitignore Formatter'
     types:
     - 'gitignore'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run python -m file_name_conventions'
       'Please run src/sh/python-lint/format.sh and fix the errors.'
@@ -134,8 +79,7 @@ repos:
     name: 'check file name conventions'
     types:
     - 'python'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run autoflake -c --remove-all-unused-imports
       --remove-unused-variables --ignore-init-module-imports'
@@ -145,8 +89,7 @@ repos:
     name: 'autoflake'
     types:
     - 'python'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run black --check'
       'Please run src/sh/python-lint/format.sh and fix the errors.'
@@ -155,8 +98,7 @@ repos:
     name: 'black'
     types:
     - 'python'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run flake8'
       'Please run src/sh/python-lint/format.sh and fix the errors.'
@@ -165,8 +107,7 @@ repos:
     name: 'flake8'
     types:
     - 'python'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run isort --check'
       'Please run src/sh/python-lint/format.sh and fix the errors.'
@@ -175,8 +116,7 @@ repos:
     name: 'isort'
     types:
     - 'python'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run mypy'
       'Please run src/sh/python-lint/format.sh and fix the errors.'
@@ -186,25 +126,21 @@ repos:
     types:
     - 'python'
   repo: 'local'
--
-  hooks:
+- hooks:
   - id: 'check-added-large-files'
   - id: 'check-case-conflict'
   - id: 'detect-private-key'
   - id: 'end-of-file-fixer'
-  -
-    files: 'cfg/cspell-dictionary.txt'
+  - files: 'cfg/cspell-dictionary.txt'
     id: 'file-contents-sorter'
   - id: 'mixed-line-ending'
-  -
-    args:
+  - args:
     - '--autofix'
     id: 'pretty-format-json'
   - id: 'trailing-whitespace'
   repo: 'https://github.com/pre-commit/pre-commit-hooks'
   rev: 'v4.5.0'
--
-  hooks:
+- hooks:
   - additional_dependencies:
     - 'mdformat-gfm'
     - 'mdformat-frontmatter'
@@ -212,42 +148,33 @@ repos:
     id: 'mdformat'
   repo: 'https://github.com/executablebooks/mdformat'
   rev: '0.7.21'
--
-  hooks:
-  -
-    args:
+- hooks:
+  - args:
     - '--config'
     - 'cfg/markdownlint-config.yaml'
     id: 'markdownlint-fix'
   repo: 'https://github.com/igorshubovych/markdownlint-cli'
   rev: 'v0.39.0'
--
-  hooks:
-  -
-    args:
+- hooks:
+  - args:
     - '--autofix'
     id: 'pretty-format-toml'
   repo: 'https://github.com/macisamuele/language-formatters-pre-commit-hooks'
   rev: 'v2.12.0'
--
-  hooks:
-  -
-    args:
+- hooks:
+  - args:
     - '--config-file'
     - 'cfg/yamllint-config.yaml'
     - '--strict'
     id: 'yamllint'
   repo: 'https://github.com/adrienverge/yamllint'
   rev: 'v1.35.1'
--
-  hooks:
+- hooks:
   - id: 'shfmt'
   repo: 'https://github.com/scop/pre-commit-shfmt'
   rev: 'v3.8.0-1'
--
-  hooks:
-  -
-    args:
+- hooks:
+  - args:
     - '--config'
     - 'cfg/cspell-config.json'
     id: 'cspell'
