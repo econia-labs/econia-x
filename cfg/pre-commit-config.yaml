@@ -32,14 +32,7 @@ repos:
 - hooks:
   # Loop through each tex file passed by pre-commit (files are passed in
   # batches). Run chktex on each file. If any check fails, exit with error.
-  # yamllint disable rule:indentation
-  - entry: |
-      sh -c '
-        for f in "$@"; do
-          chktex "$f" || exit 1
-        done
-      ' --
-    # yamllint enable rule:indentation
+  - entry: 'sh src/sh/pre-commit-local-hooks/chktex.sh'
     id: 'chktex'
     language: 'system'
     name: 'chktex'
