@@ -1,4 +1,4 @@
-<!--- cspell:word pdflatex -->
+<!--- cspell:word latexmk -->
 
 # AMM
 
