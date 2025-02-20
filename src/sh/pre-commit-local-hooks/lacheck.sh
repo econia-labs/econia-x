@@ -1,4 +1,5 @@
 #!/bin/sh
+# cspell:word lacheck
 
 # Exit on first error.
 set -e
