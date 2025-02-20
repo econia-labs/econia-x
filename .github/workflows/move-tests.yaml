@@ -1,0 +1,25 @@
+---
+jobs:
+  move-tests:
+    runs-on: 'ubuntu-latest'
+    steps:
+    - uses: 'actions/checkout@v4'
+    # yamllint disable-line rule:line-length
+    - uses: 'aptos-labs/aptos-core/.github/actions/get-latest-cli@aptos-framework-v1.27.0'
+      with:
+        destination_directory: '/usr/local/bin'
+    - name: 'Find and test Move packages'
+      # yamllint disable-line rule:indentation
+      run: |
+        # Find all Move.toml files and run tests in their directories
+        find . -name "Move.toml" -exec sh -c '
+          echo "Testing package in directory: $(dirname "{}")"
+          aptos move test --dev --package-dir "$(dirname "{}")" || exit 1
+        ' \;
+# yamllint enable-line rule:indentation
+name: 'move-tests'
+'on':
+  merge_group: null
+  pull_request: null
+  workflow_dispatch: null
+...
