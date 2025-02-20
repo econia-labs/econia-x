@@ -733,8 +733,8 @@ module econia::core {
     #[test_only]
     public fun ensure_module_initialized_for_test() {
         let feature = features::get_coin_to_fungible_asset_migration_feature();
-        features::change_feature_flags(&get_signer(@std), vector[feature], vector[]);
-        aptos_coin::ensure_initialized_with_fa_metadata_for_test();
+        features::change_feature_flags_for_testing(&get_signer(@std), vector[feature], vector[]);
+        aptos_coin::ensure_initialized_with_apt_fa_metadata_for_test();
         if (!exists<Registry>(@econia)) init_module(&get_signer(@econia));
     }
 
@@ -752,9 +752,9 @@ module econia::core {
 
     #[test_only]
     public fun mint_fa_apt_to_market_registrant() {
-        aptos_coin::mint_fa_to_primary_fungible_store_for_test(
+        primary_fungible_store::deposit(
             MARKET_REGISTRANT_FOR_TEST,
-            GENESIS_MARKET_REGISTRATION_FEE
+            aptos_coin::mint_apt_fa_for_test(GENESIS_MARKET_REGISTRATION_FEE)
         );
     }
 
