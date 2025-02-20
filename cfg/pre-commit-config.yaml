@@ -29,7 +29,7 @@ repos:
   - id: 'cleveref-instead-of-autoref'
   repo: 'https://github.com/jonasbb/pre-commit-latex-hooks'
   rev: 'v1.4.3'
-- hooks:
+  hooks:
   - entry: 'sh src/sh/pre-commit-local-hooks/chktex.sh'
     id: 'chktex'
     language: 'system'
@@ -47,18 +47,13 @@ repos:
     id: 'movefmt'
     language: 'system'
     name: 'movefmt'
-  repo: 'local'
--
-  hooks:
-  -
-    entry: './src/sh/ensure-shebang.sh'
+  - entry: './src/sh/ensure-shebang.sh'
     id: 'ensure-shebang'
     language: 'script'
     name: 'ensure shebang'
     types:
     - 'shell'
-  -
-    entry: './src/sh/python-lint/poetry-check.sh'
+  - entry: './src/sh/python-lint/poetry-check.sh'
     id: 'local-poetry-check'
     language: 'script'
     name: 'local poetry check'
@@ -75,8 +70,7 @@ repos:
     name: '.gitignore Formatter'
     types:
     - 'gitignore'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run python -m file_name_conventions'
       'Please run src/sh/python-lint/format.sh and fix the errors.'
@@ -85,8 +79,7 @@ repos:
     name: 'check file name conventions'
     types:
     - 'python'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run autoflake -c --remove-all-unused-imports
       --remove-unused-variables --ignore-init-module-imports'
@@ -96,8 +89,7 @@ repos:
     name: 'autoflake'
     types:
     - 'python'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run black --check'
       'Please run src/sh/python-lint/format.sh and fix the errors.'
@@ -106,8 +98,7 @@ repos:
     name: 'black'
     types:
     - 'python'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run flake8'
       'Please run src/sh/python-lint/format.sh and fix the errors.'
@@ -116,8 +107,7 @@ repos:
     name: 'flake8'
     types:
     - 'python'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run isort --check'
       'Please run src/sh/python-lint/format.sh and fix the errors.'
@@ -126,8 +116,7 @@ repos:
     name: 'isort'
     types:
     - 'python'
-  -
-    entry: |
+  - entry: |
       './src/sh/python-lint/run-in-poetry-subdir.sh'
       'poetry run mypy'
       'Please run src/sh/python-lint/format.sh and fix the errors.'
