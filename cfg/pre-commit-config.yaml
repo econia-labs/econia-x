@@ -42,8 +42,7 @@ repos:
     name: 'lacheck'
     types:
     - 'tex'
-  -
-    entry: 'sh src/sh/pre-commit-local-hooks/movefmt.sh'
+  - entry: 'sh src/sh/pre-commit-local-hooks/movefmt.sh'
     files: 'Move.toml'
     id: 'movefmt'
     language: 'system'
