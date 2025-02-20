@@ -2,17 +2,15 @@
 
 # Description
 
-1. Abstract recently-added lint hooks to use shell script inputs.
-1. Combine all local hooks into one block.
-1. Enforce consistent delimiting in yaml pre-commit sections.
-1. Consolidate pre-commit local hooks into one directory.
-1. Remove shell script snippets that can be easily constructed using LLMs during local development.
+Delete this sentence and add a description that explains what changes you have
+done and why they were necessary.
 
 # Testing
 
-CI updates checked locally to verify failures and passes as expected.
+Delete this sentence and provide a description of how to test the changes in
+this PR.
 
 # Checklist
 
-- [x] Did you check all checkboxes from the linked Linear task? (Ignore if you
+- [ ] Did you check all checkboxes from the linked Linear task? (Ignore if you
   are not a member of Econia Labs)
