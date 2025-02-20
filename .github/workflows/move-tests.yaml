@@ -13,10 +13,15 @@ jobs:
       # any failure.
       # yamllint disable-line rule:indentation
       run: |
-        find . -name "Move.toml" -exec sh -c -e '
+        status=0
+        find . -name "Move.toml" -exec sh -c '
           echo "Testing package in directory: $(dirname "{}")"
-          aptos move test --dev --package-dir "$(dirname "{}")" || exit 1
-        ' \;
+          if ! aptos move test --dev --package-dir "$(dirname "{}")"; then
+            echo "Test failed in directory: $(dirname "{}")"
+            exit 1
+          fi
+        ' \; || status=$?
+        exit $status
 # yamllint enable-line rule:indentation
 name: 'move-tests'
 'on':
