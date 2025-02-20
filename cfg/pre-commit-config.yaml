@@ -29,7 +29,7 @@ repos:
   - id: 'cleveref-instead-of-autoref'
   repo: 'https://github.com/jonasbb/pre-commit-latex-hooks'
   rev: 'v1.4.3'
-  hooks:
+- hooks:
   - entry: 'sh src/sh/pre-commit-local-hooks/chktex.sh'
     id: 'chktex'
     language: 'system'
