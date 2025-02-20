@@ -38,7 +38,7 @@ repos:
         for f in "$@"; do
           chktex "$f" || exit 1
         done
-      '
+      ' --
     # yamllint enable rule:indentation
     id: 'chktex'
     language: 'system'
@@ -74,7 +74,7 @@ repos:
           # Return to original directory for next file.
           cd - > /dev/null
         done
-      '
+      ' --
     # yamllint enable rule:indentation
     id: 'lacheck'
     language: 'system'
@@ -90,7 +90,7 @@ repos:
         for f in "$@"; do
           aptos move fmt --package-path "$(dirname "$f")" || exit 1
         done
-      '
+      ' --
     # yamllint enable rule:indentation
     files: 'Move.toml'
     id: 'movefmt'
