@@ -9,13 +9,19 @@ jobs:
       with:
         destination_directory: '/usr/local/bin'
     - name: 'Find and test Move packages'
+      # Find all Move packages and run tests in each directory, exiting on
+      # any failure.
       # yamllint disable-line rule:indentation
       run: |
-        # Find all Move.toml files and run tests in their directories
-        find . -name "Move.toml" -exec sh -c '
-          echo "Testing package in directory: $(dirname "{}")"
-          aptos move test --dev --package-dir "$(dirname "{}")" || exit 1
-        ' \;
+        set -e
+        find . -name "Move.toml" | while read -r toml; do
+          dir=$(dirname "$toml")
+          echo "Testing package in directory: $dir"
+          if ! aptos move test --dev --package-dir "$dir"; then
+            echo "Test failed in directory: $dir"
+            exit 1
+          fi
+        done
 # yamllint enable-line rule:indentation
 name: 'move-tests'
 'on':
