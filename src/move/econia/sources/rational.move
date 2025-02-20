@@ -58,8 +58,17 @@ module econia::rational {
 
     #[test]
     fun test_compare_unchecked() {
-        assert!(compare_unchecked(1, 5, 2, 10) == COMPARE_EQUAL, 0);
-        assert!(compare_unchecked(1, 4, 1, 5) == COMPARE_LEFT_GREATER, 0);
-        assert!(compare_unchecked(1, 5, 1, 4) == COMPARE_RIGHT_GREATER, 0);
+        assert!(
+            compare_unchecked(1, 5, 2, 10) == COMPARE_EQUAL,
+            0
+        );
+        assert!(
+            compare_unchecked(1, 4, 1, 5) == COMPARE_LEFT_GREATER,
+            0
+        );
+        assert!(
+            compare_unchecked(1, 5, 1, 4) == COMPARE_RIGHT_GREATER,
+            0
+        );
     }
 }
