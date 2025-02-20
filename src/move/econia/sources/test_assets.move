@@ -37,7 +37,9 @@ module econia::test_assets {
         if (exists<TestAssetsMetadata>(@econia)) return;
         let framework = account::create_signer_for_test(@std);
         features::change_feature_flags_for_testing(
-            &framework, vector[features::get_auids()], vector[]
+            &framework,
+            vector[features::get_auids()],
+            vector[]
         );
         move_to(
             &account::create_signer_for_test(@econia),
@@ -66,9 +68,7 @@ module econia::test_assets {
     }
 
     public fun burn_from_metadata(
-        owner: address,
-        metadata: Object<Metadata>,
-        amount: u64
+        owner: address, metadata: Object<Metadata>, amount: u64
     ) acquires AssetRefs {
         ensure_assets_initialized();
         let asset_refs_ref = borrow_global<AssetRefs>(object::object_address(&metadata));
@@ -76,9 +76,7 @@ module econia::test_assets {
     }
 
     public fun mint_from_metadata(
-        owner: address,
-        metadata: Object<Metadata>,
-        amount: u64
+        owner: address, metadata: Object<Metadata>, amount: u64
     ) acquires AssetRefs {
         ensure_assets_initialized();
         let asset_refs_ref = borrow_global<AssetRefs>(object::object_address(&metadata));

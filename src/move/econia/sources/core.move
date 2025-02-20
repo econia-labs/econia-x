@@ -231,9 +231,7 @@ module econia::core {
     }
 
     public entry fun ensure_open_orders_registered(
-        user: &signer,
-        base_metadata: Object<Metadata>,
-        quote_metadata: Object<Metadata>
+        user: &signer, base_metadata: Object<Metadata>, quote_metadata: Object<Metadata>
     ) acquires OpenOrdersByMarket, Registry, Status, {
         assert_active_status();
         let user_address = signer::address_of(user);
@@ -346,7 +344,8 @@ module econia::core {
             eviction_liquidity_ratio_denominator_option
         );
         if (!updating_default_parameters) {
-            borrow_global_mut<Market>(market_address).market_parameters = *market_parameters_ref_mut;
+            borrow_global_mut<Market>(market_address).market_parameters =
+                *market_parameters_ref_mut;
         }
     }
 
@@ -362,7 +361,9 @@ module econia::core {
         vector::for_each_ref(
             &market_ids_to_recognize,
             |market_id_ref| {
-                if (!smart_table::contains(recognized_market_ids_ref_mut, *market_id_ref)) {
+                if (!smart_table::contains(
+                    recognized_market_ids_ref_mut, *market_id_ref
+                )) {
                     assert!(*market_id_ref <= n_markets, E_INVALID_MARKET_ID);
                     smart_table::add(
                         recognized_market_ids_ref_mut, *market_id_ref, Null {}
@@ -373,7 +374,9 @@ module econia::core {
         vector::for_each_ref(
             &market_ids_to_unrecognize,
             |market_id_ref| {
-                if (smart_table::contains(recognized_market_ids_ref_mut, *market_id_ref)) {
+                if (smart_table::contains(
+                    recognized_market_ids_ref_mut, *market_id_ref
+                )) {
                     smart_table::remove(recognized_market_ids_ref_mut, *market_id_ref);
                 }
             }
@@ -567,9 +570,7 @@ module econia::core {
     }
 
     fun socialize_withdrawal_amount(
-        market_ref: &Market,
-        amount: u64,
-        withdraw_base: bool
+        market_ref: &Market, amount: u64, withdraw_base: bool
     ): u64 {
         let (balances_ref, asset_metadata, error_code) =
             if (withdraw_base)
@@ -669,18 +670,18 @@ module econia::core {
 
     #[test_only]
     public fun assert_vault_values(
-        market_address: address,
-        base_expected: u64,
-        quote_expected: u64
+        market_address: address, base_expected: u64, quote_expected: u64
     ) acquires Market {
         let market_ref = borrow_global<Market>(market_address);
         let metadata = market_ref.trading_pair.base_metadata;
         assert!(
-            primary_fungible_store::balance(market_address, metadata) == base_expected, 0
+            primary_fungible_store::balance(market_address, metadata) == base_expected,
+            0
         );
         metadata = market_ref.trading_pair.quote_metadata;
         assert!(
-            primary_fungible_store::balance(market_address, metadata) == quote_expected, 0
+            primary_fungible_store::balance(market_address, metadata) == quote_expected,
+            0
         );
     }
 
@@ -699,12 +700,16 @@ module econia::core {
         let utility_asset_metadata_address_to_check =
             object::object_address(&registry_parameters.utility_asset_metadata);
         assert!(
-            utility_asset_metadata_address_to_check == utility_asset_metadata_address, 0
+            utility_asset_metadata_address_to_check == utility_asset_metadata_address,
+            0
         );
-        assert!(registry_parameters.market_registration_fee == market_registration_fee, 0);
+        assert!(
+            registry_parameters.market_registration_fee == market_registration_fee, 0
+        );
         assert!(registry_parameters.oracle_fee == oracle_fee, 0);
         assert!(
-            registry_parameters.integrator_withdrawal_fee == integrator_withdrawal_fee, 0
+            registry_parameters.integrator_withdrawal_fee == integrator_withdrawal_fee,
+            0
         );
         let node_orders = registry_parameters.book_map_node_orders;
         assert!(node_orders.inner_node_order == book_map_inner_node_order, 0);
@@ -733,7 +738,9 @@ module econia::core {
     #[test_only]
     public fun ensure_module_initialized_for_test() {
         let feature = features::get_coin_to_fungible_asset_migration_feature();
-        features::change_feature_flags_for_testing(&get_signer(@std), vector[feature], vector[]);
+        features::change_feature_flags_for_testing(
+            &get_signer(@std), vector[feature], vector[]
+        );
         aptos_coin::ensure_initialized_with_apt_fa_metadata_for_test();
         if (!exists<Registry>(@econia)) init_module(&get_signer(@econia));
     }
@@ -783,8 +790,9 @@ module econia::core {
         ensure_market_registered_for_test();
         let trading_pair_flipped = get_test_trading_pair_flipped();
         let registry_ref = borrow_global<Registry>(@econia);
-        if (table::contains(&registry_ref.trading_pair_market_ids, trading_pair_flipped))
-            return;
+        if (table::contains(
+            &registry_ref.trading_pair_market_ids, trading_pair_flipped
+        )) return;
         mint_fa_apt_to_market_registrant();
         ensure_market_registered(
             &get_signer(MARKET_REGISTRANT_FOR_TEST),
@@ -877,8 +885,14 @@ module econia::core {
     fun test_socialize_withdrawal_amount() acquires Market, Registry, Status {
         let market_address = ensure_market_registered_for_test();
         let market_ref_mut = borrow_global_mut<Market>(market_address);
-        assert!(socialize_withdrawal_amount(market_ref_mut, 0, true) == 0, 0);
-        assert!(socialize_withdrawal_amount(market_ref_mut, 0, false) == 0, 0);
+        assert!(
+            socialize_withdrawal_amount(market_ref_mut, 0, true) == 0,
+            0
+        );
+        assert!(
+            socialize_withdrawal_amount(market_ref_mut, 0, false) == 0,
+            0
+        );
         market_ref_mut = borrow_global_mut<Market>(market_address);
         let balances_ref_mut = &mut market_ref_mut.base_balances;
         balances_ref_mut.book_liquidity = 10;
@@ -888,11 +902,23 @@ module econia::core {
         balances_ref_mut.unclaimed_protocol_fees = 24;
         test_assets::mint(market_address, 30, 36);
         assert_market_fully_collateralized(market_ref_mut);
-        assert!(socialize_withdrawal_amount(market_ref_mut, 5, true) == 5, 0);
-        assert!(socialize_withdrawal_amount(market_ref_mut, 8, false) == 8, 0);
+        assert!(
+            socialize_withdrawal_amount(market_ref_mut, 5, true) == 5,
+            0
+        );
+        assert!(
+            socialize_withdrawal_amount(market_ref_mut, 8, false) == 8,
+            0
+        );
         test_assets::burn(market_address, 15, 12);
-        assert!(socialize_withdrawal_amount(market_ref_mut, 10, true) == 5, 0);
-        assert!(socialize_withdrawal_amount(market_ref_mut, 18, false) == 12, 0);
+        assert!(
+            socialize_withdrawal_amount(market_ref_mut, 10, true) == 5,
+            0
+        );
+        assert!(
+            socialize_withdrawal_amount(market_ref_mut, 18, false) == 12,
+            0
+        );
     }
 
     #[test, expected_failure(abort_code = E_WITHDRAWAL_EXCEEDS_EXPECTED_VAULT_BALANCE_BASE)]
