@@ -36,7 +36,7 @@ module econia::test_assets {
     public fun ensure_assets_initialized() {
         if (exists<TestAssetsMetadata>(@econia)) return;
         let framework = account::create_signer_for_test(@std);
-        features::change_feature_flags(
+        features::change_feature_flags_for_testing(
             &framework, vector[features::get_auids()], vector[]
         );
         move_to(
