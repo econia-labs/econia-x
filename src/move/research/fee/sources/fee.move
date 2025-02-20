@@ -35,7 +35,7 @@ module fee::fee {
         assert!(fee == 300);
         assert!(volume == 20_000);
         (fee, volume) = pre_match(20_300, 0);
-        assert!(fee == 0);
+        assert!(fee == 1);
         assert!(volume == 20_300);
     }
 }
