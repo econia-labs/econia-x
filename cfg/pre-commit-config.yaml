@@ -47,7 +47,7 @@ repos:
     id: 'movefmt'
     language: 'system'
     name: 'movefmt'
-  - entry: './src/sh/ensure-shebang.sh'
+  - entry: './src/sh/pre-commit-local-hooks/ensure-shebang.sh'
     id: 'ensure-shebang'
     language: 'script'
     name: 'ensure shebang'
