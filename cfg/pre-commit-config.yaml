@@ -126,25 +126,21 @@ repos:
     types:
     - 'python'
   repo: 'local'
--
-  hooks:
+- hooks:
   - id: 'check-added-large-files'
   - id: 'check-case-conflict'
   - id: 'detect-private-key'
   - id: 'end-of-file-fixer'
-  -
-    files: 'cfg/cspell-dictionary.txt'
+  - files: 'cfg/cspell-dictionary.txt'
     id: 'file-contents-sorter'
   - id: 'mixed-line-ending'
-  -
-    args:
+  - args:
     - '--autofix'
     id: 'pretty-format-json'
   - id: 'trailing-whitespace'
   repo: 'https://github.com/pre-commit/pre-commit-hooks'
   rev: 'v4.5.0'
--
-  hooks:
+- hooks:
   - additional_dependencies:
     - 'mdformat-gfm'
     - 'mdformat-frontmatter'
@@ -152,42 +148,33 @@ repos:
     id: 'mdformat'
   repo: 'https://github.com/executablebooks/mdformat'
   rev: '0.7.21'
--
-  hooks:
-  -
-    args:
+- hooks:
+  - args:
     - '--config'
     - 'cfg/markdownlint-config.yaml'
     id: 'markdownlint-fix'
   repo: 'https://github.com/igorshubovych/markdownlint-cli'
   rev: 'v0.39.0'
--
-  hooks:
-  -
-    args:
+- hooks:
+  - args:
     - '--autofix'
     id: 'pretty-format-toml'
   repo: 'https://github.com/macisamuele/language-formatters-pre-commit-hooks'
   rev: 'v2.12.0'
--
-  hooks:
-  -
-    args:
+- hooks:
+  - args:
     - '--config-file'
     - 'cfg/yamllint-config.yaml'
     - '--strict'
     id: 'yamllint'
   repo: 'https://github.com/adrienverge/yamllint'
   rev: 'v1.35.1'
--
-  hooks:
+- hooks:
   - id: 'shfmt'
   repo: 'https://github.com/scop/pre-commit-shfmt'
   rev: 'v3.8.0-1'
--
-  hooks:
-  -
-    args:
+- hooks:
+  - args:
     - '--config'
     - 'cfg/cspell-config.json'
     id: 'cspell'
