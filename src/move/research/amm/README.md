@@ -1,4 +1,4 @@
-<!--- cspell:word pdflatex -->
+<!--- cspell:word latexmk -->
 
 # AMM
 
@@ -7,7 +7,7 @@ relies on a LaTeX document which can be viewed easily using the
 [LaTeX Workshop extension for VS Code], or compiled from source via:
 
 ```sh
-pdflatex amm.tex
+latexmk -pdf amm.tex
 ```
 
 [latex workshop extension for vs code]: https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop

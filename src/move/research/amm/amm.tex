@@ -35,19 +35,166 @@
 
 \section{Spot price}\label{sec:spot-price}
 
-In the absence of fees, the spot price of a \gls*{cpamm} is determined by the ratio of
-quote reserves $q$ to base reserves $b$ as defined in Equation~\ref{eqn:price-defined}.
+The spot price of a \gls*{cpamm} is determined by the ratio of quote reserves $q$ to
+base reserves $b$ per Equation~\ref{eqn:price-defined}.
+
 \begin{equation}\label{eqn:price-defined}
-  p = \frac{q}{b}
+	p = \frac{q}{b}
 \end{equation}
 
-Note that this represents the instantaneous derivative of the constant product curve
-for the given reserve amounts, as illustrated in Figure~\ref{fig:spot-price-no-fees}.
+This is equal to the derivative of the constant product curve for the given reserve
+amounts, as illustrated in Figure~\ref{fig:spot-price}.
 
 \begin{figure}[!htb]
 	\centering
-	\input{figures/spot-price-simple.tex}
-	\caption{Spot price without fees}\label{fig:spot-price-no-fees}
+	\input{figures/spot-price.tex}
+	\caption{Spot price}\label{fig:spot-price}
 \end{figure}
+
+\section{Basic swap theory}\label{sec:basic-swap-theory}
+
+Since a swap involves a change in reserves, it alters the spot price. The initial spot
+price $p_i$ and final spot price $p_f$ are simply the spot price at the initial and
+final reserve amounts, respectively, per Equations~\ref{eqn:swap-initial-price}
+and~\ref{eqn:swap-final-price}.
+
+\begin{equation}\label{eqn:swap-initial-price}
+	p_i = \frac{q_i}{b_i}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-final-price}
+	p_f = \frac{q_f}{b_f}
+\end{equation}
+
+The execution price $p_e$ is the ratio of quote and base exchanged during the swap,
+equivalent to the magnitude of the change in reserves, per
+Equation~\ref{eqn:swap-execution-price}.
+
+\begin{equation}\label{eqn:swap-execution-price}
+	p_e = \frac{\Delta q}{\Delta b} = \frac{|q_f - q_i|}{|b_f - b_i|}
+\end{equation}
+
+The product of base and quote reserves is held constant throughout a swap per
+Equation~\ref{eqn:swap-constant-product}.
+
+\begin{equation}\label{eqn:swap-constant-product}
+	b_i \cdot q_i = b_f \cdot q_f
+\end{equation}
+
+\subsection{Swap sell}\label{ssec:swap-sell}
+
+Figure~\ref{fig:swap-sell} illustrates a swap where base input amount $b_{in}$ is sold
+for quote output amount $q_{out}$.
+
+\begin{figure}[!htb]
+	\centering
+	\input{figures/swap-sell.tex}
+	\caption{Swap sell}\label{fig:swap-sell}
+\end{figure}
+
+The final base and quote amounts are respectively given in
+Equations~\ref{eqn:swap-sell-base-final} and~\ref{eqn:swap-sell-quote-final}, and the
+swap execution price $p_e$ is given in Equation~\ref{eqn:swap-sell-execution-price}.
+
+\begin{equation}\label{eqn:swap-sell-base-final}
+	b_f = b_i + b_{in}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-sell-quote-final}
+	q_f = q_i - q_{out}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-sell-execution-price}
+	p_e = \frac{q_{out}}{b_{in}}
+\end{equation}
+
+As derived in Section~\ref{ssec:swap-sell-derivations}, $q_f$, $q_{out}$, and $p_e$ are
+respectively given in terms of $b_i$, $q_i$, and $b_{in}$ in Equations%
+~\ref{eqn:swap-sell-quote-final-solved},~\ref{eqn:swap-sell-quote-out-solved}, and%
+~\ref{eqn:swap-sell-execution-price-solved}.
+
+\begin{equation}\label{eqn:swap-sell-quote-final-solved}
+	q_f(b_i, q_i, b_{in}) = \frac{b_i \cdot q_i}{b_i + b_{in}}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-sell-quote-out-solved}
+	q_{out} (b_i, q_i, b_{in}) = \frac{b_{in} \cdot q_i}{b_i + b_{in}}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-sell-execution-price-solved}
+	p_e (b_i, q_i, b_{in}) = \frac{q_i}{b_i + b_{in}}
+\end{equation}
+
+\section{Derivations}\label{sec:derivations}
+
+\subsection{Swap sell derivations}\label{ssec:swap-sell-derivations}
+
+\subsubsection{Equation~\ref{eqn:swap-sell-quote-final-solved} derivation}%
+\label{sssec:equation-eqn-swap-sell-quote-final-solved-derivation}
+
+Consider Equation~\ref{eqn:swap-constant-product}.
+
+\begin{equation}
+	b_i \cdot q_i = b_f \cdot q_f \nonumber
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-sell-base-final}.
+
+\begin{equation}
+	b_i \cdot q_i = (b_i + b_{in}) \cdot q_f \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{equation}
+	q_f = \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber
+\end{equation}
+
+\subsubsection{Equation~\ref{eqn:swap-sell-quote-out-solved} derivation}%
+\label{sssec:equation-eqn-swap-sell-quote-out-solved-derivation}
+
+Consider Equation~\ref{eqn:swap-sell-quote-final}.
+
+\begin{equation}
+	q_f = q_i - q_{out} \nonumber
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-sell-quote-final-solved}.
+
+\begin{equation}
+	\frac{b_i \cdot q_i}{b_i + b_{in}}= q_i - q_{out} \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{align}
+	q_{out} & = q_i - \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber       \\
+	q_{out} & = q_i \cdot \frac{b_i + b_{in}}{b_i + b_{in}} -
+	\frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber                         \\
+	q_{out} & = \frac{b_i \cdot q_i + b_{in} \cdot q_i }{b_i + b_{in}} -
+	\frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber                         \\
+	q_{out} & = \frac{b_{in} \cdot q_i }{b_i + b_{in}} \nonumber
+\end{align}
+
+\subsubsection{Equation~\ref{eqn:swap-sell-execution-price-solved} derivation}%
+\label{sssec:equation-eqn-swap-sell-execution-price-solved-derivation}
+
+Consider Equation~\ref{eqn:swap-sell-execution-price}.
+
+\begin{equation}
+	p_e = \frac{q_{out}}{b_{in}} \nonumber
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-sell-quote-out-solved}.
+
+\begin{equation}
+	p_e = \dfrac{\left(\dfrac{q_i \cdot b_{in}}{b_i + b_{in}}\right)}{b_{in}} \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{equation}
+	p_e (b_i, q_i, b_{in}) = \frac{q_i}{b_i + b_{in}} \nonumber
+\end{equation}
 
 \end{document} % chktex 17
