@@ -1,3 +1,7 @@
 *.move @alnoki
 *Move.toml @alnoki
 .github/* @alnoki
+cfg/* @alnoki
+src/python/* @xbtmatt
+src/sh/pre-commit-local-hooks/* @alnoki
+src/sh/python-lint/* @xbtmatt
