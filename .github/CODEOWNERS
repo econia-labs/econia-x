@@ -1,1 +1,3 @@
 *.move @alnoki
+*Move.toml @alnoki
+.github/* @alnoki
