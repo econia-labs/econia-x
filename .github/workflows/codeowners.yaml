@@ -1,6 +1,8 @@
 ---
 jobs:
   codeowners:
+    permissions:
+      organization-administration: 'read'
     runs-on: 'ubuntu-latest'
     steps:
     - uses: 'actions/checkout@v4'
@@ -12,6 +14,4 @@ name: 'Verify codeowners'
 'on':
   merge_group: null
   pull_request: null
-permissions:
-  organization-administration: 'read'
 ...
