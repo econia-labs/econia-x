@@ -1,9 +1,8 @@
-.github/                          @alnoki
-CONTRIBUTING.md                   @alnoki
-LICENSE.md                        @alnoki
-README.md                         @alnoki
-cfg/                              @alnoki
-doc/architecture-specification.md @alnoki
-research/                         @alnoki
-src/python/                       @xbtmatt
-src/sh/python-lint/               @xbtmatt
+.github/            @alnoki
+CONTRIBUTING.md     @alnoki
+LICENSE.md          @alnoki
+README.md           @alnoki
+cfg/                @alnoki
+research/           @alnoki
+src/python/         @xbtmatt
+src/sh/python-lint/ @xbtmatt
