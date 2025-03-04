@@ -10,6 +10,7 @@ jobs:
         github_access_token: '${{ secrets.CODEOWNERS_VALIDATOR_GITHUB_TOKEN }}'
     - uses: 'Archetypically/format-codeowners@v1'
       with:
+        file-path: '.github/CODEOWNERS'
         remove-empty-lines: 'true'
 name: 'Verify codeowners'
 'on':
