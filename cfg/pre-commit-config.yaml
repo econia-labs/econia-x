@@ -133,6 +133,8 @@ repos:
   - id: 'end-of-file-fixer'
   - files: 'cfg/cspell-dictionary.txt'
     id: 'file-contents-sorter'
+  - files: '.github/CODEOWNERS'
+    id: 'file-contents-sorter'
   - id: 'mixed-line-ending'
   - args:
     - '--autofix'

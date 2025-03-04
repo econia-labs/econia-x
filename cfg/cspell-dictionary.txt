@@ -1,8 +1,10 @@
+alnoki
 aptos
 auid
 bitshift
 chktex
 clmm
+codeowners
 collateralized
 cpamm
 econia

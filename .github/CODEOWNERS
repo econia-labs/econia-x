@@ -1,0 +1,10 @@
+.github/                          @alnoki
+CONTRIBUTING.md                   @alnoki
+LICENSE.md                        @alnoki
+README.md                         @alnoki
+cfg/                              @alnoki
+doc/architecture-specification.md @alnoki
+src/move/                         @alnoki
+src/python/                       @xbtmatt
+src/sh/pre-commit-local-hooks/    @alnoki
+src/sh/python-lint/               @xbtmatt
