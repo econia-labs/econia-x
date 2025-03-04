@@ -6,5 +6,4 @@ cfg/                              @alnoki
 doc/architecture-specification.md @alnoki
 src/move/                         @alnoki
 src/python/                       @xbtmatt
-src/sh/pre-commit-local-hooks/    @alnoki
 src/sh/python-lint/               @xbtmatt
