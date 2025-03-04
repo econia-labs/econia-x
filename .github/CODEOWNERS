@@ -1,12 +1,10 @@
-*.move @alnoki
-*.tex @alnoki
-*Move.toml @alnoki
 .github/ @alnoki
 cfg/ @alnoki
 src/python/ @xbtmatt
 src/sh/pre-commit-local-hooks/ @alnoki
 src/sh/python-lint/ @xbtmatt
-CONTRIBUTING @alnoki
-LICENSE @xbtmatt
-README @alnoki
+CONTRIBUTING.md @alnoki
+LICENSE.md @alnoki
+README.md @alnoki
 src/move/ @alnoki
+doc/architecture-specification.md @alnoki
