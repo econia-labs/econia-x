@@ -12,4 +12,5 @@ name: 'Verify codeowners'
 'on':
   merge_group: null
   pull_request: null
+  workflow_dispatch: null
 ...
