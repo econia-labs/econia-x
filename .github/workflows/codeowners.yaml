@@ -12,4 +12,6 @@ name: 'Verify codeowners'
 'on':
   merge_group: null
   pull_request: null
+permissions:
+  organization-administration: 'read'
 ...
