@@ -8,6 +8,9 @@ jobs:
       with:
         experimental_checks: 'avoid-shadowing,notowned'
         github_access_token: '${{ secrets.CODEOWNERS_VALIDATOR_GITHUB_TOKEN }}'
+    - uses: 'Archetypically/format-codeowners@v1'
+      with:
+        remove-empty-lines: 'true'
 name: 'Verify codeowners'
 'on':
   merge_group: null
