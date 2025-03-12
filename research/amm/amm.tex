@@ -213,11 +213,13 @@ Rearrange.
 
 \begin{align}
 	q_{out} & = q_i - \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber       \\
-	q_{out} & = q_i \cdot \frac{b_i + b_{in}}{b_i + b_{in}} -
-	\frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber                         \\
-	q_{out} & = \frac{b_i \cdot q_i + b_{in} \cdot q_i }{b_i + b_{in}} -
-	\frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber                         \\
-	q_{out} & = \frac{b_{in} \cdot q_i }{b_i + b_{in}} \nonumber
+	(b_i + b_{in}) \cdot q_{out} &= q_i \cdot (b_i + b_{in}) - b_i \cdot q_i \nonumber \\
+	(b_i + b_{in}) \cdot q_{out} &=
+  q_i \cdot b_i + q_i \cdot b_{in} - b_i \cdot q_i \nonumber \\
+	(b_i + b_{in}) \cdot q_{out} &=
+  b_i \cdot q_i + b_{in} \cdot q_i - b_i \cdot q_i \nonumber \\
+	(b_i + b_{in}) \cdot q_{out} &= b_{in} \cdot q_i \nonumber \\
+	q_{out} & = \frac{b_{in} \cdot q_i}{b_i + b_{in}} \nonumber \\
 \end{align}
 
 \subsubsection{Equation~\ref{eqn:swap-sell-execution-price-solved} derivation}%
@@ -273,7 +275,7 @@ Consider equation Equation~\ref{eqn:swap-buy-base-final}.
   b_f = b_i - b_{out} \nonumber
 \end{equation}
 
-Subsititue equation Equation~\ref{eqn:swap-buy-base-final-solved}.
+Substitute equation Equation~\ref{eqn:swap-buy-base-final-solved}.
 
 \begin{equation}
   \frac{b_i \cdot q_i}{q_i + q_{in}} = b_i - b_{out} \nonumber
@@ -283,10 +285,10 @@ Rearrange.
 
 \begin{align}
   b_{out} &= b_i - \frac{b_i \cdot q_i}{q_i + q_{in}} \nonumber \\
-  b_{out} \cdot (q_i + q_{in}) &= b_i \cdot (q_i + q_{in})- b_i \cdot q_i \nonumber \\
-  b_{out} \cdot (q_i + q_{in}) &=
+  (q_i + q_{in}) \cdot b_{out} &= b_i \cdot (q_i + q_{in})- b_i \cdot q_i \nonumber \\
+  (q_i + q_{in}) \cdot b_{out} &=
   b_i \cdot q_i + b_i \cdot q_{in} - b_i \cdot q_i \nonumber \\
-  b_{out} \cdot (q_i + q_{in}) &= b_i \cdot q_{in} \nonumber \\
+  (q_i + q_{in}) \cdot b_{out} &= b_i \cdot q_{in} \nonumber \\
   b_{out} &= \frac{b_i \cdot q_{in}}{q_i + q_{in}} \nonumber
 \end{align}
 
