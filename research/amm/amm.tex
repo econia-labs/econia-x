@@ -81,50 +81,6 @@ Equation~\ref{eqn:swap-constant-product}.
 	b_i \cdot q_i = b_f \cdot q_f
 \end{equation}
 
-\subsection{Swap sell}\label{ssec:swap-sell}
-
-Figure~\ref{fig:swap-sell} illustrates a swap where base input amount $b_{in}$ is sold
-for quote output amount $q_{out}$.
-
-\begin{figure}[!htb]
-	\centering
-	\input{figures/swap-sell.tex}
-	\caption{Swap sell}\label{fig:swap-sell}
-\end{figure}
-
-The final base and quote reserves are respectively given in
-Equations~\ref{eqn:swap-sell-base-final} and~\ref{eqn:swap-sell-quote-final}, and the
-swap execution price $p_e$ is given in Equation~\ref{eqn:swap-sell-execution-price}.
-
-\begin{equation}\label{eqn:swap-sell-base-final}
-	b_f = b_i + b_{in}
-\end{equation}
-
-\begin{equation}\label{eqn:swap-sell-quote-final}
-	q_f = q_i - q_{out}
-\end{equation}
-
-\begin{equation}\label{eqn:swap-sell-execution-price}
-	p_e = \frac{q_{out}}{b_{in}}
-\end{equation}
-
-As derived in Section~\ref{ssec:swap-sell-derivations}, $q_f$, $q_{out}$, and $p_e$ are
-respectively given in terms of $b_i$, $q_i$, and $b_{in}$ in Equations%
-~\ref{eqn:swap-sell-quote-final-solved},~\ref{eqn:swap-sell-quote-out-solved}, and%
-~\ref{eqn:swap-sell-execution-price-solved}.
-
-\begin{equation}\label{eqn:swap-sell-quote-final-solved}
-	q_f(b_i, q_i, b_{in}) = \frac{b_i \cdot q_i}{b_i + b_{in}}
-\end{equation}
-
-\begin{equation}\label{eqn:swap-sell-quote-out-solved}
-	q_{out} (b_i, q_i, b_{in}) = \frac{b_{in} \cdot q_i}{b_i + b_{in}}
-\end{equation}
-
-\begin{equation}\label{eqn:swap-sell-execution-price-solved}
-	p_e (b_i, q_i, b_{in}) = \frac{q_i}{b_i + b_{in}}
-\end{equation}
-
 \subsection{Swap buy}\label{ssec:swap-buy}
 
 Figure~\ref{fig:swap-buy} illustrates a swap where quote input amount $q_{in}$ is used
@@ -169,80 +125,51 @@ respectively given in terms of $b_i$, $q_i$, and $q_{in}$ in Equations%
 	p_e (b_i, q_i, q_{in}) = \frac{q_i + q_{in}}{b_i}
 \end{equation}
 
+\subsection{Swap sell}\label{ssec:swap-sell}
+
+Figure~\ref{fig:swap-sell} illustrates a swap where base input amount $b_{in}$ is sold
+for quote output amount $q_{out}$.
+
+\begin{figure}[!htb]
+	\centering
+	\input{figures/swap-sell.tex}
+	\caption{Swap sell}\label{fig:swap-sell}
+\end{figure}
+
+The final base and quote reserves are respectively given in
+Equations~\ref{eqn:swap-sell-base-final} and~\ref{eqn:swap-sell-quote-final}, and the
+swap execution price $p_e$ is given in Equation~\ref{eqn:swap-sell-execution-price}.
+
+\begin{equation}\label{eqn:swap-sell-base-final}
+	b_f = b_i + b_{in}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-sell-quote-final}
+	q_f = q_i - q_{out}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-sell-execution-price}
+	p_e = \frac{q_{out}}{b_{in}}
+\end{equation}
+
+As derived in Section~\ref{ssec:swap-sell-derivations}, $q_f$, $q_{out}$, and $p_e$ are
+respectively given in terms of $b_i$, $q_i$, and $b_{in}$ in Equations%
+~\ref{eqn:swap-sell-quote-final-solved},~\ref{eqn:swap-sell-quote-out-solved}, and%
+~\ref{eqn:swap-sell-execution-price-solved}.
+
+\begin{equation}\label{eqn:swap-sell-quote-final-solved}
+	q_f(b_i, q_i, b_{in}) = \frac{b_i \cdot q_i}{b_i + b_{in}}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-sell-quote-out-solved}
+	q_{out} (b_i, q_i, b_{in}) = \frac{b_{in} \cdot q_i}{b_i + b_{in}}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-sell-execution-price-solved}
+	p_e (b_i, q_i, b_{in}) = \frac{q_i}{b_i + b_{in}}
+\end{equation}
+
 \section{Derivations}\label{sec:derivations}
-
-\subsection{Swap sell derivations}\label{ssec:swap-sell-derivations}
-
-\subsubsection{Equation~\ref{eqn:swap-sell-quote-final-solved} derivation}%
-\label{sssec:equation-eqn-swap-sell-quote-final-solved-derivation}
-
-Consider Equation~\ref{eqn:swap-constant-product}.
-
-\begin{equation}
-	b_i \cdot q_i = b_f \cdot q_f \nonumber
-\end{equation}
-
-Substitute Equation~\ref{eqn:swap-sell-base-final}.
-
-\begin{equation}
-	b_i \cdot q_i = (b_i + b_{in}) \cdot q_f \nonumber
-\end{equation}
-
-Rearrange.
-
-\begin{equation}
-	q_f = \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber
-\end{equation}
-
-\subsubsection{Equation~\ref{eqn:swap-sell-quote-out-solved} derivation}%
-\label{sssec:equation-eqn-swap-sell-quote-out-solved-derivation}
-
-Consider Equation~\ref{eqn:swap-sell-quote-final}.
-
-\begin{equation}
-	q_f = q_i - q_{out} \nonumber
-\end{equation}
-
-Substitute Equation~\ref{eqn:swap-sell-quote-final-solved}.
-
-\begin{equation}
-	\frac{b_i \cdot q_i}{b_i + b_{in}}= q_i - q_{out} \nonumber
-\end{equation}
-
-Rearrange.
-
-\begin{align}
-	q_{out}                      & = q_i - \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber \\
-	(b_i + b_{in}) \cdot q_{out} & = q_i \cdot (b_i + b_{in}) - b_i \cdot q_i \nonumber \\
-	(b_i + b_{in}) \cdot q_{out} & =
-	q_i \cdot b_i + q_i \cdot b_{in} - b_i \cdot q_i \nonumber                          \\
-	(b_i + b_{in}) \cdot q_{out} & =
-	b_i \cdot q_i + b_{in} \cdot q_i - b_i \cdot q_i \nonumber                          \\
-	(b_i + b_{in}) \cdot q_{out} & = b_{in} \cdot q_i \nonumber                         \\
-	q_{out}                      & = \frac{b_{in} \cdot q_i}{b_i + b_{in}} \nonumber    \\
-\end{align}
-
-\subsubsection{Equation~\ref{eqn:swap-sell-execution-price-solved} derivation}%
-\label{sssec:equation-eqn-swap-sell-execution-price-solved-derivation}
-
-Consider Equation~\ref{eqn:swap-sell-execution-price}.
-
-\begin{equation}
-	p_e = \frac{q_{out}}{b_{in}} \nonumber
-\end{equation}
-
-Substitute Equation~\ref{eqn:swap-sell-quote-out-solved}.
-
-\begin{equation}
-	p_e = \dfrac{\left(\dfrac{q_i \cdot b_{in}}{b_i + b_{in}}\right)}{b_{in}} \nonumber
-\end{equation}
-
-Rearrange.
-
-\begin{align}
-	p_e & = \frac{q_i \cdot b_{in}}{b_{in} \cdot (b_i + b_{in})} \nonumber \\
-	p_e & = \frac{q_i}{b_i + b_{in}} \nonumber                             \\
-\end{align}
 
 \subsection{Swap buy derivations}\label{ssec:swap-buy-derivations}
 
@@ -312,7 +239,80 @@ Rearrange.
 
 \begin{align}
 	p_e & = \frac{q_{in} \cdot (q_i + q_{in})}{b_i \cdot q_{in}} \nonumber \\
-	p_e & = \frac{q_i + q_{in}}{b_i} \nonumber                             \\
+	p_e & = \frac{q_i + q_{in}}{b_i} \nonumber
+\end{align}
+
+\subsection{Swap sell derivations}\label{ssec:swap-sell-derivations}
+
+\subsubsection{Equation~\ref{eqn:swap-sell-quote-final-solved} derivation}%
+\label{sssec:equation-eqn-swap-sell-quote-final-solved-derivation}
+
+Consider Equation~\ref{eqn:swap-constant-product}.
+
+\begin{equation}
+	b_i \cdot q_i = b_f \cdot q_f \nonumber
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-sell-base-final}.
+
+\begin{equation}
+	b_i \cdot q_i = (b_i + b_{in}) \cdot q_f \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{equation}
+	q_f = \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber
+\end{equation}
+
+\subsubsection{Equation~\ref{eqn:swap-sell-quote-out-solved} derivation}%
+\label{sssec:equation-eqn-swap-sell-quote-out-solved-derivation}
+
+Consider Equation~\ref{eqn:swap-sell-quote-final}.
+
+\begin{equation}
+	q_f = q_i - q_{out} \nonumber
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-sell-quote-final-solved}.
+
+\begin{equation}
+	\frac{b_i \cdot q_i}{b_i + b_{in}}= q_i - q_{out} \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{align}
+	q_{out}                      & = q_i - \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber \\
+	(b_i + b_{in}) \cdot q_{out} & = q_i \cdot (b_i + b_{in}) - b_i \cdot q_i \nonumber \\
+	(b_i + b_{in}) \cdot q_{out} & =
+	q_i \cdot b_i + q_i \cdot b_{in} - b_i \cdot q_i \nonumber                          \\
+	(b_i + b_{in}) \cdot q_{out} & =
+	b_i \cdot q_i + b_{in} \cdot q_i - b_i \cdot q_i \nonumber                          \\
+	(b_i + b_{in}) \cdot q_{out} & = b_{in} \cdot q_i \nonumber                         \\
+	q_{out}                      & = \frac{b_{in} \cdot q_i}{b_i + b_{in}} \nonumber
+\end{align}
+
+\subsubsection{Equation~\ref{eqn:swap-sell-execution-price-solved} derivation}%
+\label{sssec:equation-eqn-swap-sell-execution-price-solved-derivation}
+
+Consider Equation~\ref{eqn:swap-sell-execution-price}.
+
+\begin{equation}
+	p_e = \frac{q_{out}}{b_{in}} \nonumber
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-sell-quote-out-solved}.
+
+\begin{equation}
+	p_e = \dfrac{\left(\dfrac{q_i \cdot b_{in}}{b_i + b_{in}}\right)}{b_{in}} \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{align}
+	p_e & = \frac{q_i \cdot b_{in}}{b_{in} \cdot (b_i + b_{in})} \nonumber \\
+	p_e & = \frac{q_i}{b_i + b_{in}} \nonumber
 \end{align}
 
 \end{document} % chktex 17
