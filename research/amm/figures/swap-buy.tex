@@ -10,9 +10,9 @@
 			ytick=\empty,
 			xtick=\empty,
 			extra x ticks = {0.5, 2},
-			extra x tick labels = {$b_i$, $b_f$},
+			extra x tick labels = {$b_f$, $b_i$},
 			extra y ticks = {2, 0.5},
-			extra y tick labels = {$q_i$, $q_f$},
+			extra y tick labels = {$q_f$, $q_i$},
 			tick style = {thick, major tick length = 7pt},
 			legend style = {fill = black, draw = gray},
 			% Tangent lines on graph per https://tex.stackexchange.com/a/198046.
@@ -36,22 +36,22 @@
 			tangent,
 		] {1 / x};
 		% Initial price.
-		\node at (0.325, 2.15) [] {$p_i$};
-		\node at (0.5, 2) [circle, fill, scale = 0.5] {};
-		% Final price.
-		\node at (2.15, 0.325) [] {$p_f$};
+		\node at (2.15, 0.325) [] {$p_i$};
 		\node at (2, 0.5) [circle, fill, scale = 0.5] {};
+		% Final price.
+		\node at (0.325, 2.15) [] {$p_f$};
+		\node at (0.5, 2) [circle, fill, scale = 0.5] {};
 		% Execution price.
-		\draw [arrows = {-Latex[]}, thick] (0.5, 2) -- (2, 0.5);
+		\draw [arrows = {-Latex[]}, thick] (2, 0.5) -- (0.5, 2);
 		\node at (1.35, 1.35) [] {$p_e$};
 		% Base delta.
-		\node at (1.25, 0.25) [] {$b_{in}$};
-		\draw [arrows = {-Latex[]}] (0.5, 0.125) -- (2, 0.125);
+		\node at (1.25, 0.25) [] {$b_{out}$};
+		\draw [arrows = {-Latex[]}] (2, 0.125) -- (0.5, 0.125);
 		\draw [dashed] (0.5, 0) -- (0.5, 2);
 		\draw [dashed] (2, 0) -- (2, 0.5);
 		% Quote delta.
-		\node at (0.3, 1.25) [] {$q_{out}$};
-		\draw [arrows = {-Latex[]}] (0.125, 2) -- (0.125, 0.5);
+		\node at (0.3, 1.25) [] {$q_{in}$};
+		\draw [arrows = {-Latex[]}] (0.125, 0.5) -- (0.125, 2);
 		\draw [dashed] (0, 2) -- (0.5, 2);
 		\draw [dashed] (0, 0.5) -- (2, 0.5);
 	\end{axis}
