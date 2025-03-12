@@ -125,6 +125,33 @@ respectively given in terms of $b_i$, $q_i$, and $b_{in}$ in Equations%
 	p_e (b_i, q_i, b_{in}) = \frac{q_i}{b_i + b_{in}}
 \end{equation}
 
+\subsection{Swap buy}\label{ssec:swap-buy}
+
+Figure~\ref{fig:swap-buy} illustrates a swap where quote input amount $q_{in}$ is used
+to buy base output amount $b_{out}$.
+
+\begin{figure}[!htb]
+	\centering
+	\input{figures/swap-buy.tex}
+	\caption{Swap buy}\label{fig:swap-buy}
+\end{figure}
+
+The final base and quote amounts are respectively given in
+Equations~\ref{eqn:swap-buy-base-final} and~\ref{eqn:swap-buy-quote-final}, and the
+swap execution price $p_e$ is given in Equation~\ref{eqn:swap-buy-execution-price}.
+
+\begin{equation}\label{eqn:swap-buy-base-final}
+	b_f = b_i - b_{out}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-buy-quote-final}
+	q_f = q_i + q_{in}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-buy-execution-price}
+	p_e = \frac{q_{in}}{b_{out}}
+\end{equation}
+
 \section{Derivations}\label{sec:derivations}
 
 \subsection{Swap sell derivations}\label{ssec:swap-sell-derivations}
