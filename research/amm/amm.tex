@@ -81,6 +81,50 @@ Equation~\ref{eqn:swap-constant-product}.
 	b_i \cdot q_i = b_f \cdot q_f
 \end{equation}
 
+\subsection{Swap buy}\label{ssec:swap-buy}
+
+Figure~\ref{fig:swap-buy} illustrates a swap where quote input amount $q_{in}$ is used
+to buy base output amount $b_{out}$.
+
+\begin{figure}[!htb]
+	\centering
+	\input{figures/swap-buy.tex}
+	\caption{Swap buy}\label{fig:swap-buy}
+\end{figure}
+
+The final base and quote reserves are respectively given in
+Equations~\ref{eqn:swap-buy-base-final} and~\ref{eqn:swap-buy-quote-final}, and the
+swap execution price $p_e$ is given in Equation~\ref{eqn:swap-buy-execution-price}.
+
+\begin{equation}\label{eqn:swap-buy-base-final}
+	b_f = b_i - b_{out}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-buy-quote-final}
+	q_f = q_i + q_{in}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-buy-execution-price}
+	p_e = \frac{q_{in}}{b_{out}}
+\end{equation}
+
+As derived in Section~\ref{ssec:swap-buy-derivations}, $b_f$, $b_{out}$, and $p_e$ are
+respectively given in terms of $b_i$, $q_i$, and $q_{in}$ in Equations%
+~\ref{eqn:swap-buy-base-final-solved},~\ref{eqn:swap-buy-base-out-solved}, and%
+~\ref{eqn:swap-buy-execution-price-solved}.
+
+\begin{equation}\label{eqn:swap-buy-base-final-solved}
+	b_f(b_i, q_i, b_{in}) = \frac{b_i \cdot q_i}{q_i + q_{in}}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-buy-base-out-solved}
+	b_{out} (b_i, q_i, b_{in}) = \frac{b_i \cdot q_{in}}{q_i + q_{in}}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-buy-execution-price-solved}
+	p_e (b_i, q_i, q_{in}) = \frac{q_i + q_{in}}{b_i}
+\end{equation}
+
 \subsection{Swap sell}\label{ssec:swap-sell}
 
 Figure~\ref{fig:swap-sell} illustrates a swap where base input amount $b_{in}$ is sold
@@ -92,7 +136,7 @@ for quote output amount $q_{out}$.
 	\caption{Swap sell}\label{fig:swap-sell}
 \end{figure}
 
-The final base and quote amounts are respectively given in
+The final base and quote reserves are respectively given in
 Equations~\ref{eqn:swap-sell-base-final} and~\ref{eqn:swap-sell-quote-final}, and the
 swap execution price $p_e$ is given in Equation~\ref{eqn:swap-sell-execution-price}.
 
@@ -126,6 +170,77 @@ respectively given in terms of $b_i$, $q_i$, and $b_{in}$ in Equations%
 \end{equation}
 
 \section{Derivations}\label{sec:derivations}
+
+\subsection{Swap buy derivations}\label{ssec:swap-buy-derivations}
+
+\subsubsection{Equation~\ref{eqn:swap-buy-base-final-solved} derivation}%
+\label{sssec:equation-eqn-swap-buy-base-final-solved-derivation}
+
+Consider Equation~\ref{eqn:swap-constant-product}.
+
+\begin{equation}
+	b_i \cdot q_i = b_f \cdot q_f \nonumber
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-buy-quote-final}.
+
+\begin{equation}
+	b_i \cdot q_i = b_f \cdot (q_i + q_{in}) \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{equation}
+	b_f = \frac{b_i \cdot q_i}{q_i + q_{in}} \nonumber
+\end{equation}
+
+\subsubsection{Equation~\ref{eqn:swap-buy-base-out-solved} derivation}%
+\label{sssec:equation-eqn-swap-buy-base-out-solved-derivation}
+
+Consider equation Equation~\ref{eqn:swap-buy-base-final}.
+
+\begin{equation}
+	b_f = b_i - b_{out} \nonumber
+\end{equation}
+
+Substitute equation Equation~\ref{eqn:swap-buy-base-final-solved}.
+
+\begin{equation}
+	\frac{b_i \cdot q_i}{q_i + q_{in}} = b_i - b_{out} \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{align}
+	b_{out}                      & = b_i - \frac{b_i \cdot q_i}{q_i + q_{in}} \nonumber \\
+	(q_i + q_{in}) \cdot b_{out} & = b_i \cdot (q_i + q_{in})- b_i \cdot q_i \nonumber  \\
+	(q_i + q_{in}) \cdot b_{out} & =
+	b_i \cdot q_i + b_i \cdot q_{in} - b_i \cdot q_i \nonumber                          \\
+	(q_i + q_{in}) \cdot b_{out} & = b_i \cdot q_{in} \nonumber                         \\
+	b_{out}                      & = \frac{b_i \cdot q_{in}}{q_i + q_{in}} \nonumber
+\end{align}
+
+\subsubsection{Equation~\ref{eqn:swap-buy-execution-price-solved} derivation}%
+\label{sssec:equation-eqn-swap-buy-execution-price-solved-derivation}
+
+Consider Equation~\ref{eqn:swap-buy-execution-price}.
+
+\begin{equation}
+	p_e = \frac{q_{in}}{b_{out}} \nonumber
+\end{equation}
+
+Substitute equation Equation~\ref{eqn:swap-buy-base-out-solved}.
+
+\begin{equation}
+	p_e = \frac{q_{in}}{\left(\dfrac{b_i \cdot q_{in}}{q_i + q_{in}}\right)} \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{align}
+	p_e & = \frac{q_{in} \cdot (q_i + q_{in})}{b_i \cdot q_{in}} \nonumber \\
+	p_e & = \frac{q_i + q_{in}}{b_i} \nonumber
+\end{align}
 
 \subsection{Swap sell derivations}\label{ssec:swap-sell-derivations}
 
@@ -168,12 +283,14 @@ Substitute Equation~\ref{eqn:swap-sell-quote-final-solved}.
 Rearrange.
 
 \begin{align}
-	q_{out} & = q_i - \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber       \\
-	q_{out} & = q_i \cdot \frac{b_i + b_{in}}{b_i + b_{in}} -
-	\frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber                         \\
-	q_{out} & = \frac{b_i \cdot q_i + b_{in} \cdot q_i }{b_i + b_{in}} -
-	\frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber                         \\
-	q_{out} & = \frac{b_{in} \cdot q_i }{b_i + b_{in}} \nonumber
+	q_{out}                      & = q_i - \frac{b_i \cdot q_i}{b_i + b_{in}} \nonumber \\
+	(b_i + b_{in}) \cdot q_{out} & = q_i \cdot (b_i + b_{in}) - b_i \cdot q_i \nonumber \\
+	(b_i + b_{in}) \cdot q_{out} & =
+	q_i \cdot b_i + q_i \cdot b_{in} - b_i \cdot q_i \nonumber                          \\
+	(b_i + b_{in}) \cdot q_{out} & =
+	b_i \cdot q_i + b_{in} \cdot q_i - b_i \cdot q_i \nonumber                          \\
+	(b_i + b_{in}) \cdot q_{out} & = b_{in} \cdot q_i \nonumber                         \\
+	q_{out}                      & = \frac{b_{in} \cdot q_i}{b_i + b_{in}} \nonumber
 \end{align}
 
 \subsubsection{Equation~\ref{eqn:swap-sell-execution-price-solved} derivation}%
@@ -193,8 +310,9 @@ Substitute Equation~\ref{eqn:swap-sell-quote-out-solved}.
 
 Rearrange.
 
-\begin{equation}
-	p_e (b_i, q_i, b_{in}) = \frac{q_i}{b_i + b_{in}} \nonumber
-\end{equation}
+\begin{align}
+	p_e & = \frac{q_i \cdot b_{in}}{b_{in} \cdot (b_i + b_{in})} \nonumber \\
+	p_e & = \frac{q_i}{b_i + b_{in}} \nonumber
+\end{align}
 
 \end{document} % chktex 17
