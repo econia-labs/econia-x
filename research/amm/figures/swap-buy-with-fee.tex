@@ -58,8 +58,10 @@
 		\draw [arrows = {-Latex[]}, thick] (2, 0.5) -- (0.875, 2);
 		\node at (1.575, 0.9) [] {$p_e$};
 		% Base delta.
-		\node at (1.75, 0.25) [] {$b_{vol}$} ;
+		\node[anchor=east] at (0.5, 0.15) [] {$b_v$} ;
+		\node at (1.4, 0.375) [] {$b_{out}$} ;
 		\draw [arrows = {-Latex[]}] (2, 0.125) -- (0.5, 0.125);
+		\draw [arrows = {-Latex[]}] (2, 0.25) -- (0.875, 0.25);
 		\draw [dashed] (0.5, 0) -- (0.5, 2);
 		\draw [dashed] (2, 0) -- (2, 0.875);
 		% Quote delta.
@@ -68,8 +70,8 @@
 		\draw [dashed] (0, 2) -- (0.875, 2);
 		\draw [dashed] (0, 0.5) -- (2, 0.5);
 		% Fee.
-		\node at (1.125, 0.375) [] {$f \cdot b_{vol}$} ;
-		\draw [arrows = {-Latex[]}] (0.5, 0.375) -- (0.875, 0.375);
+		\node[anchor=east] at (0.5, 0.335) [] {$f \cdot b_v$} ;
+		\draw [arrows = {-Latex[]}] (0.5, 0.25) -- (0.875, 0.25);
 		\draw [dashed] (0.875, 0) -- (0.875, 2);
 	\end{axis}
 \end{tikzpicture}
