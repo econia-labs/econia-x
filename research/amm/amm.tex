@@ -185,7 +185,7 @@ quote holdings $q_t$.
 
 \subsection{Swap buy with fee}\label{ssec:swap-buy-with-fee}
 
-Figure \ref{fig:swap-buy-with-fee} illustrates a swap buy where quote input amount
+Figure~\ref{fig:swap-buy-with-fee} illustrates a swap buy where quote input amount
 $q_{in}$ is provided by the taker, resulting in base volume $b_v$ before fees. The fee
 rate $f$ is then assessed on $b_v$, resulting in a final base output amount $b_{out}$.
 
@@ -197,8 +197,8 @@ rate $f$ is then assessed on $b_v$, resulting in a final base output amount $b_{
 
 As derived in Section~\ref{ssec:swap-buy-with-fee-derivations}, $b_{out}$ and $p_t$ are
 given in terms of $b_i$, $f$, $q_i$, and $q_{in}$ in
-Equations~\ref{eqn:swap-buy-with-fees-output-solved} and
-\ref{eqn:swap-taker-execution-price-buy-solved}.
+Equations~\ref{eqn:swap-buy-with-fees-output-solved} and%
+~\ref{eqn:swap-taker-execution-price-buy-solved}.
 
 \begin{equation}\label{eqn:swap-buy-with-fees-output-solved}
   b_{out} (b_i, f, q_i, q_{in}) =
@@ -216,12 +216,12 @@ $p_a$ after matching, $q_{in}^{\dagger}$, is given in
 Equation~\ref{eqn:swap-buy-with-fees-input-solved}.
 
 \begin{equation}\label{eqn:swap-buy-with-fees-input-solved}
-  q_{in}^{\dagger} (b_i, f, p_a, q_i) = ?
+  q_{in}^{\dagger} (b_i, f, p_a, q_i) =
 \end{equation}
 
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}
 
-Figure \ref{fig:swap-sell-with-fee} illustrates a swap sell where base input amount
+Figure~\ref{fig:swap-sell-with-fee} illustrates a swap sell where base input amount
 $b_{in}$ is provided by the taker, resulting in quote volume $q_v$ before fees. The fee
 rate $f$ is then assessed on $q_v$, resulting in a final quote output amount $q_{out}$.
 
@@ -380,6 +380,7 @@ Rearrange.
 \subsection{Swap buy with fee  derivations}\label{ssec:swap-buy-with-fee-derivations}
 
 \subsubsection{Equation~\ref{eqn:swap-buy-with-fees-output-solved} derivation}%
+\label{sssec:equation-eqn-swap-buy-with-fees-output-solved-derivation}
 
 Define $b_{out}$ in terms of $b_v$ and $f$.
 
@@ -435,7 +436,7 @@ Rearrange.
 \end{align}
 
 \subsubsection{Equation~\ref{eqn:swap-buy-with-fees-input-solved} derivation}%
-\label{sssec:equation-eqn:swap-buy-with-fees-input-solved-derivation}
+\label{sssec:equation-eqn-swap-buy-with-fees-input-solved-derivation}
 
 Consider Equation~\ref{eqn:swap-taker-execution-price-buy-solved}.
 
@@ -476,12 +477,38 @@ $q_{in} = q_{in}^{\dagger}$.
 
 \begin{equation}
   p_a \cdot (1 - f) \cdot
-  \left(b_i - \frac{(1 - f) \cdot b_i \cdot q_{in}^{\dagger}}
-  {q_i + q_{in}^{\dagger}}\right) =
+  \left(b_i -
+  \frac{(1 - f) \cdot b_i \cdot q_{in}^{\dagger}}{q_i + q_{in}^{\dagger}}
+  \right) = q_i + q_{in}^{\dagger} \nonumber
+\end{equation}
+
+Expand the left side.
+
+\begin{equation}
+  p_a \cdot (1 - f) \cdot b_i -
+  \frac{p_a \cdot{(1 - f)}^2 \cdot b_i \cdot q_{in}^{\dagger}}{q_i + q_{in}^{\dagger}} =
   q_i + q_{in}^{\dagger} \nonumber
 \end{equation}
 
-Solve for $q_{in}^{\dagger}$.
+Multiply both sides by $q_i + q_{in}^{\dagger}$.
 
+\begin{equation}
+  \begin{aligned}
+    p_a \cdot (1 - f) \cdot b_i \cdot (q_i + q_{in}^{\dagger}) & \\
+    {}- p_a \cdot {(1 - f)}^2 \cdot b_i \cdot q_{in}^{\dagger} &=
+    {(q_i + q_{in}^{\dagger})}^2
+  \end{aligned}
+  \nonumber
+\end{equation}
+
+Expand.
+
+\begin{equation}
+  p_a \cdot (1 - f) \cdot b_i \cdot q_i +
+  p_a \cdot (1 - f) \cdot b_i \cdot q_{in}^{\dagger} -
+  p_a \cdot {(1 - f)}^2 \cdot b_i \cdot q_{in}^{\dagger} =
+  q_i^2 + 2 \cdot q_i \cdot q_{in}^{\dagger} + {(q_{in}^{\dagger})}^2
+  \nonumber
+\end{equation}
 
 \end{document} % chktex 17
