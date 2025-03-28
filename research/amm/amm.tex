@@ -66,8 +66,8 @@ and~\ref{eqn:swap-final-price}.
 	p_f = \frac{q_f}{b_f}
 \end{equation}
 
-The execution price $p_e$ is the ratio of quote and base exchanged during the swap,
-equivalent to the magnitude of the change in reserves, per
+The execution price $p_e$ is the ratio of quote and base exchanged by the taker during
+the swap, equivalent to the magnitude of the change in reserves, per
 Equation~\ref{eqn:swap-execution-price}.
 
 \begin{equation}\label{eqn:swap-execution-price}
@@ -171,7 +171,23 @@ respectively given in terms of $b_i$, $q_i$, and $b_{in}$ in Equations%
 
 \section{Swaps with fees}\label{sec:swaps-with-fees}
 
+In a swap with fees, the taker pays a fee on the output coin volume (equal to the output
+coin amount in a swap without fees), after the constant-product exchange. This amount is
+then reinvested in the pool.
+
+To simplify price comparisons versus order book prices, define the average taker
+execution price $p_t$ in terms of the change in the taker's base holdings $b_t$ and
+quote holdings $q_t$.
+
+\begin{equation}\label{eqn:swap-taker-execution-price}
+  p_t = \frac{\Delta q_t}{\Delta b_t}
+\end{equation}
+
 \subsection{Swap buy with fee}\label{ssec:swap-buy-with-fee}
+
+Figure \ref{fig:swap-buy-with-fee} illustrates a swap buy where quote input amount
+$q_{in}$ is provided by the taker, resulting in base volume $b_v$ before fees. The fee
+rate $f$ is then assessed on $b_v$, resulting in a final base output amount $b_{out}$.
 
 \begin{figure}[!htb]
 	\centering
@@ -179,7 +195,35 @@ respectively given in terms of $b_i$, $q_i$, and $b_{in}$ in Equations%
 	\caption{Swap buy with fee}\label{fig:swap-buy-with-fee}
 \end{figure}
 
+As derived in Section~\ref{ssec:swap-buy-with-fee-derivations}, $b_{out}$ and $p_t$ are
+given in terms of $b_i$, $f$, $q_i$, and $q_{in}$ in
+Equations~\ref{eqn:swap-buy-with-fees-output-solved} and
+\ref{eqn:swap-taker-execution-price-buy-solved}.
+
+\begin{equation}\label{eqn:swap-buy-with-fees-output-solved}
+  b_{out} (b_i, f, q_i, q_{in}) =
+  \frac{(1 - f) \cdot b_i \cdot q_{in}}{q_i + q_{in}}
+\end{equation}
+
+\begin{equation}\label{eqn:swap-taker-execution-price-buy-solved}
+  p_t (b_i, f, q_i, q_{in}) = \frac{q_i + q_{in}}{(1 - f) \cdot b_i}
+\end{equation}
+
+As derived in
+Section~\ref{sssec:equation-eqn:swap-buy-with-fees-input-solved-derivation}, for order
+book best ask price $p_a$, the quote input amount that slips the \gls*{cpamm} to
+$p_a$ after matching, $q_{in}^{\dagger}$, is given in
+Equation~\ref{eqn:swap-buy-with-fees-input-solved}.
+
+\begin{equation}\label{eqn:swap-buy-with-fees-input-solved}
+  q_{in}^{\dagger} (b_i, f, p_a, q_i) = ?
+\end{equation}
+
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}
+
+Figure \ref{fig:swap-sell-with-fee} illustrates a swap sell where base input amount
+$b_{in}$ is provided by the taker, resulting in quote volume $q_v$ before fees. The fee
+rate $f$ is then assessed on $q_v$, resulting in a final quote output amount $q_{out}$.
 
 \begin{figure}[!htb]
 	\centering
@@ -332,5 +376,112 @@ Rearrange.
 	p_e & = \frac{q_i \cdot b_{in}}{b_{in} \cdot (b_i + b_{in})} \nonumber \\
 	p_e & = \frac{q_i}{b_i + b_{in}} \nonumber
 \end{align}
+
+\subsection{Swap buy with fee  derivations}\label{ssec:swap-buy-with-fee-derivations}
+
+\subsubsection{Equation~\ref{eqn:swap-buy-with-fees-output-solved} derivation}%
+
+Define $b_{out}$ in terms of $b_v$ and $f$.
+
+\begin{equation}
+  b_{out} = b_v - f \cdot b_v \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{equation}
+  b_{out} = b_v \cdot (1 - f) \nonumber
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-buy-base-out-solved}, noting $b_v$ equals $b_{out}$
+for a swap buy without fees.
+
+\begin{equation}
+  b_{out} = \frac{b_i \cdot q_{in}}{q_i + q_{in}} \cdot (1 - f) \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{equation}
+  b_{out} = \frac{(1 - f) \cdot b_i \cdot q_{in}}{q_i + q_{in}} \nonumber
+\end{equation}
+
+\subsubsection{Equation~\ref{eqn:swap-taker-execution-price-buy-solved} derivation}%
+\label{sssec:equation-eqn-swap-taker-execution-price-buy-solved-derivation}
+
+Consider equation Equation~\ref{eqn:swap-taker-execution-price}.
+
+\begin{equation}
+  p_t = \frac{\Delta q_t}{\Delta b_t}
+\end{equation}
+
+Substitute values from Figure~\ref{fig:swap-buy-with-fee}.
+
+\begin{equation}
+  p_t = \frac{q_{in}}{b_{out}}
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-buy-with-fees-output-solved}.
+\begin{equation}
+  p_t = \frac{q_{in}}{\left(\dfrac{(1 - f) \cdot b_i \cdot q_{in}}{q_i + q_{in}}\right)}
+\end{equation}
+
+Rearrange.
+
+\begin{align}
+  p_t & =
+  \frac{q_{in} \cdot (q_i + q_{in})}{(1 - f) \cdot b_i \cdot q_{in}} \nonumber \\
+  p_t & = \frac{q_i + q_{in}}{(1 - f) \cdot b_i} \nonumber
+\end{align}
+
+\subsubsection{Equation~\ref{eqn:swap-buy-with-fees-input-solved} derivation}%
+\label{sssec:equation-eqn:swap-buy-with-fees-input-solved-derivation}
+
+Consider Equation~\ref{eqn:swap-taker-execution-price-buy-solved}.
+
+\begin{equation}
+  p_t = \frac{q_i + q_{in}}{(1 - f) \cdot b_i} \nonumber
+\end{equation}
+
+Take the limit of $p_t$ as $q_{in}$ approaches zero, $p_{t, 0}$, the taker execution
+price for a swap of infinitesimal size.
+
+\begin{equation}
+  p_{t, 0} = \lim_{q_{in} \to 0} p_t (b_i, f, q_i, q_{in}) =
+  \frac{q_i}{(1 - f) \cdot b_i} \nonumber
+\end{equation}
+
+Replace $p_{t, 0}$ with $p_a$, $b_i$ with $b_f$, and $q_i$ with $q_f$ to solve for an
+input amount $q_{in}^{\dagger}$ that slips the \gls*{cpamm} to the best ask price $p_a$
+after matching.
+
+\begin{equation}
+  p_a = \frac{q_f}{(1 - f) \cdot b_f} \nonumber
+\end{equation}
+
+Substitute $q_f = q_i + q_{in}^{\dagger}$ and $b_f = b_i - b_{out}$.
+
+\begin{equation}
+  p_a = \frac{q_i + q_{in}^{\dagger}}{(1 - f) \cdot (b_i - b_{out})} \nonumber
+\end{equation}
+
+Rearrange.
+
+\begin{equation}
+  p_a \cdot (1 - f) \cdot (b_i - b_{out}) = q_i + q_{in}^{\dagger} \nonumber
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-buy-with-fees-output-solved} with
+$q_{in} = q_{in}^{\dagger}$.
+
+\begin{equation}
+  p_a \cdot (1 - f) \cdot
+  \left(b_i - \frac{(1 - f) \cdot b_i \cdot q_{in}^{\dagger}}
+  {q_i + q_{in}^{\dagger}}\right) =
+  q_i + q_{in}^{\dagger} \nonumber
+\end{equation}
+
+Solve for $q_{in}^{\dagger}$.
+
 
 \end{document} % chktex 17
