@@ -210,14 +210,22 @@ Equations~\ref{eqn:swap-buy-with-fees-output-solved} and%
 \end{equation}
 
 As derived in
-Section~\ref{sssec:equation-eqn:swap-buy-with-fees-input-solved-derivation}, for order
+Section~\ref{sssec:equation-eqn-swap-buy-with-fees-input-solved-derivation}, for order
 book best ask price $p_a$, the quote input amount that slips the \gls*{cpamm} to
 $p_a$ after matching, $q_{in}^{\dagger}$, is given in
 Equation~\ref{eqn:swap-buy-with-fees-input-solved}.
 
 \begin{equation}\label{eqn:swap-buy-with-fees-input-solved}
-  q_{in}^{\dagger} (b_i, f, p_a, q_i) =
+  \begin{aligned}
+    q_{in}^{\dagger} (b_i, f, p_a, q_i) &= \frac{-b + \sqrt{b^2 - 4c}}{2},
+    \text{where} \\
+    b &= 2 q_i - b_i f p_a(1-f), \\
+    c &= q_i^2 - b_i p_a q_i (1 - f)
+    \end{aligned} \nonumber
 \end{equation}
+
+Notably, this strict form solution requires considerable intermediate arithmetic, such
+that an iterative approach is preferred in practice.
 
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}
 
@@ -453,62 +461,108 @@ price for a swap of infinitesimal size.
 \end{equation}
 
 Replace $p_{t, 0}$ with $p_a$, $b_i$ with $b_f$, and $q_i$ with $q_f$ to solve for an
-input amount $q_{in}^{\dagger}$ that slips the \gls*{cpamm} to the best ask price $p_a$
-after matching.
+input amount $q_{in}$ that slips the \gls*{cpamm} to the best ask price $p_a$ after
+matching.
 
 \begin{equation}
   p_a = \frac{q_f}{(1 - f) \cdot b_f} \nonumber
 \end{equation}
 
-Substitute $q_f = q_i + q_{in}^{\dagger}$ and $b_f = b_i - b_{out}$.
+Substitute $q_f = q_i + q_{in}$ and $b_f = b_i - b_{out}$.
 
 \begin{equation}
-  p_a = \frac{q_i + q_{in}^{\dagger}}{(1 - f) \cdot (b_i - b_{out})} \nonumber
+  p_a = \frac{q_i + q_{in}}{(1 - f) \cdot (b_i - b_{out})} \nonumber
 \end{equation}
 
-Rearrange.
+Substitute Equation~\ref{eqn:swap-buy-with-fees-output-solved}.
 
 \begin{equation}
-  p_a \cdot (1 - f) \cdot (b_i - b_{out}) = q_i + q_{in}^{\dagger} \nonumber
+  p_a = \frac{q_i + q_{in}}{(1 - f) \cdot
+  \left(b_i - \dfrac{(1 - f) \cdot b_i \cdot q_{in}}{q_i + q_{in}}\right)} \nonumber
 \end{equation}
 
-Substitute Equation~\ref{eqn:swap-buy-with-fees-output-solved} with
-$q_{in} = q_{in}^{\dagger}$.
+Factor out $(1 - f) \cdot b_i$.
 
 \begin{equation}
-  p_a \cdot (1 - f) \cdot
-  \left(b_i -
-  \frac{(1 - f) \cdot b_i \cdot q_{in}^{\dagger}}{q_i + q_{in}^{\dagger}}
-  \right) = q_i + q_{in}^{\dagger} \nonumber
+  p_a = \frac{q_i + q_{in}}{(1 - f) \cdot b_i \cdot
+  \left(1 - \dfrac{(1 - f) \cdot q_{in}}{q_i + q_{in}}\right)} \nonumber
+\end{equation}
+
+Cross-multiply.
+
+\begin{equation}
+  p_a \cdot (1 - f) \cdot b_i \cdot
+  \left(1 - \dfrac{(1 - f) \cdot q_{in}}{q_i + q_{in}}\right) = q_i + q_{in} \nonumber
 \end{equation}
 
 Expand the left side.
 
 \begin{equation}
-  p_a \cdot (1 - f) \cdot b_i -
-  \frac{p_a \cdot{(1 - f)}^2 \cdot b_i \cdot q_{in}^{\dagger}}{q_i + q_{in}^{\dagger}} =
-  q_i + q_{in}^{\dagger} \nonumber
+  p_a \cdot (1 - f) \cdot b_i - p_a \cdot {(1 - f)}^2 \cdot b_i \cdot
+  \frac{q_{in}}{q_i + q_{in}} = q_i + q_{in} \nonumber
 \end{equation}
 
-Multiply both sides by $q_i + q_{in}^{\dagger}$.
+Simplify by setting $X = p_a \cdot (1 - f) \cdot b_i$.
 
 \begin{equation}
-  \begin{aligned}
-    p_a \cdot (1 - f) \cdot b_i \cdot (q_i + q_{in}^{\dagger}) & \\
-    {}- p_a \cdot {(1 - f)}^2 \cdot b_i \cdot q_{in}^{\dagger} &=
-    {(q_i + q_{in}^{\dagger})}^2
-  \end{aligned}
-  \nonumber
+  X - X \cdot \frac{(1 - f) \cdot q_{in}}{q_i + q_{in}} = q_i + q_{in} \nonumber
+\end{equation}
+
+Multiply both sides by $(q_i + q_{in})$.
+
+\begin{equation}
+  X \cdot (q_i + q_{in}) - X \cdot (1 - f) \cdot q_{in} = (q_i + q_{in})^2 \nonumber
 \end{equation}
 
 Expand.
 
 \begin{equation}
-  p_a \cdot (1 - f) \cdot b_i \cdot q_i +
-  p_a \cdot (1 - f) \cdot b_i \cdot q_{in}^{\dagger} -
-  p_a \cdot {(1 - f)}^2 \cdot b_i \cdot q_{in}^{\dagger} =
-  q_i^2 + 2 \cdot q_i \cdot q_{in}^{\dagger} + {(q_{in}^{\dagger})}^2
+  \begin{aligned}
+  X \cdot q_i + X \cdot q_{in} & \\
+  {}- X \cdot q_{in} + X \cdot f \cdot q_{in} &=
+  q_i^2 + 2 \cdot q_i \cdot q_{in} + q_{in}^2 \nonumber
+  \end{aligned}
+\end{equation}
+
+Cancel out $X \cdot q_{in}$.
+
+\begin{equation}
+  X \cdot q_i + X \cdot f \cdot q_{in} =
+  q_i^2 + 2 \cdot q_i \cdot q_{in} + q_{in}^2 \nonumber
+\end{equation}
+
+Bring all terms to right side.
+
+\begin{equation}
+  0 = q_i^2 + 2 \cdot q_i \cdot q_{in} + q_{in}^2 - X \cdot q_i - X \cdot f \cdot q_{in}
   \nonumber
+\end{equation}
+
+Rearrange into standard quadratic form.
+
+\begin{equation}
+  q_{in}^2 + (2 \cdot q_i - X \cdot f) \cdot q_{in} + (q_i^2 - X \cdot q_i) = 0
+  \nonumber
+\end{equation}
+
+Substitute $X$.
+
+\begin{equation}
+  \begin{aligned}
+  q_{in}^2 & \\
+  {}+ (2 \cdot q_i - p_a \cdot (1 - f) \cdot b_i \cdot f) \cdot q_{in} & \\
+  {}+ (q_i^2 - p_a \cdot (1 - f) \cdot b_i \cdot q_i) &= 0
+  \end{aligned} \nonumber
+\end{equation}
+
+Thus $q_{in}$ is the positive root of the quadratic equation.
+
+\begin{equation}
+  \begin{aligned}
+    q_{in} &= \frac{-b + \sqrt{b^2 - 4c}}{2}, \text{where} \\
+    b &= 2 q_i - b_i f p_a(1-f), \\
+    c &= q_i^2 - b_i p_a q_i (1 - f)
+    \end{aligned} \nonumber
 \end{equation}
 
 \end{document} % chktex 17
