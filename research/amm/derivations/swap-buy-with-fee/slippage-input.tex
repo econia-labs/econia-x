@@ -1,4 +1,75 @@
 \subsubsection{Equation~\ref{eqn:swap-buy-with-fee-slippage-input} derivation}%
 \label{sssec:equation-eqn-swap-buy-with-fee-slippage-input-derivation}
 
-foo
+Consider Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
+
+\begin{equation}
+	p_s = \frac{{(q_i + q_{in})}^2}
+	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in})} \nonumber
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-buy-with-fee-slippage-price-ratio} for $p_s$ and
+$q_s$ for $q_{in}$.
+
+\begin{equation}
+	\frac{p_{s, n}}{p_{s, d}} = \frac{{(q_i + q_s)}^2}
+	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_s)} \nonumber
+\end{equation}
+
+Multiply both sides by $p_{s, d}$.
+
+\begin{equation}
+	p_{s, n} = \frac{p_{s, d}{(q_i + q_s)}^2}
+	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_s)} \nonumber
+\end{equation}
+
+Multiply both sides by $(1 - f) \cdot b_i \cdot (q_i + f \cdot q_s)$.
+
+\begin{equation}
+	p_{s, n} \cdot (1 - f) \cdot b_i \cdot (q_i + f \cdot q_s) =
+	p_{s, d} \cdot {(q_i + q_s)}^2 \nonumber
+\end{equation}
+
+Subtract $(p_{s, n} \cdot (1 - f) \cdot b_i \cdot (q_i + f \cdot q_s))$ from both sides.
+
+\begin{equation}
+	0 = p_{s, d} \cdot {(q_i + q_s)}^2 -
+	p_{s, n} \cdot (1 - f) \cdot b_i \cdot (q_i + f \cdot q_s) \nonumber
+\end{equation}
+
+Move all terms to the left side, and expand terms for a polynomial in $q_s$.
+
+\begin{equation}
+	\begin{aligned}
+		p_{s, d} \cdot q_i^2                                   &     \\
+		{}+ p_{s, d} \cdot 2 \cdot q_i \cdot q_s               &     \\
+		{}+ p_{s, d} \cdot q_s^2                               &     \\
+		{}- p_{s, n} \cdot (1 - f) \cdot b_i \cdot q_i         &     \\
+		{}- p_{s, n} \cdot (1 - f) \cdot b_i \cdot f \cdot q_s & = 0
+	\end{aligned}
+	\nonumber
+\end{equation}
+
+Sort terms by polynomial degree.
+
+\begin{equation}
+	\begin{aligned}
+		p_{s, d} \cdot q_s^2                                   &     \\
+		{}+ p_{s, d} \cdot 2 \cdot q_i \cdot q_s               &     \\
+		{}- p_{s, n} \cdot (1 - f) \cdot b_i \cdot f \cdot q_s &     \\
+		{}+ p_{s, d} \cdot q_i^2                               &     \\
+		{}- p_{s, n} \cdot (1 - f) \cdot b_i \cdot q_i         & = 0
+	\end{aligned}
+	\nonumber
+\end{equation}
+
+Regroup terms for standard quadratic form.
+
+\begin{equation}
+	\begin{aligned}
+		p_{s, d} \cdot q_s^2                                                                  &    \\
+		{}+ (p_{s, d} \cdot 2 \cdot q_i - p_{s, n} \cdot (1 - f) \cdot b_i \cdot f) \cdot q_s &    \\
+		{}+ (p_{s, d} \cdot q_i^2 - p_{s, n} \cdot (1 - f) \cdot b_i \cdot q_i)               & =0
+	\end{aligned}
+	\nonumber
+\end{equation}

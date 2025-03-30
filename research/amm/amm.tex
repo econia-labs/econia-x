@@ -211,7 +211,7 @@ Equation~\ref{eqn:swap-buy-with-fee-base-volume}.
 	b_v (b_i, q_i, q_{in}) = \frac{b_i \cdot q_{in}}{q_i + q_{in}}
 \end{equation}
 
-As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-out-derivation},
+As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-out-derivation},
 $b_{out}$ is a function of $b_i$, fee rate $f$, $q_i$, and
 $q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-base-out}.
 
@@ -258,8 +258,15 @@ Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
 	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in})}
 \end{equation}
 
+In practice, the slippage price is represented as a ratio per
+Equation~\ref{eqn:swap-buy-with-fee-slippage-price-ratio}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-slippage-price-ratio}
+	p_s = \frac{p_{s, n}}{p_{s, d}}
+\end{equation}
+
 Define the slippage quote input amount $q_s$ as $q_{in}$ resulting in a specified
-slippage price $p_s$ after the swap. As derived in
+slippage price $p_s = \frac{p_{s, n}}{p_{s, d}}$ after the swap. As derived in
 Section~\ref{sssec:equation-eqn-swap-buy-with-fee-slippage-input-derivation},
 $F$ is given in Equation~\ref{eqn:swap-buy-with-fee-slippage-input}.
 
