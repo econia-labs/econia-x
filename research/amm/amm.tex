@@ -180,7 +180,7 @@ execution price $p_t$ in terms of the change in the taker's base holdings $b_t$ 
 quote holdings $q_t$.
 
 \begin{equation}\label{eqn:swap-taker-execution-price}
-  p_t = \frac{\Delta q_t}{\Delta b_t}
+	p_t = \frac{\Delta q_t}{\Delta b_t}
 \end{equation}
 
 \subsection{Swap buy with fee}\label{ssec:swap-buy-with-fee}
@@ -200,7 +200,7 @@ The final quote amount $q_f$ is the sum of the initial quote amount $q_i$ and th
 quote input amount $q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-quote-final}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-quote-final}
-  q_f (q_i, q_{in}) = q_i + q_{in}
+	q_f (q_i, q_{in}) = q_i + q_{in}
 \end{equation}
 
 As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-volume-derivation},
@@ -208,7 +208,7 @@ $b_v$ is a function of the initial base amount $b_i$, $q_i$, and $q_{in}$, per
 Equation~\ref{eqn:swap-buy-with-fee-base-volume}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-base-volume}
-  b_v (b_i, q_i, q_{in}) = \frac{b_i \cdot q_{in}}{q_i + q_{in}}
+	b_v (b_i, q_i, q_{in}) = \frac{b_i \cdot q_{in}}{q_i + q_{in}}
 \end{equation}
 
 As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-out-derivation},
@@ -216,7 +216,7 @@ $b_{out}$ is a function of $b_i$, fee rate $f$, $q_i$, and
 $q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-base-out}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-base-out}
-  b_{out} (b_i, f, q_i, q_{in}) = (1 - f) \cdot \frac{b_i \cdot q_{in}}{q_i + q_{in}}
+	b_{out} (b_i, f, q_i, q_{in}) = (1 - f) \cdot \frac{b_i \cdot q_{in}}{q_i + q_{in}}
 \end{equation}
 
 As derived in
@@ -224,8 +224,8 @@ Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-final-derivation},
 $b_f (b_i, f, q_i, q_{in})$ is given in Equation~\ref{eqn:swap-buy-with-fee-base-final}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-base-final}
-  b_f (b_i, f, q_i, q_{in}) =
-  b_i \cdot \frac{q_i + f \cdot q_{in}}{q_i + q_{in}}
+	b_f (b_i, f, q_i, q_{in}) =
+	b_i \cdot \frac{q_i + f \cdot q_{in}}{q_i + q_{in}}
 \end{equation}
 
 As derived in
@@ -234,7 +234,7 @@ $p_t (b_i, f, q_i, q_{in})$ is given in
 Equation~\ref{eqn:swap-buy-with-fee-taker-execution-price}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-taker-execution-price}
-  p_t (b_i, f, q_i, q_{in}) = \frac{q_i + q_{in}}{(1 - f) \cdot b_i}
+	p_t (b_i, f, q_i, q_{in}) = \frac{q_i + q_{in}}{(1 - f) \cdot b_i}
 \end{equation}
 
 Define the marginal taker execution price $p_m$ as the taker execution price for a swap
@@ -243,7 +243,7 @@ Section~\ref{sssec:equation-eqn-swap-buy-with-fee-marginal-price-derivation},
 $p_m (b_i, f, q_i)$ is given in Equation~\ref{eqn:swap-buy-with-fee-marginal-price}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-marginal-price}
-  p_m (b_i, f, q_i) = \frac{q_i}{(1 - f) \cdot b_i}
+	p_m (b_i, f, q_i) = \frac{q_i}{(1 - f) \cdot b_i}
 \end{equation}
 
 Define the slippage price $p_s$ as $p_m$ after $q_{in}$ has been swapped, the point at
@@ -254,24 +254,17 @@ $p_s (b_i, f, q_i, q_{in})$ is given in
 Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-slippage-price}
-  p_s (b_i, f, q_i, q_{in}) = \frac{{(q_i + q_{in})}^2}
-  {(1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in})}
+	p_s (b_i, f, q_i, q_{in}) = \frac{{(q_i + q_{in})}^2}
+	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in})}
 \end{equation}
 
 Define the slippage quote input amount $q_s$ as $q_{in}$ resulting in a specified
-slippage price $p_s$ after the swap. Equation~\ref{eqn:swap-buy-with-fee-slippage-price}
-does afford a closed-form solution for $q_s$ in terms of the other variables including
-$p_s$, but it is non-trivial and due to its numerical implementation complexity it is
-not provided here.
+slippage price $p_s$ after the swap. As derived in
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-slippage-input-derivation},
+$F$ is given in Equation~\ref{eqn:swap-buy-with-fee-slippage-input}.
 
-Rather, consider that in practice $p_s$ can be represented as the ratio
-$\frac{p_{s, q}}{p_{s, b}}$, such that
-Equation~\ref{eqn:swap-buy-with-fee-slippage-price} can be alternatively represented as
-Equation~\ref{eqn:swap-buy-with-fee-slippage-price-ratio}.
-
-\begin{equation}\label{eqn:swap-buy-with-fee-slippage-price-ratio}
-  p_{s, q} \cdot (1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in}) =
-  p_{s, b} \cdot {(q_i + q_{in})}^2
+\begin{equation}\label{eqn:swap-buy-with-fee-slippage-input}
+	F =
 \end{equation}
 
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}
@@ -441,5 +434,6 @@ Rearrange.
 \input{derivations/swap-buy-with-fee/taker-execution-price.tex}
 \input{derivations/swap-buy-with-fee/marginal-price.tex}
 \input{derivations/swap-buy-with-fee/slippage-price.tex}
+\input{derivations/swap-buy-with-fee/slippage-input.tex}
 
 \end{document} % chktex 17
