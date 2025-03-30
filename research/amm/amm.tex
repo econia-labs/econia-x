@@ -187,7 +187,8 @@ quote holdings $q_t$.
 
 Figure~\ref{fig:swap-buy-with-fee} illustrates a swap buy where quote input amount
 $q_{in}$ is provided by the taker, resulting in base volume $b_v$ before fees. The fee
-rate $f$ is then assessed on $b_v$, resulting in a final base output amount $b_{out}$.
+rate $f$ is then assessed on $b_v$, resulting in a final base output amount $b_{out}$
+at average taker execution price $p_t$.
 
 \begin{figure}[!htb]
 	\centering
@@ -195,43 +196,90 @@ rate $f$ is then assessed on $b_v$, resulting in a final base output amount $b_{
 	\caption{Swap buy with fee}\label{fig:swap-buy-with-fee}
 \end{figure}
 
-As derived in Section~\ref{ssec:swap-buy-with-fee-derivations}, $b_{out}$ and $p_t$ are
-given in terms of $b_i$, $f$, $q_i$, and $q_{in}$ in
-Equations~\ref{eqn:swap-buy-with-fees-output-solved} and%
-~\ref{eqn:swap-taker-execution-price-buy-solved}.
+The final quote amount $q_f$ is the sum of the initial quote amount $q_i$ and the
+quote input amount $q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-quote-final}.
 
-\begin{equation}\label{eqn:swap-buy-with-fees-output-solved}
-  b_{out} (b_i, f, q_i, q_{in}) =
-  \frac{(1 - f) \cdot b_i \cdot q_{in}}{q_i + q_{in}}
+\begin{equation}\label{eqn:swap-buy-with-fee-quote-final}
+  q_f (q_i, q_{in}) = q_i + q_{in}
 \end{equation}
 
-\begin{equation}\label{eqn:swap-taker-execution-price-buy-solved}
-  p_t (b_i, f, q_i, q_{in}) = \frac{q_i + q_{in}}{(1 - f) \cdot b_i}
+As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-volume-derivation},
+$b_v$ is a function of the initial base amount $b_i$, $q_i$, and $q_{in}$, per
+Equation~\ref{eqn:swap-buy-with-fee-base-volume}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-base-volume}
+  b_v (b_i, q_i, q_{in}) = \frac{b_i \cdot q_{in}}{q_i + q_{in}}
+\end{equation}
+
+As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-out-derivation},
+$b_{out}$ is a function of $b_i$, fee rate $f$, $q_i$, and
+$q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-base-out}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-base-out}
+  b_{out} (b_i, f, q_i, q_{in}) = (1 - f) \cdot \frac{b_i \cdot q_{in}}{q_i + q_{in}}
 \end{equation}
 
 As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fees-input-solved-derivation}, for order
-book best ask price $p_a$, the quote input amount that slips the \gls*{cpamm} to
-$p_a$ after matching, $q_{in}^{\dagger}$, is given in
-Equation~\ref{eqn:swap-buy-with-fees-input-solved}.
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-final-derivation},
+$b_f (b_i, f, q_i, q_{in})$ is given in Equation~\ref{eqn:swap-buy-with-fee-base-final}.
 
-\begin{equation}\label{eqn:swap-buy-with-fees-input-solved}
-  \begin{aligned}
-    q_{in}^{\dagger} (b_i, f, p_a, q_i) &= \frac{-b + \sqrt{b^2 - 4c}}{2},
-    \text{where} \\
-    b &= 2 q_i - b_i f p_a(1-f), \\
-    c &= q_i^2 - b_i p_a q_i (1 - f)
-    \end{aligned} \nonumber
+\begin{equation}\label{eqn:swap-buy-with-fee-base-final}
+  b_f (b_i, f, q_i, q_{in}) =
+  b_i \cdot \frac{q_i + f \cdot q_{in}}{q_i + q_{in}}
 \end{equation}
 
-Notably, this strict form solution requires considerable intermediate arithmetic, such
-that an iterative approach is preferred in practice.
+As derived in
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-taker-execution-price-derivation},
+$p_t (b_i, f, q_i, q_{in})$ is given in
+Equation~\ref{eqn:swap-buy-with-fee-taker-execution-price}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-taker-execution-price}
+  p_t (b_i, f, q_i, q_{in}) = \frac{q_i + q_{in}}{(1 - f) \cdot b_i}
+\end{equation}
+
+Define the marginal taker execution price $p_m$ as the taker execution price for a swap
+of infinitesimal size. As derived in
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-marginal-price-derivation},
+$p_m (b_i, f, q_i)$ is given in Equation~\ref{eqn:swap-buy-with-fee-marginal-price}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-marginal-price}
+  p_m (b_i, f, q_i) = \frac{q_i}{(1 - f) \cdot b_i}
+\end{equation}
+
+Define the slippage price $p_s$ as $p_m$ after $q_{in}$ has been swapped, the point at
+which additional quote will fill at a worse price compared with matching against an
+order book best ask price that is also at $p_s$. As derived in
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-slippage-price-derivation},
+$p_s (b_i, f, q_i, q_{in})$ is given in
+Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-slippage-price}
+  p_s (b_i, f, q_i, q_{in}) = \frac{{(q_i + q_{in})}^2}
+  {(1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in})}
+\end{equation}
+
+Define the slippage quote input amount $q_s$ as $q_{in}$ resulting in a specified
+slippage price $p_s$ after the swap. Equation~\ref{eqn:swap-buy-with-fee-slippage-price}
+does afford a closed-form solution for $q_s$ in terms of the other variables including
+$p_s$, but it is non-trivial and due to its numerical implementation complexity it is
+not provided here.
+
+Rather, consider that in practice $p_s$ can be represented as the ratio
+$\frac{p_{s, q}}{p_{s, b}}$, such that
+Equation~\ref{eqn:swap-buy-with-fee-slippage-price} can be alternatively represented as
+Equation~\ref{eqn:swap-buy-with-fee-slippage-price-ratio}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-slippage-price-ratio}
+  p_{s, q} \cdot (1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in}) =
+  p_{s, b} \cdot {(q_i + q_{in})}^2
+\end{equation}
 
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}
 
 Figure~\ref{fig:swap-sell-with-fee} illustrates a swap sell where base input amount
 $b_{in}$ is provided by the taker, resulting in quote volume $q_v$ before fees. The fee
-rate $f$ is then assessed on $q_v$, resulting in a final quote output amount $q_{out}$.
+rate $f$ is then assessed on $q_v$, resulting in a final quote output amount $q_{out}$
+at average taker execution price $p_t$.
 
 \begin{figure}[!htb]
 	\centering
@@ -385,184 +433,13 @@ Rearrange.
 	p_e & = \frac{q_i}{b_i + b_{in}} \nonumber
 \end{align}
 
-\subsection{Swap buy with fee  derivations}\label{ssec:swap-buy-with-fee-derivations}
+\subsection{Swap buy with fee derivations}\label{ssec:swap-buy-with-fee-derivations}
 
-\subsubsection{Equation~\ref{eqn:swap-buy-with-fees-output-solved} derivation}%
-\label{sssec:equation-eqn-swap-buy-with-fees-output-solved-derivation}
-
-Define $b_{out}$ in terms of $b_v$ and $f$.
-
-\begin{equation}
-  b_{out} = b_v - f \cdot b_v \nonumber
-\end{equation}
-
-Rearrange.
-
-\begin{equation}
-  b_{out} = b_v \cdot (1 - f) \nonumber
-\end{equation}
-
-Substitute Equation~\ref{eqn:swap-buy-base-out-solved}, noting $b_v$ equals $b_{out}$
-for a swap buy without fees.
-
-\begin{equation}
-  b_{out} = \frac{b_i \cdot q_{in}}{q_i + q_{in}} \cdot (1 - f) \nonumber
-\end{equation}
-
-Rearrange.
-
-\begin{equation}
-  b_{out} = \frac{(1 - f) \cdot b_i \cdot q_{in}}{q_i + q_{in}} \nonumber
-\end{equation}
-
-\subsubsection{Equation~\ref{eqn:swap-taker-execution-price-buy-solved} derivation}%
-\label{sssec:equation-eqn-swap-taker-execution-price-buy-solved-derivation}
-
-Consider equation Equation~\ref{eqn:swap-taker-execution-price}.
-
-\begin{equation}
-  p_t = \frac{\Delta q_t}{\Delta b_t}
-\end{equation}
-
-Substitute values from Figure~\ref{fig:swap-buy-with-fee}.
-
-\begin{equation}
-  p_t = \frac{q_{in}}{b_{out}}
-\end{equation}
-
-Substitute Equation~\ref{eqn:swap-buy-with-fees-output-solved}.
-\begin{equation}
-  p_t = \frac{q_{in}}{\left(\dfrac{(1 - f) \cdot b_i \cdot q_{in}}{q_i + q_{in}}\right)}
-\end{equation}
-
-Rearrange.
-
-\begin{align}
-  p_t & =
-  \frac{q_{in} \cdot (q_i + q_{in})}{(1 - f) \cdot b_i \cdot q_{in}} \nonumber \\
-  p_t & = \frac{q_i + q_{in}}{(1 - f) \cdot b_i} \nonumber
-\end{align}
-
-\subsubsection{Equation~\ref{eqn:swap-buy-with-fees-input-solved} derivation}%
-\label{sssec:equation-eqn-swap-buy-with-fees-input-solved-derivation}
-
-Consider Equation~\ref{eqn:swap-taker-execution-price-buy-solved}.
-
-\begin{equation}
-  p_t = \frac{q_i + q_{in}}{(1 - f) \cdot b_i} \nonumber
-\end{equation}
-
-Take the limit of $p_t$ as $q_{in}$ approaches zero, $p_{t, 0}$, the taker execution
-price for a swap of infinitesimal size.
-
-\begin{equation}
-  p_{t, 0} = \lim_{q_{in} \to 0} p_t (b_i, f, q_i, q_{in}) =
-  \frac{q_i}{(1 - f) \cdot b_i} \nonumber
-\end{equation}
-
-Replace $p_{t, 0}$ with $p_a$, $b_i$ with $b_f$, and $q_i$ with $q_f$ to solve for an
-input amount $q_{in}$ that slips the \gls*{cpamm} to the best ask price $p_a$ after
-matching.
-
-\begin{equation}
-  p_a = \frac{q_f}{(1 - f) \cdot b_f} \nonumber
-\end{equation}
-
-Substitute $q_f = q_i + q_{in}$ and $b_f = b_i - b_{out}$.
-
-\begin{equation}
-  p_a = \frac{q_i + q_{in}}{(1 - f) \cdot (b_i - b_{out})} \nonumber
-\end{equation}
-
-Substitute Equation~\ref{eqn:swap-buy-with-fees-output-solved}.
-
-\begin{equation}
-  p_a = \frac{q_i + q_{in}}{(1 - f) \cdot
-  \left(b_i - \dfrac{(1 - f) \cdot b_i \cdot q_{in}}{q_i + q_{in}}\right)} \nonumber
-\end{equation}
-
-Factor out $(1 - f) \cdot b_i$.
-
-\begin{equation}
-  p_a = \frac{q_i + q_{in}}{(1 - f) \cdot b_i \cdot
-  \left(1 - \dfrac{(1 - f) \cdot q_{in}}{q_i + q_{in}}\right)} \nonumber
-\end{equation}
-
-Cross-multiply.
-
-\begin{equation}
-  p_a \cdot (1 - f) \cdot b_i \cdot
-  \left(1 - \dfrac{(1 - f) \cdot q_{in}}{q_i + q_{in}}\right) = q_i + q_{in} \nonumber
-\end{equation}
-
-Expand the left side.
-
-\begin{equation}
-  p_a \cdot (1 - f) \cdot b_i - p_a \cdot {(1 - f)}^2 \cdot b_i \cdot
-  \frac{q_{in}}{q_i + q_{in}} = q_i + q_{in} \nonumber
-\end{equation}
-
-Simplify by setting $X = p_a \cdot (1 - f) \cdot b_i$.
-
-\begin{equation}
-  X - X \cdot \frac{(1 - f) \cdot q_{in}}{q_i + q_{in}} = q_i + q_{in} \nonumber
-\end{equation}
-
-Multiply both sides by $(q_i + q_{in})$.
-
-\begin{equation}
-  X \cdot (q_i + q_{in}) - X \cdot (1 - f) \cdot q_{in} = {(q_i + q_{in})}^2 \nonumber
-\end{equation}
-
-Expand.
-
-\begin{equation}
-  \begin{aligned}
-  X \cdot q_i + X \cdot q_{in} & \\
-  {}- X \cdot q_{in} + X \cdot f \cdot q_{in} &=
-  q_i^2 + 2 \cdot q_i \cdot q_{in} + q_{in}^2 \nonumber
-  \end{aligned}
-\end{equation}
-
-Cancel out $X \cdot q_{in}$.
-
-\begin{equation}
-  X \cdot q_i + X \cdot f \cdot q_{in} =
-  q_i^2 + 2 \cdot q_i \cdot q_{in} + q_{in}^2 \nonumber
-\end{equation}
-
-Bring all terms to right side.
-
-\begin{equation}
-  0 = q_i^2 + 2 \cdot q_i \cdot q_{in} + q_{in}^2 - X \cdot q_i - X \cdot f \cdot q_{in}
-  \nonumber
-\end{equation}
-
-Rearrange into standard quadratic form.
-
-\begin{equation}
-  q_{in}^2 + (2 \cdot q_i - X \cdot f) \cdot q_{in} + (q_i^2 - X \cdot q_i) = 0
-  \nonumber
-\end{equation}
-
-Substitute $X$.
-
-\begin{equation}
-  \begin{aligned}
-  q_{in}^2 & \\
-  {}+ (2 \cdot q_i - p_a \cdot (1 - f) \cdot b_i \cdot f) \cdot q_{in} & \\
-  {}+ (q_i^2 - p_a \cdot (1 - f) \cdot b_i \cdot q_i) &= 0
-  \end{aligned} \nonumber
-\end{equation}
-
-Thus $q_{in}$ is the positive root of the quadratic equation.
-
-\begin{equation}
-  \begin{aligned}
-    q_{in} &= \frac{-b + \sqrt{b^2 - 4c}}{2}, \text{where} \\
-    b &= 2 q_i - b_i f p_a(1-f), \\
-    c &= q_i^2 - b_i p_a q_i (1 - f)
-    \end{aligned} \nonumber
-\end{equation}
+\input{derivations/swap-buy-with-fee/base-volume.tex}
+\input{derivations/swap-buy-with-fee/base-out.tex}
+\input{derivations/swap-buy-with-fee/base-final.tex}
+\input{derivations/swap-buy-with-fee/taker-execution-price.tex}
+\input{derivations/swap-buy-with-fee/marginal-price.tex}
+\input{derivations/swap-buy-with-fee/slippage-price.tex}
 
 \end{document} % chktex 17
