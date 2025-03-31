@@ -8,68 +8,75 @@ Consider Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
 	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in})} \nonumber
 \end{equation}
 
-Substitute Equation~\ref{eqn:swap-buy-with-fee-slippage-price-ratio} for $p_s$ and
-$q_s$ for $q_{in}$.
+Substitute $q_s$ = $q_{in}$.
 
 \begin{equation}
-	\frac{p_{s, n}}{p_{s, d}} = \frac{{(q_i + q_s)}^2}
+	p_s = \frac{{(q_i + q_s)}^2}
 	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_s)} \nonumber
 \end{equation}
 
-Multiply both sides by $p_{s, d}$.
+Multiply both sides by the denominator.
 
 \begin{equation}
-	p_{s, n} = \frac{p_{s, d}{(q_i + q_s)}^2}
-	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_s)} \nonumber
+	p_s \cdot (1 - f) \cdot b_i \cdot (q_i + f \cdot q_s) =
+	{(q_i + q_s)}^2 \nonumber
 \end{equation}
 
-Multiply both sides by $(1 - f) \cdot b_i \cdot (q_i + f \cdot q_s)$.
-
-\begin{equation}
-	p_{s, n} \cdot (1 - f) \cdot b_i \cdot (q_i + f \cdot q_s) =
-	p_{s, d} \cdot {(q_i + q_s)}^2 \nonumber
-\end{equation}
-
-Subtract $(p_{s, n} \cdot (1 - f) \cdot b_i \cdot (q_i + f \cdot q_s))$ from both sides.
-
-\begin{equation}
-	0 = p_{s, d} \cdot {(q_i + q_s)}^2 -
-	p_{s, n} \cdot (1 - f) \cdot b_i \cdot (q_i + f \cdot q_s) \nonumber
-\end{equation}
-
-Move all terms to the left side, and expand terms for a polynomial in $q_s$.
+Expand both sides.
 
 \begin{equation}
 	\begin{aligned}
-		p_{s, d} \cdot q_i^2                                   &     \\
-		{}+ p_{s, d} \cdot 2 \cdot q_i \cdot q_s               &     \\
-		{}+ p_{s, d} \cdot q_s^2                               &     \\
-		{}- p_{s, n} \cdot (1 - f) \cdot b_i \cdot q_i         &     \\
-		{}- p_{s, n} \cdot (1 - f) \cdot b_i \cdot f \cdot q_s & = 0
-	\end{aligned}
-	\nonumber
+		      & p_s \cdot (1 - f) \cdot b_i \cdot q_i           \\
+		{}+{} & p_s \cdot (1 - f) \cdot b_i \cdot f \cdot q_s =
+		q_i^2 + 2 \cdot q_i \cdot q_s + q_s^2
+	\end{aligned} \nonumber
 \end{equation}
 
-Sort terms by polynomial degree.
+Group all terms with $q_s$ on the right side, and all other terms on the left side.
 
-\begin{equation}
+\begin{equation*}
 	\begin{aligned}
-		p_{s, d} \cdot q_s^2                                   &     \\
-		{}+ p_{s, d} \cdot 2 \cdot q_i \cdot q_s               &     \\
-		{}- p_{s, n} \cdot (1 - f) \cdot b_i \cdot f \cdot q_s &     \\
-		{}+ p_{s, d} \cdot q_i^2                               &     \\
-		{}- p_{s, n} \cdot (1 - f) \cdot b_i \cdot q_i         & = 0
+		p_s \cdot (1 - f) \cdot b_i \cdot q_i - q_i^ 2 ={}
+		 & q_s^2                                           \\
+		 & + 2 \cdot q_i \cdot q_s                         \\
+		 & - p_s \cdot (1 - f) \cdot b_i \cdot f \cdot q_s
 	\end{aligned}
-	\nonumber
-\end{equation}
+\end{equation*}
 
-Regroup terms for standard quadratic form.
+Factor out $q_s$ on the right side.
 
-\begin{equation}
+\begin{equation*}
 	\begin{aligned}
-		p_{s, d} \cdot q_s^2                                                                  &    \\
-		{}+ (p_{s, d} \cdot 2 \cdot q_i - p_{s, n} \cdot (1 - f) \cdot b_i \cdot f) \cdot q_s &    \\
-		{}+ (p_{s, d} \cdot q_i^2 - p_{s, n} \cdot (1 - f) \cdot b_i \cdot q_i)               & =0
+		p_s \cdot (1 - f) \cdot b_i \cdot q_i - q_i^ 2 ={}
+		 & q_s^2                                                           \\
+		 & + q_s \cdot (2 \cdot q_i - p_s \cdot (1 - f) \cdot b_i \cdot f)
 	\end{aligned}
-	\nonumber
-\end{equation}
+\end{equation*}
+
+Rerrange into standard quadratic form.
+
+\begin{equation*}
+	\begin{aligned}
+		0 ={}
+		 & q_s^2                                                           \\
+		 & + q_s \cdot (2 \cdot q_i - p_s \cdot (1 - f) \cdot b_i \cdot f) \\
+		 & + (q_i^2 - p_s \cdot (1 - f) \cdot b_i \cdot q_i)
+	\end{aligned}
+\end{equation*}
+
+Rearrange to yield the common term $T = [(1 - f) \cdot b_i \cdot p_s]$.
+
+\begin{equation*}
+	\begin{aligned}
+		0 ={}
+		 & q_s^2                                                             \\
+		 & + q_s \cdot (2 \cdot q_i - f \cdot [(1 - f) \cdot b_i \cdot p_s]) \\
+		 & + (q_i^2 - q_i \cdot [(1 - f) \cdot b_i \cdot p_s])
+	\end{aligned}
+\end{equation*}
+
+Simplify the right side with the common term $T$.
+
+\begin{equation*}
+	0 = q_s^2 + q_s \cdot (2 \cdot q_i - f \cdot T) + (q_i^2 - q_i \cdot T)
+\end{equation*}
