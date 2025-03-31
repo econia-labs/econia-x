@@ -259,18 +259,27 @@ Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
 \end{equation}
 
 Define the slippage quote input amount $q_s$ as $q_{in}$ resulting in a specified
-slippage price $p_s$ after the swap. As derived in
+slippage price $p_s$ after the swap where $p_s \geq p_m$. As derived in
 Section~\ref{sssec:equation-eqn-swap-buy-with-fee-slippage-input-derivation},
 solving Equation~\ref{eqn:swap-buy-with-fee-slippage-price} for $q_s = q_{in}$ is
-identical to finding the roots of Equation~\ref{eqn:swap-buy-with-fee-slippage-input}, a quadratic polynomial in $q_s$ containing the common term
-$T = [(1 - f) \cdot b_i \cdot p_s]$.
+identical to finding the roots of Equation~\ref{eqn:swap-buy-with-fee-slippage-input},
+a quadratic polynomial in $q_s$ containing the common term
+$Q = [(1 - f) \cdot b_i \cdot p_s]$.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-slippage-input}
-	\begin{aligned}
-		F(b_i, f, p_s, q_i, q_s) & =
-		q_s^2 + q_s \cdot (2 \cdot q_i - f \cdot T) + (q_i^2 - q_i \cdot T), \\
-		T                        & = [(1 - f) \cdot b_i \cdot p_s]
-	\end{aligned}
+	F(b_i, f, p_s, q_i, q_s) = q_s^2 + B \cdot q_s + C,
+	\begin{cases}
+		B = 2 \cdot q_i - f \cdot Q, \\
+		C = q_i^2 - q_i \cdot Q,     \\
+		Q = [(1 - f) \cdot b_i \cdot p_s]
+	\end{cases}
+\end{equation}
+
+As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-converge-derivation},
+see Equation~\ref{eqn:swap-buy-with-fee-convergence}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-convergence}
+	x
 \end{equation}
 
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}
@@ -441,5 +450,6 @@ Rearrange.
 \input{derivations/swap-buy-with-fee/marginal-price.tex}
 \input{derivations/swap-buy-with-fee/slippage-price.tex}
 \input{derivations/swap-buy-with-fee/slippage-input.tex}
+\input{derivations/swap-buy-with-fee/convergence.tex}
 
 \end{document} % chktex 17
