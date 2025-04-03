@@ -41,7 +41,7 @@ module amm::amm {
         let (_, denominator) = fee::post_match(b_i * (q_i + inner_term), f);
         let p_s = price::price(denominator, numerator);
 
-        // Compare price value significands.
+        // Compare price value significand values.
         print_labeled_value(
             b"p_m_after significand", price::encoded_significand(p_m_after)
         );
