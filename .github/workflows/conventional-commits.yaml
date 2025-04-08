@@ -32,5 +32,7 @@ name: 'Verify conventional commit PR title'
     - 'reopened'
     - 'synchronize'
 permissions:
+  pull-requests: 'read'
+  statuses: 'read'
   contents: 'read'
 ...
