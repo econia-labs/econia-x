@@ -54,7 +54,7 @@ module prover_examples::phantom_key_struct {
 
     public fun increment_phantom_key_struct_with_rollover<T>(
         account: &signer
-    ) acquires PhantomKeyStruct<T> {
+    ) acquires PhantomKeyStruct {
         let value_ref_mut = &mut PhantomKeyStruct<T>[signer::address_of(account)].value;
         if (*value_ref_mut == MAX_VALUE) {
             *value_ref_mut = 0;
