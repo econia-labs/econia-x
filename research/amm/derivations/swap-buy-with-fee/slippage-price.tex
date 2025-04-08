@@ -1,0 +1,30 @@
+\subsubsection{Equation~\ref{eqn:swap-buy-with-fee-slippage-price} derivation}%
+\label{sssec:equation-eqn-swap-buy-with-fee-slippage-price-derivation}
+
+Consider Equation~\ref{eqn:swap-buy-with-fee-marginal-price}.
+
+\begin{equation}
+	p_m = \frac{q_i}{(1 - f) \cdot b_i} \nonumber
+\end{equation}
+
+Substitute $p_s$ for $p_m$, $q_f$ for $q_i$, and $b_f$ for $b_i$, since $p_s$ is $p_m$
+after $q_{in}$ has been swapped.
+
+\begin{equation}
+	p_s = \frac{q_f}{(1 - f) \cdot b_f} \nonumber
+\end{equation}
+
+Substitute Equation~\ref{eqn:swap-buy-with-fee-quote-final} for $q_f$ and
+Equation~\ref{eqn:swap-buy-with-fee-base-final} for $b_f$.
+
+\begin{equation}
+	p_s = \frac{q_i + q_{in}}
+	{(1 - f) \cdot b_i \cdot \dfrac{q_i + f \cdot q_{in}}{q_i + q_{in}}} \nonumber
+\end{equation}
+
+Multiply the numerator and the denominator by $(q_i + q_{in})$.
+
+\begin{equation}
+	p_s = \frac{{(q_i + q_{in})}^2}
+	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in})} \nonumber
+\end{equation}

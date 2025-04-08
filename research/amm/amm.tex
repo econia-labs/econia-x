@@ -219,6 +219,61 @@ $q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-base-out}.
 	b_{out} (b_i, f, q_i, q_{in}) = (1 - f) \cdot \frac{b_i \cdot q_{in}}{q_i + q_{in}}
 \end{equation}
 
+As derived in
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-final-derivation},
+$b_f (b_i, f, q_i, q_{in})$ is given in Equation~\ref{eqn:swap-buy-with-fee-base-final}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-base-final}
+	b_f (b_i, f, q_i, q_{in}) =
+	b_i \cdot \frac{q_i + f \cdot q_{in}}{q_i + q_{in}}
+\end{equation}
+
+As derived in
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-taker-execution-price-derivation},
+$p_t (b_i, f, q_i, q_{in})$ is given in
+Equation~\ref{eqn:swap-buy-with-fee-taker-execution-price}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-taker-execution-price}
+	p_t (b_i, f, q_i, q_{in}) = \frac{q_i + q_{in}}{(1 - f) \cdot b_i}
+\end{equation}
+
+Define the marginal taker execution price $p_m$ as the taker execution price for a swap
+of infinitesimal size. As derived in
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-marginal-price-derivation},
+$p_m (b_i, f, q_i)$ is given in Equation~\ref{eqn:swap-buy-with-fee-marginal-price}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-marginal-price}
+	p_m (b_i, f, q_i) = \frac{q_i}{(1 - f) \cdot b_i}
+\end{equation}
+
+Define the slippage price $p_s$ as $p_m$ after $q_{in}$ has been swapped, the point at
+which additional quote will fill at a worse price compared with matching against an
+order book best ask price that is also at $p_s$. As derived in
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-slippage-price-derivation},
+$p_s (b_i, f, q_i, q_{in})$ is given in
+Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-slippage-price}
+	p_s (b_i, f, q_i, q_{in}) = \frac{{(q_i + q_{in})}^2}
+	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in})}
+\end{equation}
+
+Define the slippage quote input amount $q_s$ as $q_{in}$ resulting in a specified
+slippage price $p_s$ after the swap where $p_s \geq p_m$. As derived in
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-slippage-input-derivation},
+solving Equation~\ref{eqn:swap-buy-with-fee-slippage-price} for $q_s = q_{in}$ is
+identical to finding the roots of Equation~\ref{eqn:swap-buy-with-fee-slippage-input},
+a quadratic polynomial in $q_s$ containing the common term
+$Q = [(1 - f) \cdot b_i \cdot p_s]$.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-slippage-input}
+	F(b_i, f, p_s, q_i, q_s) = q_s^2 + B \cdot q_s + C,
+	\begin{cases}
+		B = 2 \cdot q_i - f \cdot Q, \\
+		C = q_i^2 - q_i \cdot Q,     \\
+		Q = [(1 - f) \cdot b_i \cdot p_s]
+	\end{cases}
+\end{equation}
 
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}
 
@@ -383,5 +438,10 @@ Rearrange.
 
 \input{derivations/swap-buy-with-fee/base-volume.tex}
 \input{derivations/swap-buy-with-fee/base-out.tex}
+\input{derivations/swap-buy-with-fee/base-final.tex}
+\input{derivations/swap-buy-with-fee/taker-execution-price.tex}
+\input{derivations/swap-buy-with-fee/marginal-price.tex}
+\input{derivations/swap-buy-with-fee/slippage-price.tex}
+\input{derivations/swap-buy-with-fee/slippage-input.tex}
 
 \end{document} % chktex 17

@@ -1,0 +1,82 @@
+\subsubsection{Equation~\ref{eqn:swap-buy-with-fee-slippage-input} derivation}%
+\label{sssec:equation-eqn-swap-buy-with-fee-slippage-input-derivation}
+
+Consider Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
+
+\begin{equation}
+	p_s = \frac{{(q_i + q_{in})}^2}
+	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in})} \nonumber
+\end{equation}
+
+Substitute $q_s$ = $q_{in}$.
+
+\begin{equation}
+	p_s = \frac{{(q_i + q_s)}^2}
+	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_s)} \nonumber
+\end{equation}
+
+Multiply both sides by the denominator.
+
+\begin{equation}
+	p_s \cdot (1 - f) \cdot b_i \cdot (q_i + f \cdot q_s) =
+	{(q_i + q_s)}^2 \nonumber
+\end{equation}
+
+Expand both sides.
+
+\begin{equation}
+	\begin{aligned}
+		      & p_s \cdot (1 - f) \cdot b_i \cdot q_i           \\
+		{}+{} & p_s \cdot (1 - f) \cdot b_i \cdot f \cdot q_s =
+		q_i^2 + 2 \cdot q_i \cdot q_s + q_s^2
+	\end{aligned} \nonumber
+\end{equation}
+
+Group all terms with $q_s$ on the right side, and all other terms on the left side.
+
+\begin{equation*}
+	\begin{aligned}
+		p_s \cdot (1 - f) \cdot b_i \cdot q_i - q_i^ 2 ={}
+		 & q_s^2                                           \\
+		 & + 2 \cdot q_i \cdot q_s                         \\
+		 & - p_s \cdot (1 - f) \cdot b_i \cdot f \cdot q_s
+	\end{aligned}
+\end{equation*}
+
+Factor out $q_s$ on the right side.
+
+\begin{equation*}
+	\begin{aligned}
+		p_s \cdot (1 - f) \cdot b_i \cdot q_i - q_i^ 2 ={}
+		 & q_s^2                                                           \\
+		 & + q_s \cdot (2 \cdot q_i - p_s \cdot (1 - f) \cdot b_i \cdot f)
+	\end{aligned}
+\end{equation*}
+
+Rearrange into standard quadratic form.
+
+\begin{equation*}
+	\begin{aligned}
+		0 ={}
+		 & q_s^2                                                           \\
+		 & + q_s \cdot (2 \cdot q_i - p_s \cdot (1 - f) \cdot b_i \cdot f) \\
+		 & + (q_i^2 - p_s \cdot (1 - f) \cdot b_i \cdot q_i)
+	\end{aligned}
+\end{equation*}
+
+Rearrange to yield the common term $Q = [(1 - f) \cdot b_i \cdot p_s]$.
+
+\begin{equation*}
+	\begin{aligned}
+		0 ={}
+		 & q_s^2                                                             \\
+		 & + q_s \cdot (2 \cdot q_i - f \cdot [(1 - f) \cdot b_i \cdot p_s]) \\
+		 & + (q_i^2 - q_i \cdot [(1 - f) \cdot b_i \cdot p_s])
+	\end{aligned}
+\end{equation*}
+
+Simplify the right side with the common term $Q$.
+
+\begin{equation*}
+	0 = q_s^2 + q_s \cdot (2 \cdot q_i - f \cdot Q) + (q_i^2 - q_i \cdot Q)
+\end{equation*}
