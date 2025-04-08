@@ -196,6 +196,30 @@ at average taker execution price $p_t$.
 	\caption{Swap buy with fee}\label{fig:swap-buy-with-fee}
 \end{figure}
 
+The final quote amount $q_f$ is the sum of the initial quote amount $q_i$ and the
+quote input amount $q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-quote-final}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-quote-final}
+	q_f (q_i, q_{in}) = q_i + q_{in}
+\end{equation}
+
+As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-volume-derivation},
+$b_v$ is a function of the initial base amount $b_i$, $q_i$, and $q_{in}$, per
+Equation~\ref{eqn:swap-buy-with-fee-base-volume}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-base-volume}
+	b_v (b_i, q_i, q_{in}) = \frac{b_i \cdot q_{in}}{q_i + q_{in}}
+\end{equation}
+
+As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-out-derivation},
+$b_{out}$ is a function of $b_i$, fee rate $f$, $q_i$, and
+$q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-base-out}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-base-out}
+	b_{out} (b_i, f, q_i, q_{in}) = (1 - f) \cdot \frac{b_i \cdot q_{in}}{q_i + q_{in}}
+\end{equation}
+
+
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}
 
 Figure~\ref{fig:swap-sell-with-fee} illustrates a swap sell where base input amount
@@ -354,5 +378,10 @@ Rearrange.
 	p_e & = \frac{q_i \cdot b_{in}}{b_{in} \cdot (b_i + b_{in})} \nonumber \\
 	p_e & = \frac{q_i}{b_i + b_{in}} \nonumber
 \end{align}
+
+\subsection{Swap buy with fee derivations}\label{ssec:swap-buy-with-fee-derivations}
+
+\input{derivations/swap-buy-with-fee/base-volume.tex}
+\input{derivations/swap-buy-with-fee/base-out.tex}
 
 \end{document} % chktex 17
