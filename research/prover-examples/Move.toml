@@ -12,7 +12,6 @@ prover_examples = '0xabc'
 [dev-dependencies]
 
 [package]
-authors = ["Econia Labs (developers@econialabs.com)"]
 name = "ProverExamples"
 upgrade_policy = "compatible"
 version = "1.0.0"
