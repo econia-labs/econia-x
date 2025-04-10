@@ -1,0 +1,77 @@
+\begin{tikzpicture}
+	\begin{axis}[
+			axis lines = left,
+			xlabel = Base reserves,
+			ylabel = Quote reserves,
+			xmin = 0,
+			xmax = 3,
+			ymin = 0,
+			ymax = 3,
+			ytick=\empty,
+			xtick=\empty,
+			extra x ticks = {0.5, 2},
+			extra x tick labels = {$b_i$, $b_f$},
+			extra y ticks = {2, 0.875},
+			extra y tick labels = {$q_i$, $q_f$},
+			tick style = {thick, major tick length = 7pt},
+			legend style = {fill = black, draw = gray},
+			% Tangent lines on graph per https://tex.stackexchange.com/a/198046.
+			tangent_before/.style={add node at x={0.5}{[
+									sloped, minimum width = 75pt,
+									append after command =
+										{(\tikzlastnode.west) edge [thick] (\tikzlastnode.east)}
+								]},
+					add node at x={2}{[
+									sloped, minimum width = 75pt,
+									append after command =
+										{(\tikzlastnode.west) edge [thick] (\tikzlastnode.east)}
+								]}
+				},
+			tangent_after/.style={add node at x={2}{[
+									sloped, minimum width = 75pt,
+									append after command =
+										{(\tikzlastnode.west) edge [thick] (\tikzlastnode.east)}
+								]}
+				}
+		]
+		\addplot [
+			domain = 0:5,
+			samples = 100,
+			color = blue,
+			thick,
+			tangent_before,
+		] {1 / x};
+		\addlegendentry{Before reinvestment}
+		\addplot [
+			domain = 0:5,
+			samples = 100,
+			color = green,
+			thick,
+			tangent_after,
+		] {1.75 / x};
+		\addlegendentry{After reinvestment}
+		% Price nodes.
+		\node at (2, 0.5) [circle, fill, scale = 0.5] {};
+		\node at (2, 0.875) [circle, fill, scale = 0.5] {};
+		\node at (0.5, 2) [circle, fill, scale = 0.5] {};
+		% Execution price.
+		\draw [arrows = {-Latex[]}, thick] (0.5, 2) -- (2, 0.875);
+		\node at (0.9, 1.6) [] {$p_t$};
+		% Base delta.
+		\node at (1.25, 0.25) [] {$b_{in}$};
+		\draw [arrows = {-Latex[]}] (0.5, 0.125) -- (2, 0.125);
+		\draw [dashed] (0.5, 0) -- (0.5, 2);
+		\draw [dashed] (2, 0) -- (2, 0.875);
+		% Quote delta.
+		\node[rotate=90] at (0.335, 1.35) [] {$q_{out}$} ;
+		\draw [arrows = {-Latex[]}] (0.125, 2) -- (0.125, 0.5);
+		\draw [arrows = {-Latex[]}] (0.25, 2) -- (0.25, 0.875);
+		\draw [dashed] (0, 2) -- (0.5, 2);
+		\draw [dashed] (0, 0.5) -- (2, 0.5);
+		\draw [dashed] (0, 0.875) -- (2, 0.875);
+		\node[anchor=east, rotate=90] at (0.1, 0.525) [] {$q_v$} ;
+		% Fee.
+		\node[anchor=east, rotate=90] at (0.25, 0.525) [] {$f \cdot q_v$} ;
+		\draw [arrows = {-Latex[]}] (0.25, 0.5) -- (0.25, 0.875);
+	\end{axis}
+\end{tikzpicture}
