@@ -1,0 +1,27 @@
+[addresses]
+amm = '_'
+fee = '_'
+price = '_'
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dependencies.Fee]
+local = "../fee"
+
+[dependencies.Price]
+local = "../price"
+
+[dev-addresses]
+amm = '0xabc'
+fee = '0xdef'
+price = '0x123'
+
+[dev-dependencies]
+
+[package]
+name = "AMM"
+upgrade_policy = "compatible"
+version = "0.1.0"
