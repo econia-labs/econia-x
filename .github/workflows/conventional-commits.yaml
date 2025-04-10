@@ -1,7 +1,5 @@
 # cspell:word amannn
 ---
-env:
-  GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
 jobs:
   conventional-commit:
     env:
@@ -31,4 +29,8 @@ name: 'Verify conventional commit PR title'
     - 'opened'
     - 'reopened'
     - 'synchronize'
+permissions:
+  contents: 'read'
+  pull-requests: 'read'
+  statuses: 'read'
 ...
