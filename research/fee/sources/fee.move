@@ -1,6 +1,7 @@
 module fee::fee {
 
     const E_6: u128 = 1_000_000;
+    const E_6_U256: u256 = 1_000_000;
 
     #[view]
     /// Calculate fee using formula, which may truncate due to integer division.
@@ -10,6 +11,13 @@ module fee::fee {
         let fee = ((fee_rate as u128) * (volume as u128) / E_6 as u64);
         let output = volume - fee;
         (fee, output)
+    }
+
+    #[view]
+    public fun remainder(fee_rate: u16, amount: u128): u128 {
+        // Will not overflow since fee_rate / E_6 < 1.
+        let fee = (((fee_rate as u256) * (amount as u256) / E_6_U256) as u128);
+        amount - fee
     }
 
     #[view]

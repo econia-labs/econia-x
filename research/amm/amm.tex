@@ -183,6 +183,14 @@ quote holdings $q_t$.
 	p_t = \frac{\Delta q_t}{\Delta b_t}
 \end{equation}
 
+Define the fee rate $f$ as a coefficient, for example with a fee of 1\% corresponding to
+$f = 0.01$. Define the fee remainder $f^{\dagger}$ as the amount remaining after a fee
+has been assessed.
+
+\begin{equation}\label{eqn:fee-remainder}
+	f^{\dagger} = (1 - f)
+\end{equation}
+
 \subsection{Swap buy with fee}\label{ssec:swap-buy-with-fee}
 
 Figure~\ref{fig:swap-buy-with-fee} illustrates a swap buy where quote input amount
@@ -212,11 +220,10 @@ Equation~\ref{eqn:swap-buy-with-fee-base-volume}.
 \end{equation}
 
 As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-out-derivation},
-$b_{out}$ is a function of $b_i$, fee rate $f$, $q_i$, and
-$q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-base-out}.
+$b_{out}$ is given in equation Equation~\ref{eqn:swap-buy-with-fee-base-out}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-base-out}
-	b_{out} (b_i, f, q_i, q_{in}) = (1 - f) \cdot \frac{b_i \cdot q_{in}}{q_i + q_{in}}
+	b_{out} (b_i, f, q_i, q_{in}) = f^{\dagger} \cdot b_v (b_i, q_i, q_{in})
 \end{equation}
 
 As derived in

@@ -11,6 +11,18 @@ module amm::amm {
     #[test_only]
     use std::string;
 
+    public fun q_f(q_i: u64, q_in: u64): u64 {
+        q_i + q_in
+    }
+
+    public fun b_v(b_i: u64, q_i: u64, q_in: u64): u64 {
+        (((b_i as u128) * (q_in as u128)) / ((q_i as u128) + (q_in as u128)) as u64)
+    }
+
+    public fun b_out(b_i: u64, f: u16, q_i: u64, q_in: u64): u64 {
+        (fee::remainder(f, (b_v(b_i, q_i, q_in) as u128)) as u64)
+    }
+
     #[test]
     public fun swap_buy_with_fee() {
         let b_i = 200_000_000; // Initial base reserves.
