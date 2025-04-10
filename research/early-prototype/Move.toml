@@ -10,7 +10,6 @@ subdir = "aptos-framework"
 econia = "0xc0de"
 
 [package]
-authors = ["Econia Labs (developers@econialabs.com)"]
 name = "Econia"
 upgrade_policy = "compatible"
 version = "5.0.0"

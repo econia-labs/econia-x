@@ -12,7 +12,6 @@ fee = '0xabc'
 [dev-dependencies]
 
 [package]
-authors = ["Econia Labs (developers@econialabs.com)"]
 name = "Fee"
 upgrade_policy = "compatible"
 version = "0.1.0"
