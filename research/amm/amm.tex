@@ -288,6 +288,26 @@ per Equation~\ref{eqn:swap-buy-with-fee-quadratic-inequality}.
   p_s > p_m \implies F(q_s = 0) < 0
 \end{equation}
 
+The second order derivative of $F$ with respect to $q_s$, $F''(q_s)$, is given in
+Equation~\ref{eqn:swap-buy-with-fee-quadratic-double-prime}, indicating that $F$ is
+concave up.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-quadratic-double-prime}
+  F''(q_s) = \frac{\mathrm{d}^2 F}{\mathrm{d}q_s^2} = 2 > 0
+\end{equation}
+
+Equations~\ref{eqn:swap-buy-with-fee-quadratic-inequality}
+and~\ref{eqn:swap-buy-with-fee-quadratic-double-prime} imply that $F(q_s)$ has two real
+roots for $p_s > p_m$, one positive and one negative. Note that only the positive root
+is meaningful in the context of a swap.
+
+The derivative of $F$ with respect to $q_s$, $F'(q_s)$, is given in
+Equation~\ref{eqn:swap-buy-with-fee-quadratic-prime}.
+
+\begin{equation}\label{eqn:swap-buy-with-fee-quadratic-prime}
+  F'(q_s) = \frac{\mathrm{d} F}{\mathrm{d} q_s} = 2 \cdot q_s + B
+\end{equation}
+
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}
 
 Figure~\ref{fig:swap-sell-with-fee} illustrates a swap sell where base input amount
