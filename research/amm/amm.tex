@@ -258,12 +258,12 @@ $p_s (b_i, f, q_i, q_{in})$ is given in
 Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-slippage-price}
-	p_s (b_i, f, q_i, q_{in}) = \frac{{(q_i + q_{in})}^2}
-	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in})}
+	p_s (b_i, f, q_i, q_{in}) = \frac{q_i + q_{in}}{f^{\dagger} \cdot
+  \left(b_i - f^{\dagger} \cdot \dfrac{b_i \cdot q_{in}}{q_i + q_{in}}\right)}
 \end{equation}
 
 Define the slippage quote input amount $q_s$ as $q_{in}$ resulting in a specified
-slippage price $p_s$ after the swap where $p_s \geq p_m$. As derived in
+slippage price $p_s$ after a swap where $p_s \geq p_m$. As derived in
 Section~\ref{sssec:equation-eqn-swap-buy-with-fee-slippage-input-derivation},
 solving Equation~\ref{eqn:swap-buy-with-fee-slippage-price} for $q_s = q_{in}$ is
 identical to finding the roots of Equation~\ref{eqn:swap-buy-with-fee-slippage-input},
