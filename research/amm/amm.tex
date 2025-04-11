@@ -226,22 +226,19 @@ $b_{out}$ is given in equation Equation~\ref{eqn:swap-buy-with-fee-base-out}.
 	b_{out} (b_i, f, q_i, q_{in}) = f^{\dagger} \cdot b_v (b_i, q_i, q_{in})
 \end{equation}
 
-As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-final-derivation},
-$b_f (b_i, f, q_i, q_{in})$ is given in Equation~\ref{eqn:swap-buy-with-fee-base-final}.
+The final base reserve amount $b_f$ is the difference of $b_i$ and $b_{out}$, per
+Equation~\ref{eqn:swap-buy-with-fee-base-final}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-base-final}
-	b_f (b_i, f, q_i, q_{in}) =
-	b_i \cdot \frac{q_i + f \cdot q_{in}}{q_i + q_{in}}
+	b_f (b_i, f, q_i, q_{in}) = b_i - b_{out} (b_i, f, q_i, q_{in})
 \end{equation}
 
-As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-taker-execution-price-derivation},
-$p_t (b_i, f, q_i, q_{in})$ is given in
+The average taker execution price $p_t$ is the ratio of the quote input amount $q_{in}$
+to the base output amount $b_{out}$, per
 Equation~\ref{eqn:swap-buy-with-fee-taker-execution-price}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-taker-execution-price}
-	p_t (b_i, f, q_i, q_{in}) = \frac{q_i + q_{in}}{(1 - f) \cdot b_i}
+	p_t (b_i, f, q_i, q_{in}) = \frac{q_{in}}{b_{out} (b_i, f, q_i, q_{in})}
 \end{equation}
 
 Define the marginal taker execution price $p_m$ as the taker execution price for a swap
@@ -445,8 +442,6 @@ Rearrange.
 
 \input{derivations/swap-buy-with-fee/base-volume.tex}
 \input{derivations/swap-buy-with-fee/base-out.tex}
-\input{derivations/swap-buy-with-fee/base-final.tex}
-\input{derivations/swap-buy-with-fee/taker-execution-price.tex}
 \input{derivations/swap-buy-with-fee/marginal-price.tex}
 \input{derivations/swap-buy-with-fee/slippage-price.tex}
 \input{derivations/swap-buy-with-fee/slippage-input.tex}

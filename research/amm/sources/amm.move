@@ -23,6 +23,14 @@ module amm::amm {
         (fee::remainder(f, (b_v(b_i, q_i, q_in) as u128)) as u64)
     }
 
+    public fun b_f(b_i: u64, f: u16, q_i: u64, q_in: u64): u64 {
+        b_i - b_out(b_i, f, q_i, q_in)
+    }
+
+    public fun p_t(b_i: u64, q_i: u64, f: u16, q_in: u64): u32 {
+        price::price(b_out(b_i, f, q_i, q_in), q_in)
+    }
+
     #[test]
     public fun swap_buy_with_fee() {
         let b_i = 200_000_000; // Initial base reserves.
