@@ -3,12 +3,36 @@
 
 Consider Equation~\ref{eqn:swap-buy-with-fee-taker-execution-price}.
 
-\begin{equation}
-	p_t = \frac{q_i + q_{in}}{(1 - f) \cdot b_i} \nonumber
-\end{equation}
+\begin{equation*}
+	p_t = \frac{q_{in}}{b_{out}}
+\end{equation*}
+
+Substitute Equation~\ref{eqn:swap-buy-with-fee-base-out}.
+
+\begin{equation*}
+	p_t = \frac{q_{in}}{f^{\dagger} \cdot b_v}
+\end{equation*}
+
+Substitute Equation~\ref{eqn:swap-buy-with-fee-base-volume}.
+
+\begin{equation*}
+  p_t = \frac{q_{in}}{f^{\dagger} \cdot \dfrac{b_i \cdot q_{in}}{q_i + q_{in}}}
+\end{equation*}
+
+Multiply the numerator and denominator by $q_i + q_{in}$.
+
+\begin{equation*}
+  p_t = \frac{q_{in} \cdot (q_i + q_{in})}{f^{\dagger} \cdot b_i \cdot q_{in}}
+\end{equation*}
+
+Cancel $q_{in}$.
+
+\begin{equation*}
+  p_t = \frac{q_i + q_{in}}{f^{\dagger} \cdot b_i}
+\end{equation*}
 
 Take the limit of $p_t$ as $q_{in}$ approaches zero.
 
 \begin{equation}
-	p_m = \lim_{q_{in} \to 0} p_t  = \frac{q_i}{(1 - f) \cdot b_i} \nonumber
+	p_m = \lim_{q_{in} \to 0} p_t = \frac{q_i}{f^{\dagger} \cdot b_i} \nonumber
 \end{equation}
