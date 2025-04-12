@@ -63,6 +63,12 @@ Subtract at the end to prevent intermediate numerical underflow.
 	q_1 = \frac{q_0^2 + q_i \cdot t - q_i^2}{2 \cdot q_0 + 2 \cdot q_i - f \cdot t}
 \end{equation*}
 
+Subsitute $q_{n + 1}$ for $q_1$ and $q_n$ for $q_0$.
+
+\begin{equation*}
+  q_{n + 1} = \frac{q_n^2 + q_i \cdot t - q_i^2}{2 \cdot q_n + 2 \cdot q_i - f \cdot t}
+\end{equation*}
+
 $q_s$ is only required in practice if the maximum possible quote input amount $q_{\max}$
 yields $p_s > p_{ask}$. If this condition is met, then $q_{\max}$ is used
 as the initial guess for the update step, which necessarily converges to the positive
