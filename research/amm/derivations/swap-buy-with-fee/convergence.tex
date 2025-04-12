@@ -63,7 +63,7 @@ a single iteration. Moreover, $q_s$ is only required in practice if the maximum
 possible quote input amount $q_{max}$ yields a slippage price $p_s$ that is
 greater than the best ask price. If this condition is met, then $q_{max}$ is used
 as the initial guess for the update step, which necessarily converges to the positive
-root since $q_s < q_{max}$ and the function is concave up.
+root since $q_s < q_{max}$ and $F(q_s)$ is concave up.
 
 \begin{equation*}
   q_s = \frac{q_{max} \cdot Q}{2 \cdot q_{max} + 2 \cdot q_i - f \cdot Q}

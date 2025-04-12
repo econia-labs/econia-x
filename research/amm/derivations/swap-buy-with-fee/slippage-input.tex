@@ -4,6 +4,30 @@
 Consider Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
 
 \begin{equation*}
+	p_s = \frac{q_f}{f^{\dagger} \cdot b_f}
+\end{equation*}
+
+Substitute Equation~\ref{eqn:swap-buy-with-fee-quote-final}.
+
+\begin{equation*}
+	p_s = \frac{q_i + q_{in}}{f^{\dagger} \cdot b_f}
+\end{equation*}
+
+Substitute Equation~\ref{eqn:swap-buy-with-fee-base-final}.
+
+\begin{equation*}
+	p_s = \frac{q_i + q_{in}}{f^{\dagger} \cdot (b_i - b_{out})}
+\end{equation*}
+
+Substitute Equation~\ref{eqn:swap-buy-with-fee-base-out}.
+
+\begin{equation*}
+	p_s = \frac{q_i + q_{in}}{f^{\dagger} \cdot (b_i - f^{\dagger} \cdot b_v)}
+\end{equation*}
+
+Substitute Equation~\ref{eqn:swap-buy-with-fee-base-volume}.
+
+\begin{equation*}
 	p_s = \frac{q_i + q_{in}}{f^{\dagger} \cdot
   \left(b_i - f^{\dagger} \cdot \dfrac{b_i \cdot q_{in}}{q_i + q_{in}}\right)}
 \end{equation*}

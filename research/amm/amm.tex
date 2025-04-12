@@ -258,8 +258,8 @@ $p_s (b_i, f, q_i, q_{in})$ is given in
 Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-slippage-price}
-	p_s (b_i, f, q_i, q_{in}) = \frac{q_i + q_{in}}{f^{\dagger} \cdot
-  \left(b_i - f^{\dagger} \cdot \dfrac{b_i \cdot q_{in}}{q_i + q_{in}}\right)}
+	p_s (b_i, f, q_i, q_{in}) = \frac{q_f (q_i, q_{in})}
+  {f^{\dagger} \cdot b_f (b_i, f, q_i, q_{in})}
 \end{equation}
 
 Define the slippage quote input amount $q_s$ as $q_{in}$ resulting in a specified
@@ -298,9 +298,8 @@ concave up.
 
 Equations~\ref{eqn:swap-buy-with-fee-quadratic-inequality}
 and~\ref{eqn:swap-buy-with-fee-quadratic-double-prime} imply that $F(q_s)$ has two real
-roots for $p_s > p_m$, one positive and one negative.
-
-The derivative of $F$ with respect to $q_s$, $F'(q_s)$, is given in
+roots for $p_s > p_m$, one positive and one negative. The derivative of $F$ with respect
+to $q_s$, $F'(q_s)$, is given in
 Equation~\ref{eqn:swap-buy-with-fee-quadratic-prime}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-quadratic-prime}
@@ -312,9 +311,10 @@ Section~\ref{sssec:equation-eqn-swap-buy-with-fee-convergence-derivation}, $q_s$
 thus be solved via Newton-Raphson convergence with one update step per
 Equation~\ref{eqn:swap-buy-with-fee-convergence}, for a maximum quote input amount
 $q_{max}$ when a swap of size $q_{max}$ yields $p_s$ greater than the best
-ask price.
+ask price $p_{ask}$.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-convergence}
+  p_s(q_{max}) > p_{ask} \implies
   q_s = \frac{q_{max} \cdot Q}{2 \cdot q_{max} + 2 \cdot q_i - f \cdot Q}
 \end{equation}
 
