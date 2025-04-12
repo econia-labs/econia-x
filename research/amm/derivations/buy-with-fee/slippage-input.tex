@@ -29,55 +29,55 @@ Substitute Equation~\ref{eqn:swap-buy-with-fee-base-volume}.
 
 \begin{equation*}
 	p_s = \frac{q_i + q_{in}}{f^{\dagger} \cdot
-  \left(b_i - f^{\dagger} \cdot \dfrac{b_i \cdot q_{in}}{q_i + q_{in}}\right)}
+		\left(b_i - f^{\dagger} \cdot \dfrac{b_i \cdot q_{in}}{q_i + q_{in}}\right)}
 \end{equation*}
 
 Substitute $q_s$ = $q_{in}$.
 
 \begin{equation*}
-  p_s = \frac{q_i + q_s}{f^{\dagger} \cdot
-  \left(b_i - f^{\dagger} \cdot \dfrac{b_i \cdot q_s}{q_i + q_s}\right)}
+	p_s = \frac{q_i + q_s}{f^{\dagger} \cdot
+		\left(b_i - f^{\dagger} \cdot \dfrac{b_i \cdot q_s}{q_i + q_s}\right)}
 \end{equation*}
 
 Multiply the numerator and denominator by $q_i + q_s$.
 
 \begin{equation*}
-  p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot
-  \left(b_i \cdot (q_i + q_s) - f^{\dagger} \cdot b_i \cdot q_s\right)}
+	p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot
+		\left(b_i \cdot (q_i + q_s) - f^{\dagger} \cdot b_i \cdot q_s\right)}
 \end{equation*}
 
 Factor out $b_i$ from the denominator.
 
 \begin{equation*}
-  p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
-  \left(q_i + q_s - f^{\dagger} \cdot q_s\right)}
+	p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
+		\left(q_i + q_s - f^{\dagger} \cdot q_s\right)}
 \end{equation*}
 
 Group $q_s$ terms in the denominator.
 
 \begin{equation*}
-  p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
-  \left(q_i + (1 - f^{\dagger}) \cdot q_s \right)}
+	p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
+		\left(q_i + (1 - f^{\dagger}) \cdot q_s \right)}
 \end{equation*}
 
 Substitute Equation~\ref{eqn:fee-remainder}.
 
 \begin{equation*}
-  p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
-  \left(q_i + (1 - (1 - f)) \cdot q_s \right)}
+	p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
+		\left(q_i + (1 - (1 - f)) \cdot q_s \right)}
 \end{equation*}
 
 Simplify.
 
 \begin{equation*}
-  p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
-  \left(q_i + f \cdot q_s \right)}
+	p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
+		\left(q_i + f \cdot q_s \right)}
 \end{equation*}
 
 Multiply both sides by the denominator.
 
 \begin{equation*}
-  p_s \cdot f^{\dagger} \cdot b_i \cdot (q_i + f \cdot q_s) = {(q_i + q_s)}^2
+	p_s \cdot f^{\dagger} \cdot b_i \cdot (q_i + f \cdot q_s) = {(q_i + q_s)}^2
 \end{equation*}
 
 Expand both sides.
@@ -95,8 +95,8 @@ Group all terms with $q_s$ on the right side, and all other terms on the left si
 \begin{equation*}
 	\begin{aligned}
 		p_s \cdot f^{\dagger} \cdot b_i \cdot q_i - q_i^ 2 ={}
-		 & q_s^2                                           \\
-		 & + 2 \cdot q_i \cdot q_s                         \\
+		 & q_s^2                                               \\
+		 & + 2 \cdot q_i \cdot q_s                             \\
 		 & - p_s \cdot f^{\dagger} \cdot b_i \cdot f \cdot q_s
 	\end{aligned}
 \end{equation*}

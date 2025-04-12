@@ -237,22 +237,18 @@ $p_t$ is the ratio of $q_{in}$ to $b_{out}$.
 \end{equation}
 
 Define the marginal taker execution price $p_m$ as $p_t$ for a swap of infinitesimal
-size, derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-p-m-derivation}.
+size, derived in Section~\ref{sssec:equation-eqn-buy-with-fee-p-m-derivation}.
 
 \begin{equation}\label{eqn:buy-with-fee-p_m}
 	p_m = \frac{q_i}{f^{\dagger} \cdot b_i}
 \end{equation}
 
-Define the slippage price $p_s$ as $p_m$ after $q_{in}$ has been swapped, the point at
-which additional quote will fill at a worse price compared with matching against an
-order book best ask price that is also at $p_s$. As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-slippage-price-derivation},
-$p_s (b_i, f, q_i, q_{in})$ is given in
-Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
+Define the slippage price $p_s$ as $p_m$ after $q_{in}$ has been swapped, by
+substituting $q_f$ for $q_i$ and $b_f$ for $b_i$ in
+Equation~\ref{eqn:buy-with-fee-p_m}.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-slippage-price}
-	p_s (b_i, f, q_i, q_{in}) = \frac{q_f (q_i, q_{in})}
-	{f^{\dagger} \cdot b_f (b_i, f, q_i, q_{in})}
+\begin{equation}\label{eqn:buy-with-fee-p_s}
+	p_s = \frac{q_f}{f^{\dagger} \cdot b_f}
 \end{equation}
 
 Define the slippage quote input amount $q_s$ as $q_{in}$ resulting in a specified
@@ -476,7 +472,6 @@ Rearrange.
 \input{derivations/buy-with-fee/b_v.tex}
 \input{derivations/buy-with-fee/b_out.tex}
 \input{derivations/buy-with-fee/p_m.tex}
-\input{derivations/buy-with-fee/slippage-price.tex}
 \input{derivations/buy-with-fee/slippage-input.tex}
 \input{derivations/buy-with-fee/quadratic-inequality.tex}
 \input{derivations/buy-with-fee/convergence.tex}
