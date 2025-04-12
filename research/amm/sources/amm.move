@@ -43,16 +43,17 @@ module amm::amm {
         price::price(denominator, numerator)
     }
 
-    public fun Q(b_i: u64, f: u16, p_s: u32): u128 {
+    public fun t(b_i: u64, f: u16, p_s: u32): u128 {
         let (p_s_denominator, p_s_numerator) = price::ratio_irreducible(p_s);
         fee::remainder(f, (b_i as u128) * p_s_numerator / p_s_denominator)
     }
 
-    public fun q_s(b_i: u64, f: u16, p_ask: u32, q_i: u64, q_max: u64): u64 {
-        let term_Q = Q(b_i, f, p_ask);
-        let numerator = (q_max as u128) * term_Q;
-        let denominator = 2 * (q_max as u128) + 2 * (q_i as u128)
-            - fee::fee_u128(f, term_Q);
+    public fun q_1(b_i: u64, f: u16, p_ask: u32, q_i: u64, q_0: u64): u64 {
+        let t = t(b_i, f, p_ask);
+        let q_0 = q_0 as u128;
+        let q_i = q_i as u128;
+        let numerator = q_0 * q_0 + q_i * t - q_i * q_i;
+        let denominator = 2 * q_0 + 2 * q_i - fee::fee_u128(f, t);
         (numerator / denominator) as u64
     }
 
@@ -78,13 +79,13 @@ module amm::amm {
 
         let q_0 = q_max;
         for (i in 1..10) {
-            let q_s = q_s(b_i, f, p_ask, q_i, q_0);
+            let q_1 = q_1(b_i, f, p_ask, q_i, q_0);
             debug::print(&i);
-            print_labeled_value(b"q_s", q_s);
-            let p_s = p_s(b_i, f, q_i, q_s); // Slippage price after swap.
+            print_labeled_value(b"q_1", q_1);
+            let p_s = p_s(b_i, f, q_i, q_1); // Slippage price after swap.
             print_labeled_value(b"p_s significand", price::encoded_significand(p_s));
             print_labeled_value(b"p_s exponent", price::encoded_exponent(p_s));
-            q_0 = q_s
+            q_0 = q_1
         };
     }
 
