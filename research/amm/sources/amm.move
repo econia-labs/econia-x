@@ -67,24 +67,26 @@ module amm::amm {
         print_labeled_value(b"p_m significand", price::encoded_significand(p_m));
         print_labeled_value(b"p_m exponent", price::encoded_exponent(p_m));
 
-        let p_ask = price::price(b_i, q_i * 11 / 10); // Ask price.
+        let p_ask = price::price(b_i, q_i * 12 / 10); // Ask price.
 
         print_labeled_value(b"p_ask significand", price::encoded_significand(p_ask));
         print_labeled_value(b"p_ask exponent", price::encoded_exponent(p_ask));
 
-        let q_max = 20_000; // Max quote to swap in.
+        let q_max = 50_000; // Max quote to swap in.
         let p_s_max = p_s(b_i, f, q_i, q_max); // Slippage price for max quote in.
         print_labeled_value(b"p_s_max significand", price::encoded_significand(p_s_max));
         print_labeled_value(b"p_s_max exponent", price::encoded_exponent(p_s_max));
 
         let q_0 = q_max;
-        for (i in 1..10) {
+        let i = 1;
+        loop {
+            print_labeled_value(b"i", i);
             let q_1 = q_1(b_i, f, p_ask, q_i, q_0);
-            debug::print(&i);
             print_labeled_value(b"q_1", q_1);
             let p_s = p_s(b_i, f, q_i, q_1); // Slippage price after swap.
             print_labeled_value(b"p_s significand", price::encoded_significand(p_s));
             print_labeled_value(b"p_s exponent", price::encoded_exponent(p_s));
+            if (q_1 == q_0) break;
             q_0 = q_1
         };
     }
