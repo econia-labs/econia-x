@@ -1,6 +1,7 @@
 module amm::amm {
 
     use fee::fee;
+    use aptos_std::math128;
 
     #[test_only]
     use aptos_std::debug;
@@ -57,6 +58,17 @@ module amm::amm {
         (numerator / denominator) as u64
     }
 
+    public fun q_s(b_i: u64, f: u16, p_ask: u32, q_i: u64): u64 {
+        let t = t(b_i, f, p_ask);
+        let q_i = q_i as u128;
+        let sqrt_t = math128::sqrt(t);
+        let sqrt_big =
+            math128::sqrt(
+                fee::fee_u128(f, fee::fee_u128(f, t / 4)) + fee::remainder(f, q_i)
+            );
+        ((sqrt_t * sqrt_big + fee::fee_u128(f, t / 2) - q_i) as u64)
+    }
+
     #[test]
     public fun swap_buy_with_fee() {
         let b_i = 200_000_000; // Initial base reserves.
@@ -89,6 +101,9 @@ module amm::amm {
             if (q_1 == q_0) break;
             q_0 = q_1
         };
+
+        let q_s = q_s(b_i, f, p_ask, q_i);
+        print_labeled_value(b"q_s", q_s);
     }
 
     #[test_only]
