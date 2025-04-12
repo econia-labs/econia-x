@@ -1,5 +1,5 @@
 \subsubsection{Equation~\ref{eqn:buy-with-fee-polynomial} derivation}%
-\label{sssec:equation-eqn-swap-buy-with-fee-slippage-input-derivation}
+\label{sssec:equation-eqn-buy-with-fee-polynomial-derivation}
 
 Consider Equation~\ref{eqn:buy-with-fee-p_s}.
 
@@ -7,115 +7,111 @@ Consider Equation~\ref{eqn:buy-with-fee-p_s}.
 	p_s = \frac{q_f}{f^{\dagger} \cdot b_f}
 \end{equation*}
 
-Substitute Equation~\ref{eqn:swap-buy-with-fee-quote-final}.
+Substitute $p_{ask}$ for $p_s$.
 
 \begin{equation*}
-	p_s = \frac{q_i + q_{in}}{f^{\dagger} \cdot b_f}
+	p_{ask} = \frac{q_f}{f^{\dagger} \cdot b_f}
 \end{equation*}
 
-Substitute Equation~\ref{eqn:swap-buy-with-fee-base-final}.
+Substitute Equation~\ref{eqn:buy-with-fee-q_f}.
 
 \begin{equation*}
-	p_s = \frac{q_i + q_{in}}{f^{\dagger} \cdot (b_i - b_{out})}
+	p_{ask} = \frac{q_i + q_{in}}{f^{\dagger} \cdot b_f}
 \end{equation*}
 
-Substitute Equation~\ref{eqn:swap-buy-with-fee-base-out}.
+Substitute Equation~\ref{eqn:buy-with-fee-b_f}.
 
 \begin{equation*}
-	p_s = \frac{q_i + q_{in}}{f^{\dagger} \cdot (b_i - f^{\dagger} \cdot b_v)}
+	p_{ask} = \frac{q_i + q_{in}}{f^{\dagger} \cdot (b_i - b_{out})}
 \end{equation*}
 
-Substitute Equation~\ref{eqn:swap-buy-with-fee-base-volume}.
+Substitute Equation~\ref{eqn:buy-with-fee-b_out}.
 
 \begin{equation*}
-	p_s = \frac{q_i + q_{in}}{f^{\dagger} \cdot
-		\left(b_i - f^{\dagger} \cdot \dfrac{b_i \cdot q_{in}}{q_i + q_{in}}\right)}
-\end{equation*}
-
-Substitute $q_s$ = $q_{in}$.
-
-\begin{equation*}
-	p_s = \frac{q_i + q_s}{f^{\dagger} \cdot
-		\left(b_i - f^{\dagger} \cdot \dfrac{b_i \cdot q_s}{q_i + q_s}\right)}
-\end{equation*}
-
-Multiply the numerator and denominator by $q_i + q_s$.
-
-\begin{equation*}
-	p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot
-		\left(b_i \cdot (q_i + q_s) - f^{\dagger} \cdot b_i \cdot q_s\right)}
-\end{equation*}
-
-Factor out $b_i$ from the denominator.
-
-\begin{equation*}
-	p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
-		\left(q_i + q_s - f^{\dagger} \cdot q_s\right)}
-\end{equation*}
-
-Group $q_s$ terms in the denominator.
-
-\begin{equation*}
-	p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
-		\left(q_i + (1 - f^{\dagger}) \cdot q_s \right)}
-\end{equation*}
-
-Substitute Equation~\ref{eqn:fee-remainder}.
-
-\begin{equation*}
-	p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
-		\left(q_i + (1 - (1 - f)) \cdot q_s \right)}
-\end{equation*}
-
-Simplify.
-
-\begin{equation*}
-	p_s = \frac{{(q_i + q_s)}^2}{f^{\dagger} \cdot b_i \cdot
-		\left(q_i + f \cdot q_s \right)}
+	p_{ask} = \frac{q_i + q_{in}}{f^{\dagger} \cdot (b_i - f^{\dagger} \cdot b_v)}
 \end{equation*}
 
 Multiply both sides by the denominator.
 
 \begin{equation*}
-	p_s \cdot f^{\dagger} \cdot b_i \cdot (q_i + f \cdot q_s) = {(q_i + q_s)}^2
+  p_{ask} \cdot f^{\dagger} \cdot (b_i - f^{\dagger} \cdot b_v) = q_i + q_{in}
+\end{equation*}
+
+Substitute Equation~\ref{eqn:buy-with-fee-b_v}.
+
+\begin{equation*}
+  p_{ask} \cdot f^{\dagger} \cdot
+  \left(b_i - f^{\dagger} \cdot \frac{b_i \cdot q_{in}}{q_i + q_{in}}\right) =
+  q_i + q_{in}
+\end{equation*}
+
+Substitute $q_s$ for $q_{in}$.
+
+\begin{equation*}
+  p_{ask} \cdot f^{\dagger} \cdot
+  \left(b_i - f^{\dagger} \cdot \frac{b_i \cdot q_s}{q_i + q_s}\right) = q_i + q_s
+\end{equation*}
+
+Multiply both sides by $(q_i + q_s)$.
+
+\begin{equation*}
+  p_{ask} \cdot f^{\dagger} \cdot
+  (b_i \cdot (q_i + q_s) - f^{\dagger} \cdot b_i \cdot q_s) = {(q_i + q_s)}^2
+\end{equation*}
+
+Factor out $b_i$ from the left side.
+
+\begin{equation*}
+  p_{ask} \cdot f^{\dagger} \cdot b_i \cdot
+  (q_i + q_s - f^{\dagger} \cdot q_s) = {(q_i + q_s)}^2
+\end{equation*}
+
+Group $q_s$ terms in the left side.
+
+\begin{equation*}
+  p_{ask} \cdot f^{\dagger} \cdot b_i \cdot
+  (q_i + (1 - f^{\dagger}) \cdot q_s) = {(q_i + q_s)}^2
+\end{equation*}
+
+Substitute Equation~\ref{eqn:fee-remainder}.
+
+\begin{equation*}
+  p_{ask} \cdot f^{\dagger} \cdot b_i \cdot
+  (q_i + (1 - (1 - f)) \cdot q_s) = {(q_i + q_s)}^2
+\end{equation*}
+
+Simplify.
+
+\begin{equation*}
+  p_{ask} \cdot f^{\dagger} \cdot b_i \cdot (q_i + f \cdot q_s) = {(q_i + q_s)}^2
+\end{equation*}
+
+Define the common term $t = f^{\dagger} \cdot p_{ask} \cdot b_i$.
+
+\begin{equation*}
+  t \cdot (q_i + f \cdot q_s) = {(q_i + q_s)}^2
 \end{equation*}
 
 Expand both sides.
 
-\begin{equation}
-	\begin{aligned}
-		      & p_s \cdot f^{\dagger} \cdot b_i \cdot q_i           \\
-		{}+{} & p_s \cdot f^{\dagger} \cdot b_i \cdot f \cdot q_s =
-		q_i^2 + 2 \cdot q_i \cdot q_s + q_s^2
-	\end{aligned} \nonumber
-\end{equation}
-
-Group all terms with $q_s$ on the right side, and all other terms on the left side.
-
 \begin{equation*}
-	\begin{aligned}
-		p_s \cdot f^{\dagger} \cdot b_i \cdot q_i - q_i^ 2 ={}
-		 & q_s^2                                               \\
-		 & + 2 \cdot q_i \cdot q_s                             \\
-		 & - p_s \cdot f^{\dagger} \cdot b_i \cdot f \cdot q_s
-	\end{aligned}
+  t \cdot q_i + t \cdot f \cdot q_s = q_i^2 + 2 \cdot q_i \cdot q_s + q_s^2
 \end{equation*}
 
-Factor out $q_s$ on the right side.
+Sort both sides by decreasing powers of $q_s$.
 
 \begin{equation*}
-	p_s \cdot f^{\dagger} \cdot b_i \cdot q_i - q_i^ 2 =
-	q_s^2 + q_s \cdot (2 \cdot q_i - p_s \cdot f^{\dagger} \cdot b_i \cdot f)
+  t \cdot f \cdot q_s + t \cdot q_i = q_s^2 + 2 \cdot q_i \cdot q_s + q_i^2
 \end{equation*}
 
-Factor out the common term $Q = [f^{\dagger} \cdot b_i \cdot p_s]$.
+Bring all terms to the right side.
 
 \begin{equation*}
-	Q \cdot q_i - q_i^ 2 = q_s^2 + q_s \cdot (2 \cdot q_i - f \cdot Q)
+  0 = q_s^2 + (2 \cdot q_i - t \cdot f) \cdot q_s + (q_i^2 - t \cdot q_i)
 \end{equation*}
 
-Rearrange into standard quadratic form.
+Sort $t$ to be at the end of local terms.
 
 \begin{equation*}
-	0 = q_s^2 + q_s \cdot (2 \cdot q_i - f \cdot Q) + (q_i^2 - q_i \cdot Q)
+  0 = q_s^2 + (2 \cdot q_i - f \cdot t) \cdot q_s + (q_i^2 - q_i \cdot t)
 \end{equation*}

@@ -255,15 +255,15 @@ For order book best ask price $p_{ask}$ define the slippage quote input amount $
 as $q_{in}$ such that $p_s = p_{ask}$, the point at which a taker gets a better price by
 subsequently filling against an order book where $p_{ask} > p_m$. Solving
 Equation~\ref{eqn:buy-with-fee-p_s} for $p_s = p_{ask}$ yields $F$, a quadratic
-polynomial in $q_s$, derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-quadratic-inequality-derivation}.
+polynomial in $q_s$ with common term $t = (f^{\dagger} \cdot p_{ask} \cdot b_i)$,
+derived in Section~\ref{sssec:equation-eqn-buy-with-fee-polynomial-derivation}.
 
 \begin{equation}\label{eqn:buy-with-fee-polynomial}
 	F(q_s) = q_s^2 + B \cdot q_s + C,
 	\begin{cases}
-		B = 2 \cdot q_i - f \cdot Q, \\
-		C = q_i^2 - q_i \cdot Q,     \\
-		Q = f^{\dagger} \cdot b_i \cdot p_s
+		B = 2 \cdot q_i - f \cdot t, \\
+		C = q_i^2 - q_i \cdot t,     \\
+		t = f^{\dagger} \cdot p_{ask} \cdot b_i
 	\end{cases}
 \end{equation}
 
