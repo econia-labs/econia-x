@@ -251,16 +251,15 @@ Equation~\ref{eqn:buy-with-fee-p_m}.
 	p_s = \frac{q_f}{f^{\dagger} \cdot b_f}
 \end{equation}
 
-Define the slippage quote input amount $q_s$ as $q_{in}$ resulting in a specified
-slippage price $p_s$ after a swap. As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-slippage-input-derivation},
-solving Equation~\ref{eqn:swap-buy-with-fee-slippage-price} for $q_s = q_{in}$ is
-identical to finding the roots of Equation~\ref{eqn:swap-buy-with-fee-slippage-input},
-a quadratic polynomial in $q_s$ containing the common term
-$Q = (f^{\dagger} \cdot b_i \cdot p_s)$.
+For order book best ask price $p_{ask}$ define the slippage quote input amount $q_s$
+as $q_{in}$ such that $p_s = p_{ask}$, the point at which a taker gets a better price by
+subsequently filling against an order book where $p_{ask} > p_m$. Solving
+Equation~\ref{eqn:buy-with-fee-p_s} for $p_s = p_{ask}$ yields $F$, a quadratic
+polynomial in $q_s$, derived in
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-quadratic-inequality-derivation}.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-slippage-input}
-	F(b_i, f, p_s, q_i, q_s) = q_s^2 + B \cdot q_s + C,
+\begin{equation}\label{eqn:buy-with-fee-polynomial}
+	F(q_s) = q_s^2 + B \cdot q_s + C,
 	\begin{cases}
 		B = 2 \cdot q_i - f \cdot Q, \\
 		C = q_i^2 - q_i \cdot Q,     \\
