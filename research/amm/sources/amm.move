@@ -76,20 +76,16 @@ module amm::amm {
         print_labeled_value(b"p_s_max significand", price::encoded_significand(p_s_max));
         print_labeled_value(b"p_s_max exponent", price::encoded_exponent(p_s_max));
 
-        let q_s = q_s(b_i, f, p_ask, q_i, q_max); // Slippage quote input amount.
-        print_labeled_value(b"q_s after step 1", q_s);
-        q_s = q_s(b_i, f, p_ask, q_i, q_s);
-        print_labeled_value(b"q_s after step 2", q_s);
-        q_s = q_s(b_i, f, p_ask, q_i, q_s);
-        print_labeled_value(b"q_s after step 3", q_s);
-        q_s = q_s(b_i, f, p_ask, q_i, q_s);
-        print_labeled_value(b"q_s after step 4", q_s);
-        q_s = q_s(b_i, f, p_ask, q_i, q_s);
-        print_labeled_value(b"q_s after step 5", q_s);
-
-        let p_s = p_s(b_i, f, q_i, q_s); // Slippage price after swap.
-        print_labeled_value(b"p_s significand", price::encoded_significand(p_s));
-        print_labeled_value(b"p_s exponent", price::encoded_exponent(p_s));
+        let q_0 = q_max;
+        for (i in 1..10) {
+            let q_s = q_s(b_i, f, p_ask, q_i, q_0);
+            debug::print(&i);
+            print_labeled_value(b"q_s", q_s);
+            let p_s = p_s(b_i, f, q_i, q_s); // Slippage price after swap.
+            print_labeled_value(b"p_s significand", price::encoded_significand(p_s));
+            print_labeled_value(b"p_s exponent", price::encoded_exponent(p_s));
+            q_0 = q_s
+        };
     }
 
     #[test_only]
