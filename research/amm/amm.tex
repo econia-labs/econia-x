@@ -211,42 +211,36 @@ $q_i$ and the quote input amount $q_{in}$.
 	q_f = q_i + q_{in}
 \end{equation}
 
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-volume-derivation} contains a
-$b_v$ derivation.
+Section~\ref{sssec:equation-eqn-buy-with-fee-b-v-derivation} derives $b_v$.
 
 \begin{equation}\label{eqn:buy-with-fee-b_v}
 	b_v  = \frac{b_i \cdot q_{in}}{q_i + q_{in}}
 \end{equation}
 
-As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-out-derivation},
-$b_{out}$ is given in equation Equation~\ref{eqn:swap-buy-with-fee-base-out}.
+Section~\ref{sssec:equation-eqn-buy-with-fee-b-out-derivation} derives $b_{out}$.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-base-out}
-	b_{out} (b_i, f, q_i, q_{in}) = f^{\dagger} \cdot b_v (b_i, q_i, q_{in})
+\begin{equation}\label{eqn:buy-with-fee-b_out}
+	b_{out} = f^{\dagger} \cdot b_v
 \end{equation}
 
-The final base reserve amount $b_f$ is the difference of $b_i$ and $b_{out}$, per
-Equation~\ref{eqn:swap-buy-with-fee-base-final}.
+The final base reserve amount $b_f$ is the difference of the initial base reserve amount
+$b_i$ and $b_{out}$.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-base-final}
-	b_f (b_i, f, q_i, q_{in}) = b_i - b_{out} (b_i, f, q_i, q_{in})
+\begin{equation}\label{eqn:buy-with-fee-b_f}
+	b_f = b_i - b_{out}
 \end{equation}
 
-The average taker execution price $p_t$ is the ratio of the quote input amount $q_{in}$
-to the base output amount $b_{out}$, per
-Equation~\ref{eqn:swap-buy-with-fee-taker-execution-price}.
+$p_t$ is the ratio of $q_{in}$ to $b_{out}$.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-taker-execution-price}
-	p_t (b_i, f, q_i, q_{in}) = \frac{q_{in}}{b_{out} (b_i, f, q_i, q_{in})}
+\begin{equation}\label{eqn:buy-with-fee-p_t}
+	p_t = \frac{q_{in}}{b_{out}}
 \end{equation}
 
-Define the marginal taker execution price $p_m$ as the taker execution price for a swap
-of infinitesimal size. As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-marginal-price-derivation},
-$p_m (b_i, f, q_i)$ is given in Equation~\ref{eqn:swap-buy-with-fee-marginal-price}.
+Define the marginal taker execution price $p_m$ as $p_t$ for a swap of infinitesimal
+size, derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-p-m-derivation}.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-marginal-price}
-	p_m (b_i, f, q_i) = \frac{q_i}{f^{\dagger} \cdot b_i}
+\begin{equation}\label{eqn:buy-with-fee-p_m}
+	p_m = \frac{q_i}{f^{\dagger} \cdot b_i}
 \end{equation}
 
 Define the slippage price $p_s$ as $p_m$ after $q_{in}$ has been swapped, the point at
@@ -480,8 +474,8 @@ Rearrange.
 \subsection{Swap buy with fee derivations}\label{ssec:swap-buy-with-fee-derivations}
 
 \input{derivations/buy-with-fee/b_v.tex}
-\input{derivations/buy-with-fee/base-out.tex}
-\input{derivations/buy-with-fee/marginal-price.tex}
+\input{derivations/buy-with-fee/b_out.tex}
+\input{derivations/buy-with-fee/p_m.tex}
 \input{derivations/buy-with-fee/slippage-price.tex}
 \input{derivations/buy-with-fee/slippage-input.tex}
 \input{derivations/buy-with-fee/quadratic-inequality.tex}
