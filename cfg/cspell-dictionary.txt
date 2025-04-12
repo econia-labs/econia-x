@@ -12,6 +12,7 @@ forall
 movefmt
 octas
 precommit
+raphson
 significand
 struct
 structs
