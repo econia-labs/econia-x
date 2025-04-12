@@ -315,7 +315,8 @@ ask price $p_{ask}$.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-convergence}
 	p_s(q_{\max}) > p_{ask} \implies
-	q_s = \frac{q_{\max} \cdot Q}{2 \cdot q_{\max} + 2 \cdot q_i - f \cdot Q}
+	q_s = \frac{q_{\max} \cdot Q (p_{ask})}
+	{2 \cdot q_{\max} + 2 \cdot q_i - f \cdot Q (p_{ask})}
 \end{equation}
 
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}

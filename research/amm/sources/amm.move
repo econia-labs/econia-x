@@ -1,11 +1,11 @@
 module amm::amm {
 
+    use fee::fee;
+
     #[test_only]
     use aptos_std::debug;
     #[test_only]
     use aptos_std::string_utils;
-    #[test_only]
-    use fee::fee;
     #[test_only]
     use price::price;
     #[test_only]
@@ -31,42 +31,65 @@ module amm::amm {
         price::price(b_out(b_i, f, q_i, q_in), q_in)
     }
 
+    public fun p_m(b_i: u64, f: u16, q_i: u64): u32 {
+        let denominator = (fee::remainder(f, (b_i as u128)) as u64);
+        price::price(denominator, q_i)
+    }
+
+    public fun p_s(b_i: u64, f: u16, q_i: u64, q_in: u64): u32 {
+        let numerator = q_f(q_i, q_in);
+        let b_f = b_f(b_i, f, q_i, q_in);
+        let denominator = (fee::remainder(f, b_f as u128) as u64);
+        price::price(denominator, numerator)
+    }
+
+    public fun Q(b_i: u64, f: u16, p_s: u32): u128 {
+        let (p_s_denominator, p_s_numerator) = price::ratio_irreducible(p_s);
+        fee::remainder(f, (b_i as u128) * p_s_numerator / p_s_denominator)
+    }
+
+    public fun q_s(b_i: u64, f: u16, p_ask: u32, q_i: u64, q_max: u64): u64 {
+        let term_Q = Q(b_i, f, p_ask);
+        let numerator = (q_max as u128) * term_Q;
+        let denominator = 2 * (q_max as u128) + 2 * (q_i as u128)
+            - fee::fee_u128(f, term_Q);
+        (numerator / denominator) as u64
+    }
+
     #[test]
     public fun swap_buy_with_fee() {
         let b_i = 200_000_000; // Initial base reserves.
         let q_i = 100_000; // Initial quote reserves.
         let f = 10_000; // 1% fee.
-        let k_before = q_i * b_i; // Constant product before swap.
-        let q_in = 100; // Quote input.
+        let p_m = p_m(b_i, f, q_i); // Marginal taker execution price.
 
-        let b_v = (b_i * q_in) / (q_i + q_in); // Base volume.
-        let q_f = q_i + q_in; // Quote reserves after swap.
-        print_labeled_value(b"b_v", b_v);
-        // Constant product after swap, before fee reinvestment.
-        let k_after = (q_f) * (b_i - b_v);
-        // Compare constant product values before and after swap.
-        print_labeled_value(b"k_before", k_before);
-        print_labeled_value(b"k_after", k_after);
+        print_labeled_value(b"p_m significand", price::encoded_significand(p_m));
+        print_labeled_value(b"p_m exponent", price::encoded_exponent(p_m));
 
-        let (_, b_out) = fee::post_match(b_v, f);
-        let b_f = b_i - b_out; // Base reserves after swap.
+        let p_ask = price::price(b_i, q_i * 11 / 10); // Ask price.
 
-        // Get p_m after the swap, using the final reserves.
-        let (_, denominator) = fee::post_match(b_f, f);
-        let p_m_after = price::price(denominator, q_f);
+        print_labeled_value(b"p_ask significand", price::encoded_significand(p_ask));
+        print_labeled_value(b"p_ask exponent", price::encoded_exponent(p_ask));
 
-        // Get p_s using the initial reserves.
-        let numerator = (q_i + q_in) * (q_i + q_in);
-        let (inner_term, _) = fee::post_match(q_in, f);
-        let (_, denominator) = fee::post_match(b_i * (q_i + inner_term), f);
-        let p_s = price::price(denominator, numerator);
+        let q_max = 20_000; // Max quote to swap in.
+        let p_s_max = p_s(b_i, f, q_i, q_max); // Slippage price for max quote in.
+        print_labeled_value(b"p_s_max significand", price::encoded_significand(p_s_max));
+        print_labeled_value(b"p_s_max exponent", price::encoded_exponent(p_s_max));
 
-        // Compare price value significand values.
-        print_labeled_value(
-            b"p_m_after significand", price::encoded_significand(p_m_after)
-        );
+        let q_s = q_s(b_i, f, p_ask, q_i, q_max); // Slippage quote input amount.
+        print_labeled_value(b"q_s after step 1", q_s);
+        q_s = q_s(b_i, f, p_ask, q_i, q_s);
+        print_labeled_value(b"q_s after step 2", q_s);
+        q_s = q_s(b_i, f, p_ask, q_i, q_s);
+        print_labeled_value(b"q_s after step 3", q_s);
+        q_s = q_s(b_i, f, p_ask, q_i, q_s);
+        print_labeled_value(b"q_s after step 4", q_s);
+        q_s = q_s(b_i, f, p_ask, q_i, q_s);
+        print_labeled_value(b"q_s after step 5", q_s);
+
+        let p_s = p_s(b_i, f, q_i, q_s); // Slippage price after swap.
         print_labeled_value(b"p_s significand", price::encoded_significand(p_s));
-
+        print_labeled_value(b"p_s exponent", price::encoded_exponent(p_s));
     }
 
     #[test_only]

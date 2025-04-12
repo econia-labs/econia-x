@@ -14,6 +14,12 @@ module fee::fee {
     }
 
     #[view]
+    public fun fee_u128(fee_rate: u16, amount: u128): u128 {
+        // Will not overflow since fee_rate / E_6 < 1.
+        (((fee_rate as u256) * (amount as u256) / E_6_U256) as u128)
+    }
+
+    #[view]
     public fun remainder(fee_rate: u16, amount: u128): u128 {
         // Will not overflow since fee_rate / E_6 < 1.
         let fee = (((fee_rate as u256) * (amount as u256) / E_6_U256) as u128);
