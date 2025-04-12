@@ -204,19 +204,17 @@ at average taker execution price $p_t$.
 	\caption{Swap buy with fee}\label{fig:swap-buy-with-fee}
 \end{figure}
 
-The final quote amount $q_f$ is the sum of the initial quote amount $q_i$ and the
-quote input amount $q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-quote-final}.
+The final quote reserve amount $q_f$ is the sum of the initial quote reserve amount
+$q_i$ and the quote input amount $q_{in}$.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-quote-final}
-	q_f (q_i, q_{in}) = q_i + q_{in}
+\begin{equation}\label{eqn:buy-with-fee-q_f}
+	q_f = q_i + q_{in}
 \end{equation}
 
-As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-volume-derivation},
-$b_v$ is a function of the initial base amount $b_i$, $q_i$, and $q_{in}$, per
-Equation~\ref{eqn:swap-buy-with-fee-base-volume}.
+Section~\ref{sssec:b_v} contains a $b_v$ derivation.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-base-volume}
-	b_v (b_i, q_i, q_{in}) = \frac{b_i \cdot q_{in}}{q_i + q_{in}}
+\begin{equation}\label{eqn:buy-with-fee-b_v}
+	b_v  = \frac{b_i \cdot q_{in}}{q_i + q_{in}}
 \end{equation}
 
 As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-out-derivation},
@@ -480,7 +478,7 @@ Rearrange.
 
 \subsection{Swap buy with fee derivations}\label{ssec:swap-buy-with-fee-derivations}
 
-\input{derivations/buy-with-fee/base-volume.tex}
+\input{derivations/buy-with-fee/b_v.tex}
 \input{derivations/buy-with-fee/base-out.tex}
 \input{derivations/buy-with-fee/marginal-price.tex}
 \input{derivations/buy-with-fee/slippage-price.tex}
