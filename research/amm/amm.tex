@@ -274,35 +274,24 @@ Section~\ref{sssec:equation-eqn-buy-with-fee-polynomial-inequality-derivation}.
 	p_{ask} > p_m \implies F(0) < 0
 \end{equation}
 
-The second order derivative of $F$ with respect to $q_s$, $F''(q_s)$, is given in
-Equation~\ref{eqn:swap-buy-with-fee-quadratic-double-prime}, indicating that $F$ is
-concave up.
+The second order derivative of $F$ with respect to $q_s$, $F''(q_s)$, is positive,
+indicating that $F$ is concave up.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-quadratic-double-prime}
+\begin{equation}\label{eqn:buy-with-fee-polynomial-double-prime}
 	F''(q_s) = \frac{\mathrm{d}^2 F}{\mathrm{d}q_s^2} = 2 > 0
 \end{equation}
 
-Equations~\ref{eqn:swap-buy-with-fee-quadratic-inequality}
-and~\ref{eqn:swap-buy-with-fee-quadratic-double-prime} imply that $F(q_s)$ has two real
-roots for $p_s > p_m$, one positive and one negative. The derivative of $F$ with respect
-to $q_s$, $F'(q_s)$, is given in
-Equation~\ref{eqn:swap-buy-with-fee-quadratic-prime}.
-
-\begin{equation}\label{eqn:swap-buy-with-fee-quadratic-prime}
-	F'(q_s) = \frac{\mathrm{d} F}{\mathrm{d} q_s} = 2 \cdot q_s + B
-\end{equation}
-
-As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-convergence-derivation}, $q_s$ can
-thus be solved via Newton-Raphson convergence with one update step per
-Equation~\ref{eqn:swap-buy-with-fee-convergence}, for a maximum quote input amount
-$q_{\max}$ when a swap of size $q_{\max}$ yields $p_s$ greater than the best
-ask price $p_{ask}$.
+Equations~\ref{eqn:buy-with-fee-polynomial-inequality}
+and~\ref{eqn:buy-with-fee-polynomial-double-prime} imply that $F(q_s)$ has two real
+roots for $p_{ask} > p_m$, one positive and one negative. For a maximum quote input
+amount $q_{\max}$ where $q_{in} = q_{\max}$ yields $p_s > p_{ask}$, $q_s$ can thus
+be solved via Newton-Raphson convergence with $q_0 = q_{\max}$ for the first iteration,
+derived in
+Section~\ref{sssec:equation-eqn-swap-buy-with-fee-convergence-derivation}.
 
 \begin{equation}\label{eqn:swap-buy-with-fee-convergence}
 	p_s(q_{\max}) > p_{ask} \implies
-	q_s = \frac{q_{\max} \cdot Q (p_{ask})}
-	{2 \cdot q_{\max} + 2 \cdot q_i - f \cdot Q (p_{ask})}
+	q_1 = \frac{q_0 \cdot t}{2 \cdot q_0 + 2 \cdot q_i - f \cdot t}
 \end{equation}
 
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}

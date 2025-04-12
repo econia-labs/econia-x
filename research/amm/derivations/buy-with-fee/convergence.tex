@@ -7,14 +7,20 @@ Define a Newton-Raphson update step.
 	q_1 = q_0 -\frac{F(q_0)}{F'(q_0)}
 \end{equation*}
 
-Substitute Equations~\ref{eqn:swap-buy-with-fee-slippage-input}
-and~\ref{eqn:swap-buy-with-fee-quadratic-prime}.
+Substitute $F(q_0)$ from Equation~\ref{eqn:buy-with-fee-polynomial}.
+
+\begin{equation*}
+	q_1 = q_0 -\frac{q_0^2 + B \cdot q_0 + C}{F'(q_0)}
+\end{equation*}
+
+Substitute $F'(q_0)$ in the denominator.
 
 \begin{equation*}
 	q_1 = q_0 -\frac{q_0^2 + B \cdot q_0 + C}{2 \cdot q_0 + B}
 \end{equation*}
 
-Multiply the standalone $q_0$ by $\dfrac{2 \cdot q_0 + B}{2 \cdot q_0 + B}$.
+Multiply the standalone $q_0$ term by
+$\left(\dfrac{2 \cdot q_0 + B}{2 \cdot q_0 + B}\right)$.
 
 \begin{equation*}
 	q_1 = \frac{q_0 \cdot (2 \cdot q_0 + B)}{2 \cdot q_0 + B} -
@@ -39,32 +45,13 @@ Cancel terms as appropriate.
 	q_1 = \frac{q_0^2 - C}{2 \cdot q_0 + B}
 \end{equation*}
 
-Substitute $B$ and $C$ from Equations~\ref{eqn:swap-buy-with-fee-slippage-input}, with
-$q_0 = q_i$.
+Substitute $B$ and $C$ from Equations~\ref{eqn:buy-with-fee-polynomial}.
 
 \begin{equation*}
-	q_1 = \frac{q_0^2 - (q_0^2 - q_0 \cdot Q)}{2 \cdot q_0 + (2 \cdot q_i - f \cdot Q)}
+	q_1 = \frac{q_0^2 - (q_i^2 - q_i \cdot t)}{2 \cdot q_0 + (2 \cdot q_i - f \cdot t)}
 \end{equation*}
 
-Expand the numerator and denominator.
-
-\begin{equation*}
-	q_1 = \frac{q_0^2 - q_0^2 + q_0 \cdot Q}{2 \cdot q_0 + 2 \cdot q_i - f \cdot Q}
-\end{equation*}
-
-Cancel terms as appropriate.
-
-\begin{equation*}
-	q_1 = \frac{q_0 \cdot Q}{2 \cdot q_0 + 2 \cdot q_i - f \cdot Q}
-\end{equation*}
-
-Note that $F(q_s)$ is a quadratic polynomial in $q_s$ and thus converges to the root in
-a single iteration. Moreover, $q_s$ is only required in practice if the maximum
-possible quote input amount $q_{\max}$ yields a slippage price $p_s$ that is
-greater than the best ask price. If this condition is met, then $q_{\max}$ is used
+$q_s$ is only required in practice if the maximum possible quote input amount $q_{\max}$
+yields $p_s > p_{ask}$. If this condition is met, then $q_{\max}$ is used
 as the initial guess for the update step, which necessarily converges to the positive
 root since $q_s < q_{\max}$ and $F(q_s)$ is concave up.
-
-\begin{equation*}
-	q_s = \frac{q_{\max} \cdot Q}{2 \cdot q_{\max} + 2 \cdot q_i - f \cdot Q}
-\end{equation*}
