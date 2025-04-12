@@ -259,7 +259,7 @@ polynomial in $q_s$ with common term $t = (f^{\dagger} \cdot p_{ask} \cdot b_i)$
 derived in Section~\ref{sssec:equation-eqn-buy-with-fee-polynomial-derivation}.
 
 \begin{equation}\label{eqn:buy-with-fee-polynomial}
-	F(q_s) = q_s^2 + B \cdot q_s + C,
+	F(q_s) = q_s^2 + B \cdot q_s + C
 	\begin{cases}
 		B = 2 \cdot q_i - f \cdot t, \\
 		C = q_i^2 - q_i \cdot t,     \\
@@ -287,12 +287,20 @@ roots for $p_{ask} > p_m$, one positive and one negative. For a maximum quote in
 amount $q_{\max}$ where $q_{in} = q_{\max}$ yields $p_s > p_{ask}$, $q_s$ can thus
 be solved via Newton-Raphson convergence with $q_0 = q_{\max}$ for the first iteration,
 derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-convergence-derivation}.
+Section~\ref{sssec:equation-eqn-buy-with-fee-convergence-derivation}.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-convergence}
+\begin{equation}\label{eqn:buy-with-fee-convergence}
 	p_s(q_{\max}) > p_{ask} \implies
   q_{n + 1} = \frac{q_n^2 + q_i \cdot t - q_i^2}{2 \cdot q_n + 2 \cdot q_i - f \cdot t},
   q_0 = q_{\max}
+\end{equation}
+
+Alternatively, $q_s$ can be solved via the quadratic formula, derived in
+Section~\ref{sssec:equation-eqn-buy-with-fee-quadratic-derivation}.
+
+\begin{equation}\label{eqn:buy-with-fee-quadratic}
+  q_s = \sqrt{t} \cdot \sqrt{f^2 \cdot \dfrac{t}{4} + f^{\dagger} \cdot q_i} +
+  f \cdot \frac{t}{2} - q_i
 \end{equation}
 
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}
@@ -462,5 +470,6 @@ Rearrange.
 \input{derivations/buy-with-fee/polynomial.tex}
 \input{derivations/buy-with-fee/polynomial-inequality.tex}
 \input{derivations/buy-with-fee/convergence.tex}
+\input{derivations/buy-with-fee/quadratic.tex}
 
 \end{document} % chktex 17
