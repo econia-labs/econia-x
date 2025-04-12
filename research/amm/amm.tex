@@ -267,13 +267,11 @@ derived in Section~\ref{sssec:equation-eqn-buy-with-fee-polynomial-derivation}.
 	\end{cases}
 \end{equation}
 
-As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-quadratic-inequality-derivation},
-when $p_s$ is greater than $p_m$, the quadratic polynomial $F$ is negative at $q_s = 0$,
-per Equation~\ref{eqn:swap-buy-with-fee-quadratic-inequality}.
+When $p_{ask}$ is greater than $p_m$, $F(0)$ is negative, derived in
+Section~\ref{sssec:equation-eqn-buy-with-fee-polynomial-inequality-derivation}.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-quadratic-inequality}
-	p_s > p_m \implies F(q_s = 0) < 0
+\begin{equation}\label{eqn:buy-with-fee-polynomial-inequality}
+	p_{ask} > p_m \implies F(0) < 0
 \end{equation}
 
 The second order derivative of $F$ with respect to $q_s$, $F''(q_s)$, is given in
@@ -472,7 +470,7 @@ Rearrange.
 \input{derivations/buy-with-fee/b_out.tex}
 \input{derivations/buy-with-fee/p_m.tex}
 \input{derivations/buy-with-fee/polynomial.tex}
-\input{derivations/buy-with-fee/quadratic-inequality.tex}
+\input{derivations/buy-with-fee/polynomial-inequality.tex}
 \input{derivations/buy-with-fee/convergence.tex}
 
 \end{document} % chktex 17
