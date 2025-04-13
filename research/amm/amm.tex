@@ -299,8 +299,8 @@ Alternatively, $q_s$ can be solved via the quadratic formula, derived in
 Section~\ref{sssec:equation-eqn-buy-with-fee-quadratic-derivation}.
 
 \begin{equation}\label{eqn:buy-with-fee-quadratic}
-	q_s = \sqrt{t} \cdot \sqrt{f^2 \cdot \dfrac{t}{4} + f^{\dagger} \cdot q_i} +
-	f \cdot \frac{t}{2} - q_i
+	q_s = \frac{\sqrt{t \cdot ( f^2 \cdot t + f^{\dagger} \cdot 4 \cdot q_i)}
+		+ f \cdot t - 2 \cdot q_i}{2}
 \end{equation}
 
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}

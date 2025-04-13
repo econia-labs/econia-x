@@ -46,7 +46,7 @@ Factor out $4 \cdot t$ from the last two terms.
   D = f^2 \cdot t^2 + 4 \cdot t \cdot (q_i - f \cdot q_i)
 \end{equation*}
 
-Factor out $(1 - f)$ from the last two terms.
+Factor out $(1 - f)$.
 
 \begin{equation*}
   D = f^2 \cdot t^2 + 4 \cdot t \cdot (1 - f) \cdot q_i
@@ -89,47 +89,4 @@ Subtract at the end to prevent intermediate numerical underflow.
 \begin{equation*}
   q_s = \frac{\sqrt{t \cdot ( f^2 \cdot t + f^{\dagger} \cdot 4 \cdot q_i)}
   + f \cdot t - 2 \cdot q_i}{2}
-\end{equation*}
-
-Distribute the denominator.
-
-\begin{equation*}
-  q_s = \frac{\sqrt{t \cdot ( f^2 \cdot t + f^{\dagger} \cdot 4 \cdot q_i)}}{2} +
-  \frac{f \cdot t - 2 \cdot q_i}{2}
-\end{equation*}
-
-Expand.
-
-\begin{equation*}
-  q_s = \sqrt{\frac{t \cdot ( f^2 \cdot t + f^{\dagger} \cdot 4 \cdot q_i)}{4}} +
-  \frac{f \cdot t}{2} - q_i
-\end{equation*}
-
-Distribute the denominator.
-
-\begin{equation*}
-  q_s = \sqrt{t \cdot \left( \dfrac{f^2 \cdot t}{4} +
-  \dfrac{f^{\dagger} \cdot 4 \cdot q_i}{4}\right)} +
-  \frac{f \cdot t}{2} - q_i
-\end{equation*}
-
-Cancel the $4$ in the second term.
-
-\begin{equation*}
-  q_s = \sqrt{t \cdot \left( \dfrac{f^2 \cdot t}{4} + f^{\dagger} \cdot q_i\right)} +
-  \frac{f \cdot t}{2} - q_i
-\end{equation*}
-
-Group $f$ terms to the front.
-
-\begin{equation*}
-  q_s = \sqrt{t \cdot \left( f^2 \cdot \dfrac{t}{4} + f^{\dagger} \cdot q_i\right)} +
-  f \cdot \frac{t}{2} - q_i
-\end{equation*}
-
-Factor out $\sqrt{t}$ to prevent intermediate numerical overflow.
-
-\begin{equation*}
-  q_s = \sqrt{t} \cdot \sqrt{f^2 \cdot \dfrac{t}{4} + f^{\dagger} \cdot q_i} +
-  f \cdot \frac{t}{2} - q_i
 \end{equation*}
