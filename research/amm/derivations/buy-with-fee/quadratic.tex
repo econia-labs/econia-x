@@ -12,13 +12,13 @@ Substitute $B$ and $C$ from Equation~\ref{eqn:buy-with-fee-polynomial}.
 
 \begin{equation*}
   q_s = \frac{-(2 \cdot q_i - f \cdot t) +
-  \sqrt{(2 \cdot q_i - f \cdot t)^2 - 4 \cdot (q_i^2 - q_i \cdot t)}}{2}
+  \sqrt{{(2 \cdot q_i - f \cdot t)}^2 - 4 \cdot (q_i^2 - q_i \cdot t)}}{2}
 \end{equation*}
 
 Define the discriminant $D$.
 
 \begin{equation*}
-  D = (2 \cdot q_i - f \cdot t)^2 - 4 \cdot (q_i^2 - q_i \cdot t)
+  D = {(2 \cdot q_i - f \cdot t)}^2 - 4 \cdot (q_i^2 - q_i \cdot t)
 \end{equation*}
 
 Expand.
@@ -133,7 +133,3 @@ Factor out $\sqrt{t}$ to prevent intermediate numerical overflow.
   q_s = \sqrt{t} \cdot \sqrt{f^2 \cdot \dfrac{t}{4} + f^{\dagger} \cdot q_i} +
   f \cdot \frac{t}{2} - q_i
 \end{equation*}
-
-
-
-
