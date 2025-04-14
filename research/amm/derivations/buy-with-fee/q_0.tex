@@ -5,7 +5,7 @@ Consider Equation~\ref{eqn:buy-with-fee-quadratic}.
 
 \begin{equation*}
 	q_s = \frac{f \cdot t - 2 \cdot q_i +
-	\sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
+		\sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
 \end{equation*}
 
 Replace $q_s$ with $q_0$ since it is an approximation for the first iteration of a
@@ -13,7 +13,7 @@ Newton-Raphson method convergence algorithm.
 
 \begin{equation*}
 	q_0 = \frac{f \cdot t - 2 \cdot q_i +
-	\sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
+		\sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
 \end{equation*}
 
 Let $f^2 \approx 0$, thus eliminating the $f^2 \cdot t^2$.
@@ -64,25 +64,25 @@ Equation~\ref{eqn:buy-with-fee-quadratic}.
 Multiply both sides by $2$.
 
 \begin{equation*}
-  f \cdot t \stackrel{?}{>} - (2 \cdot q_i - f \cdot t)
+	f \cdot t \stackrel{?}{>} - (2 \cdot q_i - f \cdot t)
 \end{equation*}
 
 Expand.
 
 \begin{equation*}
-  f \cdot t \stackrel{?}{>} -2 \cdot q_i + f \cdot t
+	f \cdot t \stackrel{?}{>} -2 \cdot q_i + f \cdot t
 \end{equation*}
 
 Subtract $f \cdot t$ from both sides.
 
 \begin{equation*}
-  0 \stackrel{?}{>} -2 \cdot q_i
+	0 \stackrel{?}{>} -2 \cdot q_i
 \end{equation*}
 
 Add $2 \cdot q_i$ to both sides.
 
 \begin{equation*}
-  2 \cdot q_i \stackrel{?}{>} 0
+	2 \cdot q_i \stackrel{?}{>} 0
 \end{equation*}
 
 Since $q_i$ is a positive number, the inequality holds true. Therefore, the iteration

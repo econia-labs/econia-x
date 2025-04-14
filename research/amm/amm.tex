@@ -261,8 +261,8 @@ derived in Section~\ref{sssec:equation-eqn-buy-with-fee-polynomial-derivation}.
 \begin{equation}\label{eqn:buy-with-fee-polynomial}
 	F(q_s) = q_s^2 + B \cdot q_s + C
 	\begin{cases}
-		B = 2 \cdot q_i - f \cdot t, \\
-		C = q_i^2 - q_i \cdot t,     \\
+		B = 2 \cdot q_i - f \cdot t \\
+		C = q_i^2 - q_i \cdot t     \\
 		t = f^{\dagger} \cdot p_{ask} \cdot b_i
 	\end{cases}
 \end{equation}
@@ -337,7 +337,17 @@ Combining the above yields a hybrid numerical solution for $q_s$, derived in
 Section~\ref{sssec:equation-eqn-buy-with-fee-algorithm-derivation}.
 
 \begin{equation}\label{eqn:buy-with-fee-algorithm}
-	x
+	\begin{aligned}
+		p_{ask} > p_m & \implies                                       \\
+		q_1           & = \frac{{\left(\dfrac{a}{2}\right)}^2 + b}{c}, \\
+		q_{n + 1}     & = \frac{q_n^2 + b}{2 \cdot q_n + c - a}
+	\end{aligned}
+	\begin{cases}
+		a = f \cdot t                           \\
+		b = q_i \cdot t - q_i ^ 2               \\
+		c = 2 \cdot q_i                         \\
+		t = f^{\dagger} \cdot p_{ask} \cdot b_i \\
+	\end{cases}
 \end{equation}
 
 \subsection{Swap sell with fee}\label{ssec:swap-sell-with-fee}

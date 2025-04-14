@@ -5,75 +5,75 @@ Solve Equation~\ref{eqn:buy-with-fee-polynomial} for the positive root using the
 quadratic formula.
 
 \begin{equation*}
-  q_s = \frac{-B + \sqrt{B^2 - 4 \cdot C}}{2}
+	q_s = \frac{-B + \sqrt{B^2 - 4 \cdot C}}{2}
 \end{equation*}
 
 Substitute $B$ and $C$ from Equation~\ref{eqn:buy-with-fee-polynomial}.
 
 \begin{equation*}
-  q_s = \frac{-(2 \cdot q_i - f \cdot t) +
-  \sqrt{{(2 \cdot q_i - f \cdot t)}^2 - 4 \cdot (q_i^2 - q_i \cdot t)}}{2}
+	q_s = \frac{-(2 \cdot q_i - f \cdot t) +
+		\sqrt{{(2 \cdot q_i - f \cdot t)}^2 - 4 \cdot (q_i^2 - q_i \cdot t)}}{2}
 \end{equation*}
 
 Define the discriminant $D$.
 
 \begin{equation*}
-  D = {(2 \cdot q_i - f \cdot t)}^2 - 4 \cdot (q_i^2 - q_i \cdot t)
+	D = {(2 \cdot q_i - f \cdot t)}^2 - 4 \cdot (q_i^2 - q_i \cdot t)
 \end{equation*}
 
 Expand.
 
 \begin{equation*}
-  D = 4 \cdot q_i^2 - 4 \cdot f \cdot t \cdot q_i + f^2 \cdot t^2
-  - 4 \cdot q_i^2 + 4 \cdot q_i \cdot t
+	D = 4 \cdot q_i^2 - 4 \cdot f \cdot t \cdot q_i + f^2 \cdot t^2
+	- 4 \cdot q_i^2 + 4 \cdot q_i \cdot t
 \end{equation*}
 
 Combine like terms.
 
 \begin{equation*}
-  D = -4 \cdot f \cdot t \cdot q_i + f^2 \cdot t^2 + 4 \cdot q_i \cdot t
+	D = -4 \cdot f \cdot t \cdot q_i + f^2 \cdot t^2 + 4 \cdot q_i \cdot t
 \end{equation*}
 
 Rearrange.
 
 \begin{equation*}
-  D = f^2 \cdot t^2 + 4 \cdot q_i \cdot t - 4 \cdot f \cdot t \cdot q_i
+	D = f^2 \cdot t^2 + 4 \cdot q_i \cdot t - 4 \cdot f \cdot t \cdot q_i
 \end{equation*}
 
 Factor out $4 \cdot t$ from the last two terms.
 
 \begin{equation*}
-  D = f^2 \cdot t^2 + 4 \cdot t \cdot (q_i - f \cdot q_i)
+	D = f^2 \cdot t^2 + 4 \cdot t \cdot (q_i - f \cdot q_i)
 \end{equation*}
 
 Factor out $(1 - f)$.
 
 \begin{equation*}
-  D = f^2 \cdot t^2 + 4 \cdot t \cdot (1 - f) \cdot q_i
+	D = f^2 \cdot t^2 + 4 \cdot t \cdot (1 - f) \cdot q_i
 \end{equation*}
 
 Substitute Equation~\ref{eqn:fee-remainder}.
 
 \begin{equation*}
-  D = f^2 \cdot t^2 + 4 \cdot t \cdot f^{\dagger} \cdot q_i
+	D = f^2 \cdot t^2 + 4 \cdot t \cdot f^{\dagger} \cdot q_i
 \end{equation*}
 
 Rearrange to have fee terms first.
 
 \begin{equation*}
-  D = f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i
+	D = f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i
 \end{equation*}
 
 Substitute back into the quadratic formula.
 
 \begin{equation*}
-  q_s = \frac{-(2 \cdot q_i - f \cdot t) +
-  \sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
+	q_s = \frac{-(2 \cdot q_i - f \cdot t) +
+		\sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
 \end{equation*}
 
 Expand.
 
 \begin{equation*}
-  q_s = \frac{f \cdot t - 2 \cdot q_i +
-  \sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
+	q_s = \frac{f \cdot t - 2 \cdot q_i +
+		\sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
 \end{equation*}
