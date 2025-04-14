@@ -64,29 +64,16 @@ Rearrange to have fee terms first.
   D = f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i
 \end{equation*}
 
-Factor out $t$.
-
-\begin{equation*}
-  D = t \cdot ( f^2 \cdot t + f^{\dagger} \cdot 4 \cdot q_i)
-\end{equation*}
-
 Substitute back into the quadratic formula.
 
 \begin{equation*}
   q_s = \frac{-(2 \cdot q_i - f \cdot t) +
-  \sqrt{t \cdot ( f^2 \cdot t + f^{\dagger} \cdot 4 \cdot q_i)}}{2}
+  \sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
 \end{equation*}
 
 Expand.
 
 \begin{equation*}
-  q_s = \frac{-2 \cdot q_i + f \cdot t +
-  \sqrt{t \cdot ( f^2 \cdot t + f^{\dagger} \cdot 4 \cdot q_i)}}{2}
-\end{equation*}
-
-Subtract at the end to prevent intermediate numerical underflow.
-
-\begin{equation*}
-  q_s = \frac{\sqrt{t \cdot ( f^2 \cdot t + f^{\dagger} \cdot 4 \cdot q_i)}
-  + f \cdot t - 2 \cdot q_i}{2}
+  q_s = \frac{f \cdot t - 2 \cdot q_i +
+  \sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
 \end{equation*}
