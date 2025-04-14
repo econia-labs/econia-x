@@ -35,9 +35,9 @@ Cancel like terms in the denominator.
 	{2 \cdot q_i}
 \end{equation*}
 
-Let $a = f \cdot t$, a recurring term across iterations, as well as $c = 2 \cdot q_i$.
-Consider the recurring numerator term $b = q_i \cdot t - q_i^2$, which can be cached if
-$b > 0$.
+Let $d = f \cdot t$, a recurring term across iterations, as well as $c = 2 \cdot q_i$
+and $q_{s, 0} = a = \dfrac{d}{2}$. Consider the recurring numerator term
+$b = q_i \cdot t - q_i^2$, which can be cached if $b > 0$.
 
 \begin{equation*}
 	b = q_i \cdot t - q_i^2 \stackrel{?}{>} 0
@@ -54,11 +54,11 @@ prerequisite for convergence. Thus the left side is always greater than the righ
 and the inequality holds. Hence $q_1$ can be rewritten with recurring terms.
 
 \begin{equation*}
-	q_1 = \frac{{\left(\dfrac{a}{2}\right)}^2 + b}{c}
+	q_{s, 1} = \frac{q_{s, 0}^2 + b}{c}
 \end{equation*}
 
 Similarly, $q_{n + 1}$ can be rewritten with recurring terms.
 
 \begin{equation*}
-	q_{n + 1} = \frac{q_n^2 + b}{2 \cdot q_n + c - a}
+	q_{n + 1} = \frac{q_n^2 + b}{2 \cdot q_n + c - d}
 \end{equation*}

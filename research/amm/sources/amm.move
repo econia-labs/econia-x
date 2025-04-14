@@ -50,18 +50,19 @@ module amm::amm {
 
     public fun q_s(b_i: u64, f: u16, p_ask: u32, q_i: u64): u64 {
         let t = t(b_i, f, p_ask);
-        let a = fee::fee_u128(f, t);
+        let d = fee::fee_u128(f, t);
         let q_i = (q_i as u128);
         let b = q_i * t - q_i * q_i;
         let c = 2 * q_i;
-        let q_n = a / 2;
-        print_labeled_value(b"q_0", q_n);
-        let q_n_1 = (q_n * q_n + b) / c;
+        let a = d / 2;
+        print_labeled_value(b"q_0", a);
+        let q_n_1 = (a * a + b) / c;
         print_labeled_value(b"q_1", q_n_1);
+        let q_n;
         let n = 1;
         loop {
             q_n = q_n_1;
-            q_n_1 = (q_n * q_n + b) / (2 * q_n + c - a);
+            q_n_1 = (q_n * q_n + b) / (2 * q_n + c - d);
             if (q_n == q_n_1) break;
             n += 1;
             print_labeled_value(b"n", n);

@@ -338,14 +338,17 @@ Section~\ref{sssec:equation-eqn-buy-with-fee-algorithm-derivation}.
 
 \begin{equation}\label{eqn:buy-with-fee-algorithm}
 	\begin{aligned}
-		p_{ask} > p_m & \implies                                       \\
-		q_1           & = \frac{{\left(\dfrac{a}{2}\right)}^2 + b}{c}, \\
-		q_{n + 1}     & = \frac{q_n^2 + b}{2 \cdot q_n + c - a}
+		p_{ask} > p_m & \implies                                          \\
+		q_{s, 0}      & = a                                               \\
+		q_{s, 1}      & = \frac{q_{s, 0}^2 + b}{c}                        \\
+		q_{s, n + 1}  & = \frac{q_{s, n}^2 + b}{2 \cdot q_{s, n} + c - d} \\
+		q_{s, n + 1}  & = q_{s, n} \implies q_s = q_{s, n}
 	\end{aligned}
 	\begin{cases}
-		a = f \cdot t                           \\
+		a = \frac{d}{2}                         \\
 		b = q_i \cdot t - q_i ^ 2               \\
 		c = 2 \cdot q_i                         \\
+		d = f \cdot t                           \\
 		t = f^{\dagger} \cdot p_{ask} \cdot b_i \\
 	\end{cases}
 \end{equation}
