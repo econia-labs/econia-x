@@ -1,0 +1,75 @@
+\subsubsection{Equation~\ref{eqn:buy-with-fee-convergence} derivation}%
+\label{sssec:equation-eqn-buy-with-fee-convergence-derivation}
+
+Define a Newton-Raphson update step.
+
+\begin{equation*}
+	q_1 = q_0 -\frac{F(q_0)}{F'(q_0)}
+\end{equation*}
+
+Substitute $F(q_0)$ from Equation~\ref{eqn:buy-with-fee-polynomial}.
+
+\begin{equation*}
+	q_1 = q_0 -\frac{q_0^2 + B \cdot q_0 + C}{F'(q_0)}
+\end{equation*}
+
+Substitute $F'(q_0)$ in the denominator.
+
+\begin{equation*}
+	q_1 = q_0 -\frac{q_0^2 + B \cdot q_0 + C}{2 \cdot q_0 + B}
+\end{equation*}
+
+Multiply the standalone $q_0$ term by
+$\left(\dfrac{2 \cdot q_0 + B}{2 \cdot q_0 + B}\right)$.
+
+\begin{equation*}
+	q_1 = \frac{q_0 \cdot (2 \cdot q_0 + B)}{2 \cdot q_0 + B} -
+	\frac{q_0^2 + B \cdot q_0 + C}{2 \cdot q_0 + B}
+\end{equation*}
+
+Combine the fractions.
+
+\begin{equation*}
+	q_1 = \frac{q_0 \cdot (2 \cdot q_0 + B) - (q_0^2 + B \cdot q_0 + C)}{2 \cdot q_0 + B}
+\end{equation*}
+
+Expand the numerator.
+
+\begin{equation*}
+	q_1 = \frac{2 \cdot q_0^2 + B \cdot q_0 - q_0^2 - B \cdot q_0 - C}{2 \cdot q_0 + B}
+\end{equation*}
+
+Cancel terms as appropriate.
+
+\begin{equation*}
+	q_1 = \frac{q_0^2 - C}{2 \cdot q_0 + B}
+\end{equation*}
+
+Substitute $B$ and $C$ from Equations~\ref{eqn:buy-with-fee-polynomial}.
+
+\begin{equation*}
+	q_1 = \frac{q_0^2 - (q_i^2 - q_i \cdot t)}{2 \cdot q_0 + (2 \cdot q_i - f \cdot t)}
+\end{equation*}
+
+Expand.
+
+\begin{equation*}
+	q_1 = \frac{q_0^2 - q_i^2 + q_i \cdot t}{2 \cdot q_0 + 2 \cdot q_i - f \cdot t}
+\end{equation*}
+
+Subtract at the end to prevent intermediate numerical underflow.
+
+\begin{equation*}
+	q_1 = \frac{q_0^2 + q_i \cdot t - q_i^2}{2 \cdot q_0 + 2 \cdot q_i - f \cdot t}
+\end{equation*}
+
+Substitute $q_{n + 1}$ for $q_1$ and $q_n$ for $q_0$ for syntactic clarity.
+
+\begin{equation*}
+	q_{n + 1} = \frac{q_n^2 + q_i \cdot t - q_i^2}{2 \cdot q_n + 2 \cdot q_i - f \cdot t}
+\end{equation*}
+
+$q_s$ is only required in practice if the maximum possible quote input amount $q_{\max}$
+yields $p_s > p_{ask}$. If this condition is met, then $q_{\max}$ is used
+as the initial guess for the update step, which necessarily converges to the positive
+root since $q_s < q_{\max}$ and $F(q_s)$ is concave up.

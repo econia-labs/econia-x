@@ -183,6 +183,14 @@ quote holdings $q_t$.
 	p_t = \frac{\Delta q_t}{\Delta b_t}
 \end{equation}
 
+Define the fee rate $f$ as a coefficient, for example with a fee of 1\% corresponding to
+$f = 0.01$. Define the fee remainder $f^{\dagger}$ as the amount remaining after a fee
+has been assessed.
+
+\begin{equation}\label{eqn:fee-remainder}
+	f^{\dagger} = (1 - f)
+\end{equation}
+
 \subsection{Swap buy with fee}\label{ssec:swap-buy-with-fee}
 
 Figure~\ref{fig:swap-buy-with-fee} illustrates a swap buy where quote input amount
@@ -196,82 +204,152 @@ at average taker execution price $p_t$.
 	\caption{Swap buy with fee}\label{fig:swap-buy-with-fee}
 \end{figure}
 
-The final quote amount $q_f$ is the sum of the initial quote amount $q_i$ and the
-quote input amount $q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-quote-final}.
+The final quote reserve amount $q_f$ is the sum of the initial quote reserve amount
+$q_i$ and the quote input amount $q_{in}$.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-quote-final}
-	q_f (q_i, q_{in}) = q_i + q_{in}
+\begin{equation}\label{eqn:buy-with-fee-q_f}
+	q_f = q_i + q_{in}
 \end{equation}
 
-As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-volume-derivation},
-$b_v$ is a function of the initial base amount $b_i$, $q_i$, and $q_{in}$, per
-Equation~\ref{eqn:swap-buy-with-fee-base-volume}.
+Section~\ref{sssec:equation-eqn-buy-with-fee-b-v-derivation} derives $b_v$.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-base-volume}
-	b_v (b_i, q_i, q_{in}) = \frac{b_i \cdot q_{in}}{q_i + q_{in}}
+\begin{equation}\label{eqn:buy-with-fee-b_v}
+	b_v  = \frac{b_i \cdot q_{in}}{q_i + q_{in}}
 \end{equation}
 
-As derived in Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-out-derivation},
-$b_{out}$ is a function of $b_i$, fee rate $f$, $q_i$, and
-$q_{in}$, per Equation~\ref{eqn:swap-buy-with-fee-base-out}.
+Section~\ref{sssec:equation-eqn-buy-with-fee-b-out-derivation} derives $b_{out}$.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-base-out}
-	b_{out} (b_i, f, q_i, q_{in}) = (1 - f) \cdot \frac{b_i \cdot q_{in}}{q_i + q_{in}}
+\begin{equation}\label{eqn:buy-with-fee-b_out}
+	b_{out} = f^{\dagger} \cdot b_v
 \end{equation}
 
-As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-base-final-derivation},
-$b_f (b_i, f, q_i, q_{in})$ is given in Equation~\ref{eqn:swap-buy-with-fee-base-final}.
+The final base reserve amount $b_f$ is the difference of the initial base reserve amount
+$b_i$ and $b_{out}$.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-base-final}
-	b_f (b_i, f, q_i, q_{in}) =
-	b_i \cdot \frac{q_i + f \cdot q_{in}}{q_i + q_{in}}
+\begin{equation}\label{eqn:buy-with-fee-b_f}
+	b_f = b_i - b_{out}
 \end{equation}
 
-As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-taker-execution-price-derivation},
-$p_t (b_i, f, q_i, q_{in})$ is given in
-Equation~\ref{eqn:swap-buy-with-fee-taker-execution-price}.
+$p_t$ is the ratio of $q_{in}$ to $b_{out}$.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-taker-execution-price}
-	p_t (b_i, f, q_i, q_{in}) = \frac{q_i + q_{in}}{(1 - f) \cdot b_i}
+\begin{equation}\label{eqn:buy-with-fee-p_t}
+	p_t = \frac{q_{in}}{b_{out}}
 \end{equation}
 
-Define the marginal taker execution price $p_m$ as the taker execution price for a swap
-of infinitesimal size. As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-marginal-price-derivation},
-$p_m (b_i, f, q_i)$ is given in Equation~\ref{eqn:swap-buy-with-fee-marginal-price}.
+Define the marginal taker execution price $p_m$ as $p_t$ for a swap of infinitesimal
+size, derived in Section~\ref{sssec:equation-eqn-buy-with-fee-p-m-derivation}.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-marginal-price}
-	p_m (b_i, f, q_i) = \frac{q_i}{(1 - f) \cdot b_i}
+\begin{equation}\label{eqn:buy-with-fee-p_m}
+	p_m = \frac{q_i}{f^{\dagger} \cdot b_i}
 \end{equation}
 
-Define the slippage price $p_s$ as $p_m$ after $q_{in}$ has been swapped, the point at
-which additional quote will fill at a worse price compared with matching against an
-order book best ask price that is also at $p_s$. As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-slippage-price-derivation},
-$p_s (b_i, f, q_i, q_{in})$ is given in
-Equation~\ref{eqn:swap-buy-with-fee-slippage-price}.
+Define the slippage price $p_s$ as $p_m$ after $q_{in}$ has been swapped, by
+substituting $q_f$ for $q_i$ and $b_f$ for $b_i$ in
+Equation~\ref{eqn:buy-with-fee-p_m}.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-slippage-price}
-	p_s (b_i, f, q_i, q_{in}) = \frac{{(q_i + q_{in})}^2}
-	{(1 - f) \cdot b_i \cdot (q_i + f \cdot q_{in})}
+\begin{equation}\label{eqn:buy-with-fee-p_s}
+	p_s = \frac{q_f}{f^{\dagger} \cdot b_f}
 \end{equation}
 
-Define the slippage quote input amount $q_s$ as $q_{in}$ resulting in a specified
-slippage price $p_s$ after the swap where $p_s \geq p_m$. As derived in
-Section~\ref{sssec:equation-eqn-swap-buy-with-fee-slippage-input-derivation},
-solving Equation~\ref{eqn:swap-buy-with-fee-slippage-price} for $q_s = q_{in}$ is
-identical to finding the roots of Equation~\ref{eqn:swap-buy-with-fee-slippage-input},
-a quadratic polynomial in $q_s$ containing the common term
-$Q = [(1 - f) \cdot b_i \cdot p_s]$.
+For order book best ask price $p_{ask}$ define the slippage quote input amount $q_s$
+as $q_{in}$ such that $p_s = p_{ask}$, the point at which a taker gets a better price by
+subsequently filling against an order book where $p_{ask} > p_m$. Solving
+Equation~\ref{eqn:buy-with-fee-p_s} for $p_s = p_{ask}$ yields $F$, a quadratic
+polynomial in $q_s$ with common term $t = (f^{\dagger} \cdot p_{ask} \cdot b_i)$,
+derived in Section~\ref{sssec:equation-eqn-buy-with-fee-polynomial-derivation}.
 
-\begin{equation}\label{eqn:swap-buy-with-fee-slippage-input}
-	F(b_i, f, p_s, q_i, q_s) = q_s^2 + B \cdot q_s + C,
+\begin{equation}\label{eqn:buy-with-fee-polynomial}
+	F(q_s) = q_s^2 + B \cdot q_s + C
 	\begin{cases}
-		B = 2 \cdot q_i - f \cdot Q, \\
-		C = q_i^2 - q_i \cdot Q,     \\
-		Q = [(1 - f) \cdot b_i \cdot p_s]
+		B = 2 \cdot q_i - f \cdot t \\
+		C = q_i^2 - q_i \cdot t     \\
+		t = f^{\dagger} \cdot p_{ask} \cdot b_i
+	\end{cases}
+\end{equation}
+
+Note the following two relationships between $t$ and $q_i$, derived respectively in
+Sections~\ref{sssec:equation-eqn-buy-with-fee-t-eq-q-i-derivation}
+and~\ref{sssec:equation-eqn-buy-with-fee-t-gt-q-i-derivation}.
+
+\begin{equation}\label{eqn:buy-with-fee-t-eq-q_i}
+	p_{ask} = p_m \implies t = q_i
+\end{equation}
+
+\begin{equation}\label{eqn:buy-with-fee-t-gt-q_i}
+	p_{ask} > p_m \implies t > q_i
+\end{equation}
+
+When $p_{ask}$ is greater than $p_m$, $F(0)$ is negative, derived in
+Section~\ref{sssec:equation-eqn-buy-with-fee-polynomial-inequality-derivation}.
+
+\begin{equation}\label{eqn:buy-with-fee-polynomial-inequality}
+	p_{ask} > p_m \implies F(0) < 0
+\end{equation}
+
+The second order derivative of $F$ with respect to $q_s$, $F''(q_s)$, is positive,
+indicating that $F$ is concave up.
+
+\begin{equation}\label{eqn:buy-with-fee-polynomial-double-prime}
+	F''(q_s) = \frac{\mathrm{d}^2 F}{\mathrm{d}q_s^2} = 2 > 0
+\end{equation}
+
+Equations~\ref{eqn:buy-with-fee-polynomial-inequality}
+and~\ref{eqn:buy-with-fee-polynomial-double-prime} imply that $F(q_s)$ has two real
+roots for $p_{ask} > p_m$, one positive and one negative. Thus $q_s$ can be solved
+exactly using the quadratic formula, derived in
+Section~\ref{sssec:equation-eqn-buy-with-fee-quadratic-derivation}.
+
+\begin{equation}\label{eqn:buy-with-fee-quadratic}
+	\begin{aligned}
+		p_{ask} > p_m & \implies                          \\
+		q_s           & = \frac{f \cdot t - 2 \cdot q_i +
+			\sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
+	\end{aligned}
+\end{equation}
+
+In practice, Equation~\ref{eqn:buy-with-fee-quadratic} requires considerable
+intermediate computation and range checking to prevent errors like overflow.
+Alternatively, for a maximum quote input amount $q_{\max}$ where $q_{in} = q_{\max}$
+yields $p_s > p_{ask}$, $q_s$ can thus be solved via Newton-Raphson convergence with
+$q_0 = q_{\max}$ for the first iteration, derived in
+Section~\ref{sssec:equation-eqn-buy-with-fee-convergence-derivation}.
+
+\begin{equation}\label{eqn:buy-with-fee-convergence}
+	\begin{aligned}
+		p_s(q_{\max}) > p_{ask} > p_m & \implies                                   \\
+		q_{n + 1}                     & =
+		\frac{q_n^2 + q_i \cdot t - q_i^2}{2 \cdot q_n + 2 \cdot q_i - f \cdot t}, \\
+		q_0                           & = q_{\max}
+	\end{aligned}
+\end{equation}
+
+Note that Equation~\ref{eqn:buy-with-fee-convergence} may still converge slowly when
+$q_{\max}$ is sufficiently large, for example when a taker is filling a large order
+against substantial order book ask liquidity but first needs to slip the \gls*{cpamm}.
+Thus an approximation of Equation~\ref{eqn:buy-with-fee-quadratic} can instead be used
+for $q_0$, derived in Section~\ref{sssec:equation-eqn-buy-with-fee-q-0-derivation}.
+
+\begin{equation}\label{eqn:buy-with-fee-q_0}
+	q_0 = \frac{f \cdot t}{2}
+\end{equation}
+
+Combining the above yields a hybrid numerical solution for $q_s$, derived in
+Section~\ref{sssec:equation-eqn-buy-with-fee-algorithm-derivation}.
+
+\begin{equation}\label{eqn:buy-with-fee-algorithm}
+	\begin{aligned}
+		p_{ask} > p_m & \implies                                          \\
+		q_{s, 0}      & = a                                               \\
+		q_{s, 1}      & = \frac{q_{s, 0}^2 + b}{c}                        \\
+		q_{s, n + 1}  & = \frac{q_{s, n}^2 + b}{2 \cdot q_{s, n} + c - d} \\
+		q_{s, n + 1}  & = q_{s, n} \implies q_s = q_{s, n}
+	\end{aligned}
+	\begin{cases}
+		a = \frac{d}{2}                         \\
+		b = q_i \cdot t - q_i ^ 2               \\
+		c = 2 \cdot q_i                         \\
+		d = f \cdot t                           \\
+		t = f^{\dagger} \cdot p_{ask} \cdot b_i \\
 	\end{cases}
 \end{equation}
 
@@ -436,12 +514,16 @@ Rearrange.
 
 \subsection{Swap buy with fee derivations}\label{ssec:swap-buy-with-fee-derivations}
 
-\input{derivations/swap-buy-with-fee/base-volume.tex}
-\input{derivations/swap-buy-with-fee/base-out.tex}
-\input{derivations/swap-buy-with-fee/base-final.tex}
-\input{derivations/swap-buy-with-fee/taker-execution-price.tex}
-\input{derivations/swap-buy-with-fee/marginal-price.tex}
-\input{derivations/swap-buy-with-fee/slippage-price.tex}
-\input{derivations/swap-buy-with-fee/slippage-input.tex}
+\input{derivations/buy-with-fee/b_v.tex}
+\input{derivations/buy-with-fee/b_out.tex}
+\input{derivations/buy-with-fee/p_m.tex}
+\input{derivations/buy-with-fee/polynomial.tex}
+\input{derivations/buy-with-fee/t-eq-q_i.tex}
+\input{derivations/buy-with-fee/t-gt-q_i.tex}
+\input{derivations/buy-with-fee/polynomial-inequality.tex}
+\input{derivations/buy-with-fee/quadratic.tex}
+\input{derivations/buy-with-fee/convergence.tex}
+\input{derivations/buy-with-fee/q_0.tex}
+\input{derivations/buy-with-fee/algorithm.tex}
 
 \end{document} % chktex 17

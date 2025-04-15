@@ -1,0 +1,89 @@
+\subsubsection{Equation~\ref{eqn:buy-with-fee-q_0} derivation}%
+\label{sssec:equation-eqn-buy-with-fee-q-0-derivation}
+
+Consider Equation~\ref{eqn:buy-with-fee-quadratic}.
+
+\begin{equation*}
+	q_s = \frac{f \cdot t - 2 \cdot q_i +
+		\sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
+\end{equation*}
+
+Replace $q_s$ with $q_0$ since it is an approximation for the first iteration of a
+Newton-Raphson method convergence algorithm.
+
+\begin{equation*}
+	q_0 = \frac{f \cdot t - 2 \cdot q_i +
+		\sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
+\end{equation*}
+
+Let $f^2 \approx 0$, thus eliminating the $f^2 \cdot t^2$.
+
+\begin{equation*}
+	q_0 = \frac{f \cdot t - 2 \cdot q_i + \sqrt{f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
+\end{equation*}
+
+Similarly, let $f^{\dagger} \approx 1$.
+
+\begin{equation*}
+	q_0 = \frac{f \cdot t - 2 \cdot q_i + \sqrt{4 \cdot t \cdot q_i}}{2}
+\end{equation*}
+
+Per Equation~\ref{eqn:buy-with-fee-t-eq-q_i}, let $t \approx q_i$.
+
+\begin{equation*}
+	q_0 = \frac{f \cdot t - 2 \cdot q_i + \sqrt{4 \cdot q_i \cdot q_i}}{2}
+\end{equation*}
+
+Simplify.
+
+\begin{equation*}
+	q_0 = \frac{f \cdot t - 2 \cdot q_i + 2 \cdot q_i}{2}
+\end{equation*}
+
+Cancel like terms.
+
+\begin{equation*}
+	q_0 = \frac{f \cdot t}{2}
+\end{equation*}
+
+Since $F(q_s)$ is concave up and $F(0) < 0$, if $q_0$ is greater than $q_s$ at the
+vertex then iteration will converge to the positive root. Take the vertex as
+$- \dfrac{B}{2}$ from Equation~\ref{eqn:buy-with-fee-quadratic}.
+
+\begin{equation*}
+	q_0 \stackrel{?}{>} - \frac{B}{2}
+\end{equation*}
+
+Substitute $q_0 = \dfrac{f \cdot t}{2}$ and $B$ from
+Equation~\ref{eqn:buy-with-fee-quadratic}.
+
+\begin{equation*}
+	\frac{f \cdot t}{2} \stackrel{?}{>} - \frac{2 \cdot q_i - f \cdot t}{2}
+\end{equation*}
+
+Multiply both sides by $2$.
+
+\begin{equation*}
+	f \cdot t \stackrel{?}{>} - (2 \cdot q_i - f \cdot t)
+\end{equation*}
+
+Expand.
+
+\begin{equation*}
+	f \cdot t \stackrel{?}{>} -2 \cdot q_i + f \cdot t
+\end{equation*}
+
+Subtract $f \cdot t$ from both sides.
+
+\begin{equation*}
+	0 \stackrel{?}{>} -2 \cdot q_i
+\end{equation*}
+
+Add $2 \cdot q_i$ to both sides.
+
+\begin{equation*}
+	2 \cdot q_i \stackrel{?}{>} 0
+\end{equation*}
+
+Since $q_i$ is a positive number, the inequality holds true. Therefore, the iteration
+will converge to the positive root.
