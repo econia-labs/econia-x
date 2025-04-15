@@ -29,7 +29,7 @@ Combine like terms in the denominator.
 	q_{s, 1} = \frac{{(f \cdot t)}^2 + q_i \cdot t - q_i^2}{f \cdot t + 2 \cdot q_i}
 \end{equation*}
 
-Define the recurring terms $a = f \cdot t$, $b = q_i \cdot t - q_i^2$, and
+Define the recurring terms $a = f \cdot t$, $b = q_i \cdot (t - q_i)$, and
 $c = 2 \cdot q_i$.
 
 \begin{equation*}
@@ -46,15 +46,21 @@ Note that in practice caching the recurring terms requires $b \geq 0$ to prevent
 numerical underflow.
 
 \begin{equation*}
-	b = q_i \cdot t - q_i^2 \stackrel{?}{>} 0
+	b = q_i \cdot (t - q_i) \stackrel{?}{>} 0
 \end{equation*}
 
-Add $q_i^2$ to both sides.
+Divide both sides by $q_i$, which is nonnegative.
 
 \begin{equation*}
-	q_i \cdot t \stackrel{?}{>} q_i^2
+	t - q_i \stackrel{?}{>} 0
+\end{equation*}
+
+Subtract $q_i$ from both sides.
+
+\begin{equation*}
+	t \stackrel{?}{>} q_i
 \end{equation*}
 
 Per Equation~\ref{eqn:buy-with-fee-t-gt-q_i}, $t > q_i$ so long as $p_{ask} > p_{m}$, a
 condition that is also required for $q_{s, 0}$ per
-Equation~\ref{eqn:buy-with-fee-q_s_0-eq-f_t}. Thus the inequality holds.
+Equation~\ref{eqn:buy-with-fee-q_s_0-eq-f_t}. Thus $b$ can be cached without underflow.
