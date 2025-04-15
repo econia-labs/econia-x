@@ -50,19 +50,18 @@ module amm::amm {
 
     public fun q_s(b_i: u64, f: u16, p_ask: u32, q_i: u64): u64 {
         let t = t(b_i, f, p_ask);
-        let d = fee::fee_u128(f, t);
         let q_i = (q_i as u128);
-        let b = q_i * t - q_i * q_i;
+        let a = fee::fee_u128(f, t);
+        let b = q_i * (t - q_i);
         let c = 2 * q_i;
-        let a = d / 2;
         print_labeled_value(b"q_0", a);
-        let q_n_1 = (a * a + b) / c;
+        let q_n_1 = (a * a + b) / (a + c);
         print_labeled_value(b"q_1", q_n_1);
         let q_n;
         let n = 1;
         loop {
             q_n = q_n_1;
-            q_n_1 = (q_n * q_n + b) / (2 * q_n + c - d);
+            q_n_1 = (q_n * q_n + b) / (2 * q_n + c - a);
             if (q_n == q_n_1) break;
             n += 1;
             print_labeled_value(b"n", n);
@@ -73,11 +72,11 @@ module amm::amm {
 
     #[test]
     public fun swap_buy_with_fee() {
-        let b_i = 200_000_000; // Initial base reserves.
-        let q_i = 200_000_000_000; // Initial quote reserves.
-        let f = 10 * 100; // Fee in hundredth of a basis point.
+        let b_i = 456_789_012;
+        let q_i = 123_456_789_123; // Initial quote reserves.
+        let f = 25 * 100; // Fee in hundredth of a basis point.
         let p_m = p_m(b_i, f, q_i); // Marginal taker execution price.
-        let p_ask = price::price(b_i, q_i * 15_000 / 10_000); // Ask price.
+        let p_ask = price::price(b_i, q_i * 12_345 / 10_000); // Ask price.
 
         print_labeled_value(b"p_m significand", price::encoded_significand(p_m));
         print_labeled_value(b"p_m exponent", price::encoded_exponent(p_m));
