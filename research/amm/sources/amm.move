@@ -72,11 +72,11 @@ module amm::amm {
 
     #[test]
     public fun swap_buy_with_fee() {
-        let b_i = 200_000_000; // Initial base reserves.
-        let q_i = 200_000_000_000; // Initial quote reserves.
-        let f = 10 * 100; // Fee in hundredth of a basis point.
+        let b_i = 456_789_012;
+        let q_i = 123_456_789_123; // Initial quote reserves.
+        let f = 25 * 100; // Fee in hundredth of a basis point.
         let p_m = p_m(b_i, f, q_i); // Marginal taker execution price.
-        let p_ask = price::price(b_i, q_i * 15_000 / 10_000); // Ask price.
+        let p_ask = price::price(b_i, q_i * 12_345 / 10_000); // Ask price.
 
         print_labeled_value(b"p_m significand", price::encoded_significand(p_m));
         print_labeled_value(b"p_m exponent", price::encoded_exponent(p_m));
