@@ -4,40 +4,46 @@
 Consider the update step from Equation~\ref{eqn:buy-with-fee-convergence}.
 
 \begin{equation*}
-	q_{n + 1} = \frac{q_n^2 + q_i \cdot t - q_i^2}
-	{2 \cdot q_n + 2 \cdot q_i - f \cdot t}
+	q_{s, n + 1} = \frac{q_{s, n}^2 + q_i \cdot t - q_i^2}
+	{2 \cdot q_{s, n} + 2 \cdot q_i - f \cdot t}
 \end{equation*}
 
-Consider the first iteration where $q_n = q_0$ from Equation~\ref{eqn:buy-with-fee-q_0}.
+Consider the first iteration where $q_{s, n} = q_{s, 0}$ from
+Equation~\ref{eqn:buy-with-fee-q_s_0-eq-f_t}.
 
 \begin{equation*}
-	q_1 = \frac{q_0^2 + q_i \cdot t - q_i^2}{2 \cdot q_0 + 2 \cdot q_i - f \cdot t}
+	q_{s, 1} = \frac{q_{s, 0}^2 + q_i \cdot t - q_i^2}
+	{2 \cdot q_{s, 0} + 2 \cdot q_i - f \cdot t}
 \end{equation*}
 
-Substitute $q_0$ from Equation~\ref{eqn:buy-with-fee-q_0}.
+Substitute $q_{s, 0} = f \cdot t$ from Equation~\ref{eqn:buy-with-fee-q_s_0-eq-f_t}.
 
 \begin{equation*}
-	q_1 = \frac{{\left(\dfrac{f \cdot t}{2}\right)}^2 + q_i \cdot t - q_i^2}
-	{2 \cdot \left(\dfrac{f \cdot t}{2}\right) + 2 \cdot q_i - f \cdot t}
+	q_{s, 1} = \frac{{(f \cdot t)}^2 + q_i \cdot t - q_i^2}
+	{2 \cdot (f \cdot t) + 2 \cdot q_i - f \cdot t}
 \end{equation*}
 
-Expand the denominator.
+Combine like terms in the denominator.
 
 \begin{equation*}
-	q_1 = \frac{{\left(\dfrac{f \cdot t}{2}\right)}^2 + q_i \cdot t - q_i^2}
-	{f \cdot t + 2 \cdot q_i - f \cdot t}
+	q_{s, 1} = \frac{{(f \cdot t)}^2 + q_i \cdot t - q_i^2}{f \cdot t + 2 \cdot q_i}
 \end{equation*}
 
-Cancel like terms in the denominator.
+Define the recurring terms $a = f \cdot t$, $b = q_i \cdot t - q_i^2$, and
+$c = 2 \cdot q_i$.
 
 \begin{equation*}
-	q_1 = \frac{{\left(\dfrac{f \cdot t}{2}\right)}^2 + q_i \cdot t - q_i^2}
-	{2 \cdot q_i}
+	q_{s, 1} = \frac{a^2 + b}{a + c}
 \end{equation*}
 
-Let $d = f \cdot t$, a recurring term across iterations, as well as $c = 2 \cdot q_i$
-and $q_{s, 0} = a = \dfrac{d}{2}$. Consider the recurring numerator term
-$b = q_i \cdot t - q_i^2$, which can be cached if $b > 0$.
+Use recurring terms for the update step.
+
+\begin{equation*}
+	q_{s, n + 1} = \frac{q_{s, n}^2 + b}{2 \cdot q_{s, n} + c - a}
+\end{equation*}
+
+Note that in practice caching the recurring terms requires $b \geq 0$ to prevent
+numerical underflow.
 
 \begin{equation*}
 	b = q_i \cdot t - q_i^2 \stackrel{?}{>} 0
@@ -50,15 +56,5 @@ Add $q_i^2$ to both sides.
 \end{equation*}
 
 Per Equation~\ref{eqn:buy-with-fee-t-gt-q_i}, $t > q_i$ so long as $p_{ask} > p_{m}$, a
-prerequisite for convergence. Thus the left side is always greater than the right side
-and the inequality holds. Hence $q_1$ can be rewritten with recurring terms.
-
-\begin{equation*}
-	q_{s, 1} = \frac{q_{s, 0}^2 + b}{c}
-\end{equation*}
-
-Similarly, $q_{n + 1}$ can be rewritten with recurring terms.
-
-\begin{equation*}
-	q_{n + 1} = \frac{q_n^2 + b}{2 \cdot q_n + c - d}
-\end{equation*}
+condition that is also required for $q_{s, 0}$ per
+Equation~\ref{eqn:buy-with-fee-q_s_0-eq-f_t}. Thus the inequality holds.

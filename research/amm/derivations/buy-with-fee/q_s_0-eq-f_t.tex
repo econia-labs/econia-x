@@ -1,0 +1,94 @@
+\subsubsection{Equation~\ref{eqn:buy-with-fee-q_s_0-eq-f_t} derivation}%
+\label{sssec:equation-eqn-buy-with-fee-q-s-0-eq-f-t-derivation}
+
+Consider Equation~\ref{eqn:buy-with-fee-quadratic}.
+
+\begin{equation*}
+	q_s = \frac{f \cdot t - 2 \cdot q_i +
+		\sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
+\end{equation*}
+
+Replace $q_s$ with $q_{s, 0}$ to denote that it is the first step of
+Equation~\ref{eqn:buy-with-fee-convergence}.
+
+\begin{equation*}
+	q_{s, 0} = \frac{f \cdot t - 2 \cdot q_i +
+		\sqrt{f^2 \cdot t^2 + f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
+\end{equation*}
+
+Let $f^2 \approx 0$, thus eliminating the $f^2 \cdot t^2$.
+
+\begin{equation*}
+	q_{s, 0} = \frac{f \cdot t - 2 \cdot q_i + \sqrt{f^{\dagger} \cdot 4 \cdot t \cdot q_i}}{2}
+\end{equation*}
+
+Similarly, let $f^{\dagger} \approx 1$.
+
+\begin{equation*}
+	q_{s, 0} = \frac{f \cdot t - 2 \cdot q_i + \sqrt{4 \cdot t \cdot q_i}}{2}
+\end{equation*}
+
+Per Equation~\ref{eqn:buy-with-fee-t-eq-q_i}, let $t \approx q_i$.
+
+\begin{equation*}
+	q_{s, 0} = \frac{f \cdot t - 2 \cdot q_i + \sqrt{4 \cdot q_i \cdot q_i}}{2}
+\end{equation*}
+
+Simplify.
+
+\begin{equation*}
+	q_{s, 0} = \frac{f \cdot t - 2 \cdot q_i + 2 \cdot q_i}{2}
+\end{equation*}
+
+Cancel like terms.
+
+\begin{equation*}
+	q_{s, 0} = \frac{f \cdot t}{2}
+\end{equation*}
+
+Noting that the discriminant is necessarily real since all underlying terms are
+nonnegative, double the result to compensate for the removed values and to simplify
+numerical logic.
+
+\begin{equation*}
+	q_{s, 0} = f \cdot t
+\end{equation*}
+
+Since $F(q_s)$ is concave up and $F(0) < 0$ for $p_{ask} > p_m$ per
+Equations~\ref{eqn:buy-with-fee-polynomial-inequality} and%
+~\ref{eqn:buy-with-fee-polynomial-double-prime}, if $q_{s, 0}$ is greater than $q_s$ at
+the vertex of the parabola then iteration will converge to the positive root. Take the
+vertex as $-\dfrac{B}{2}$ from Equation~\ref{eqn:buy-with-fee-quadratic}.
+
+\begin{equation*}
+  p_{ask} > p_m \implies q_{s, 0} \stackrel{?}{>} - \frac{B}{2}
+\end{equation*}
+
+Substitute $q_{s, 0} = f \cdot t$ and $B$ from
+Equation~\ref{eqn:buy-with-fee-quadratic}.
+
+\begin{equation*}
+	p_{ask} > p_m \implies f \cdot t \stackrel{?}{>} - \frac{2 \cdot q_i - f \cdot t}{2}
+\end{equation*}
+
+Multiply both sides by $2$.
+
+\begin{equation*}
+	p_{ask} > p_m \implies 2 \cdot f \cdot t \stackrel{?}{>} - (2 \cdot q_i - f \cdot t)
+\end{equation*}
+
+Expand.
+
+\begin{equation*}
+	p_{ask} > p_m \implies 2 \cdot f \cdot t \stackrel{?}{>} - 2 \cdot q_i + f \cdot t
+\end{equation*}
+
+Subtract $f \cdot t$ from both sides.
+
+\begin{equation*}
+	p_{ask} > p_m \implies f \cdot t \stackrel{?}{>} - 2 \cdot q_i
+\end{equation*}
+
+Since $f \cdot t$ is strictly nonnegative and $-2 \cdot q_i$ is strictly negative for
+a pool with any reserves whatsoever, the inequality holds true. Therefore, the iteration
+will converge to the positive root.
