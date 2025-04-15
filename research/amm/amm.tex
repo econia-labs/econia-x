@@ -307,48 +307,51 @@ Section~\ref{sssec:equation-eqn-buy-with-fee-quadratic-derivation}.
 	\end{aligned}
 \end{equation}
 
-In practice, Equation~\ref{eqn:buy-with-fee-quadratic} requires considerable
-intermediate computation and range checking to prevent errors like overflow.
-Alternatively, for a maximum quote input amount $q_{\max}$ where $q_{in} = q_{\max}$
-yields $p_s > p_{ask}$, $q_s$ can thus be solved via Newton-Raphson convergence with
-$q_0 = q_{\max}$ for the first iteration, derived in
+In practice, Equation~\ref{eqn:buy-with-fee-quadratic} requires an iterative square root
+computational algorithm like Heron's method for the intermediate square root term.
+Alternatively, $q_s$ can be solved directly using Newton-Raphson convergence, derived in
 Section~\ref{sssec:equation-eqn-buy-with-fee-convergence-derivation}.
 
 \begin{equation}\label{eqn:buy-with-fee-convergence}
-	\begin{aligned}
-		p_s(q_{\max}) > p_{ask} > p_m & \implies                                   \\
-		q_{n + 1}                     & =
-		\frac{q_n^2 + q_i \cdot t - q_i^2}{2 \cdot q_n + 2 \cdot q_i - f \cdot t}, \\
-		q_0                           & = q_{\max}
-	\end{aligned}
+	q_{s, n + 1} = \frac{q_{s, n}^2 + q_i \cdot t - q_i^2}
+	{2 \cdot q_{s, n} + 2 \cdot q_i - f \cdot t}
 \end{equation}
 
-Note that Equation~\ref{eqn:buy-with-fee-convergence} may still converge slowly when
-$q_{\max}$ is sufficiently large, for example when a taker is filling a large order
-against substantial order book ask liquidity but first needs to slip the \gls*{cpamm}.
-Thus an approximation of Equation~\ref{eqn:buy-with-fee-quadratic} can instead be used
-for $q_0$, derived in Section~\ref{sssec:equation-eqn-buy-with-fee-q-0-derivation}.
+Note that $q_s$ is only required in practice if the maximum possible quote input amount
+$q_{\max}$ yields $p_s > p_{ask}$. If this condition is met, then $q_{\max}$ can be used
+as the initial guess for the update step, which necessarily converges to the positive
+root since $q_s < q_{\max}$ and $F(q_s)$ is concave up.
 
-\begin{equation}\label{eqn:buy-with-fee-q_0}
-	q_0 = \frac{f \cdot t}{2}
+\begin{equation}\label{eqn:buy-with-fee-convergence-q_s_0-eq-q_max}
+	p_s(q_{\max}) > p_{ask} > p_m \implies q_{s, 0} = q_{\max}
 \end{equation}
 
-Combining the above yields a hybrid numerical solution for $q_s$, derived in
+The solution may still converge slowly when $q_{\max}$ is sufficiently large though, for
+example when a taker fills a large order against substantial order book ask liquidity
+but first needs to marginally slip the \gls*{cpamm}. Thus an approximation of
+Equation~\ref{eqn:buy-with-fee-quadratic} can instead be used for $q_{s, 0}$ in the more
+general case of $p_{ask} > p_{m}$, derived in
+Section~\ref{sssec:equation-eqn-buy-with-fee-q-s-0-eq-f-t-derivation}.
+
+\begin{equation}\label{eqn:buy-with-fee-q_s_0-eq-f_t}
+	p_{ask} > p_m \implies q_{s, 0} = f \cdot t
+\end{equation}
+
+Combining the above yields the numerical solution for $q_s$, derived in
 Section~\ref{sssec:equation-eqn-buy-with-fee-algorithm-derivation}.
 
 \begin{equation}\label{eqn:buy-with-fee-algorithm}
 	\begin{aligned}
 		p_{ask} > p_m & \implies                                          \\
 		q_{s, 0}      & = a                                               \\
-		q_{s, 1}      & = \frac{q_{s, 0}^2 + b}{c}                        \\
-		q_{s, n + 1}  & = \frac{q_{s, n}^2 + b}{2 \cdot q_{s, n} + c - d} \\
+		q_{s, 1}      & = \frac{a^2 + b}{a + c}                           \\
+		q_{s, n + 1}  & = \frac{q_{s, n}^2 + b}{2 \cdot q_{s, n} + c - a} \\
 		q_{s, n + 1}  & = q_{s, n} \implies q_s = q_{s, n}
 	\end{aligned}
 	\begin{cases}
-		a = \frac{d}{2}                         \\
+		a = f \cdot t                           \\
 		b = q_i \cdot t - q_i ^ 2               \\
 		c = 2 \cdot q_i                         \\
-		d = f \cdot t                           \\
 		t = f^{\dagger} \cdot p_{ask} \cdot b_i \\
 	\end{cases}
 \end{equation}
@@ -523,7 +526,7 @@ Rearrange.
 \input{derivations/buy-with-fee/polynomial-inequality.tex}
 \input{derivations/buy-with-fee/quadratic.tex}
 \input{derivations/buy-with-fee/convergence.tex}
-\input{derivations/buy-with-fee/q_0.tex}
+\input{derivations/buy-with-fee/q_s_0-eq-f_t.tex}
 \input{derivations/buy-with-fee/algorithm.tex}
 
 \end{document} % chktex 17
