@@ -1,0 +1,37 @@
+---
+jobs:
+  semantic-pr:
+    env:
+      # If run from a merge group, the action should not run since it already
+      # had to pass at the PR level. However there is no way to exit early in
+      # GitHub actions per https://github.com/actions/runner/issues/662, so
+      # this conditional check can be used to skip each step.
+      SKIP_CHECK: '${{ github.event_name == ''merge_group'' }}'
+    environment: 'alpha'
+    name: 'Semantic PR'
+    runs-on: 'ubuntu-latest'
+    steps:
+    - env:
+        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      if: '${{ env.SKIP_CHECK != ''true'' }}'
+      uses: 'amannn/action-semantic-pull-request@v5'
+      with:
+        requireScope: true
+        scopes: '^ECO-[0-9]+$'
+        subjectPattern: '^[A-Z].*$'
+        validateSingleCommit: true
+        validateSingleCommitMatchesPrTitle: true
+name: 'Semantic PR'
+'on':
+  merge_group: null
+  pull_request:
+    types:
+    - 'edited'
+    - 'opened'
+    - 'reopened'
+    - 'synchronize'
+permissions:
+  contents: 'read'
+  pull-requests: 'read'
+  statuses: 'read'
+...
