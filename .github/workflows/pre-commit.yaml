@@ -2,6 +2,7 @@
 env:
   PRE_COMMIT_VERSION: '4.2.0'
   PYTHON_VERSION: '3.13'
+environment: 'alpha'
 jobs:
   pre-commit:
     env:
@@ -28,8 +29,7 @@ jobs:
     strategy:
       matrix:
         config:
-        - 'markdown'
-        - 'yamllint'
+        - 'quick-lint'
 name: 'pre-commit'
 'on':
   merge_group: null
