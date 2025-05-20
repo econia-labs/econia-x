@@ -13,9 +13,12 @@ jobs:
         cache: 'pip'
         python-version: '${{ env.PYTHON_VERSION }}'
     - run: 'pip install pre-commit==${{ env.PRE_COMMIT_VERSION }}'
-    - uses: pre-commit/action@v3.0.1
+    - uses: actions/cache@v3
       with:
-        extra-args: '--config cfg/pre-commit/yamllint.yaml'
+        path: ~/.cache/pre-commit
+        key: ${{ runner.os }}-python-${{ PYTHON_VERSION }}-precommit-${{ PRE_COMMIT_VERSION }}-${{ hashFiles('cfg/pre-commit/yamllint.yaml') }}
+    - run: 'pre-commit install-hooks -c cfg/pre-commit/yamllint.yaml'
+    - run: 'pre-commit run --all-files --show-diff-on-failure --color=always -c cfg/pre-commit/yamllint.yaml'
 name: 'pre-commit'
 'on':
   merge_group: null
