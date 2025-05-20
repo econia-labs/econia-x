@@ -2,15 +2,12 @@
 
 # Description
 
-Delete this sentence and add a description that explains what changes you have
-done and why they were necessary.
+Delete this sentence and add describe this PR's changes.
 
 # Testing
 
-Delete this sentence and provide a description of how to test the changes in
-this PR.
+Delete this sentence and describe how to test this PR or how it was tested.
 
 # Checklist
 
-- [ ] Did you check all checkboxes from the linked Linear task? (Ignore if you
-  are not a member of Econia Labs)
+- [ ] Did you check all checkboxes from the linked Linear task?
