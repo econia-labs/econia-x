@@ -1,0 +1,18 @@
+---
+repos:
+- hooks:
+  - args:
+    - '--config'
+    - 'cfg/markdownlint-config.yaml'
+    id: 'markdownlint-fix'
+  repo: 'https://github.com/igorshubovych/markdownlint-cli'
+  rev: 'v0.45.0'
+- hooks:
+  - additional_dependencies:
+    - 'mdformat-gfm'
+    - 'mdformat-frontmatter'
+    - 'mdformat-myst'
+    id: 'mdformat'
+  repo: 'https://github.com/executablebooks/mdformat'
+  rev: '0.7.22'
+...

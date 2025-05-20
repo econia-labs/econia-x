@@ -28,6 +28,7 @@ jobs:
     strategy:
       matrix:
         config:
+        - 'markdown'
         - 'yamllint'
 name: 'pre-commit'
 'on':
