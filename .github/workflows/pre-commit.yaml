@@ -15,9 +15,7 @@ jobs:
     - run: 'pip install pre-commit==${{ env.PRE_COMMIT_VERSION }}'
     - uses: pre-commit/action@v3.0.1
       with:
-        extra-args:
-        - '--config'
-        - 'cfg/pre-commit/yamllint.yaml'
+        extra-args: '--config cfg/pre-commit/yamllint.yaml'
 name: 'pre-commit'
 'on':
   merge_group: null
