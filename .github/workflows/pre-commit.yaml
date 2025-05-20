@@ -12,7 +12,7 @@ jobs:
       with:
         cache: 'pip'
         python-version: '${{ env.PYTHON_VERSION }}'
-        run: 'pip install pre-commit==${{ env.PRE_COMMIT_VERSION }}'
+    - run: 'pip install pre-commit==${{ env.PRE_COMMIT_VERSION }}'
     - run: 'pre-commit --version'
 name: 'pre-commit'
 'on':
