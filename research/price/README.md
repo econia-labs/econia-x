@@ -1,4 +1,7 @@
-<!--- cspell:word infty -->
+<!---
+cspell:word infty
+cspell:word significand
+-->
 
 # Econia canonical price
 

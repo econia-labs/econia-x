@@ -1,4 +1,6 @@
-// cspell:words ungated
+// cspell:word collateralized
+// cspell:word ungated
+// cspell:word unrecognize
 module econia::core {
 
     use aptos_framework::fungible_asset::Metadata;
@@ -921,7 +923,9 @@ module econia::core {
         );
     }
 
-    #[test, expected_failure(abort_code = E_WITHDRAWAL_EXCEEDS_EXPECTED_VAULT_BALANCE_BASE)]
+    #[test, expected_failure(
+        abort_code = E_WITHDRAWAL_EXCEEDS_EXPECTED_VAULT_BALANCE_BASE
+    )]
     fun test_socialize_withdrawal_amount_withdrawal_exceeds_expected_vault_balance_base() acquires Market, Registry, Status {
         let market_address = ensure_market_registered_for_test();
         let market_ref = borrow_global<Market>(market_address);
