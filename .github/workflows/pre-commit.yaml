@@ -2,7 +2,6 @@
 env:
   PRE_COMMIT_VERSION: '4.2.0'
   PYTHON_VERSION: '3.13'
-environment: 'alpha'
 jobs:
   pre-commit:
     env:
