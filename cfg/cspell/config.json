@@ -6,7 +6,7 @@
     {
       "addWords": true,
       "name": "project-words",
-      "path": "./cspell-dictionary.txt"
+      "path": "./dictionary.txt"
     }
   ],
   "ignorePaths": [

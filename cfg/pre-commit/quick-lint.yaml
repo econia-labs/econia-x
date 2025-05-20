@@ -1,6 +1,27 @@
 ---
 repos:
 - hooks:
+  - id: 'check-added-large-files'
+  - id: 'check-case-conflict'
+  - id: 'detect-private-key'
+  - id: 'end-of-file-fixer'
+  - files: 'cfg/cspell/dictionary.txt'
+    id: 'file-contents-sorter'
+  - id: 'mixed-line-ending'
+  - args:
+    - '--autofix'
+    id: 'pretty-format-json'
+  - id: 'trailing-whitespace'
+  repo: 'https://github.com/pre-commit/pre-commit-hooks'
+  rev: 'v5.0.0'
+- hooks:
+  - entry: './cfg/pre-commit/local-hooks/ensure-shebang.sh'
+    id: 'ensure-shebang'
+    language: 'script'
+    name: 'ensure shebang'
+    types:
+    - 'shell'
+- hooks:
   - args:
     - '--config-file'
     - 'cfg/yamllint.yaml'
@@ -23,4 +44,14 @@ repos:
     id: 'mdformat'
   repo: 'https://github.com/executablebooks/mdformat'
   rev: '0.7.22'
+- hooks:
+  - id: 'shfmt'
+  repo: 'https://github.com/scop/pre-commit-shfmt'
+  rev: 'v3.11.0-1'
+- hooks:
+  - args:
+    - '--autofix'
+    id: 'pretty-format-toml'
+  repo: 'https://github.com/macisamuele/language-formatters-pre-commit-hooks'
+  rev: 'v2.14.0'
 ...

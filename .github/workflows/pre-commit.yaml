@@ -35,6 +35,7 @@ jobs:
     strategy:
       matrix:
         config:
+        - 'cspell'
         - 'quick-lint'
 name: 'pre-commit'
 'on':
