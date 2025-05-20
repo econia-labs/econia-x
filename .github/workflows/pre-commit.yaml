@@ -8,6 +8,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     environment: 'alpha'
     steps:
+    - run: 'echo "Workflow approved"'
   pre-commit:
     env:
       CONFIG_PATH: 'cfg/pre-commit/${{ matrix.config }}.yaml'
