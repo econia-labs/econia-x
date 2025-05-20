@@ -6,7 +6,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
-    - uses: pre-commit/action@v3.0.1
+      with:
+        cache: 'pip'
+    - run: 'pip install pre-commit'
 name: 'pre-commit'
 'on':
   merge_group: null
