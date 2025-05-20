@@ -3,8 +3,10 @@ env:
   PRE_COMMIT_VERSION: '4.2.0'
   PYTHON_VERSION: '3.13'
 jobs:
-  stub:
-    name: 'pre-commit'
+  pre-commit:
+    env:
+      CONFIG_PATH: 'cfg/pre-commit/${{ matrix.config }}.yaml'
+    name: 'pre-commit-${{ matrix.config }}'
     runs-on: 'ubuntu-latest'
     steps:
     - uses: 'actions/checkout@v4'
@@ -17,12 +19,16 @@ jobs:
       with:
         key: 'pre-commit-hook-${{ runner.os }}-${{ runner.arch }}-python-${{
               env.PYTHON_VERSION }}-pre-commit-${{ env.PRE_COMMIT_VERSION
-              }}-${{ hashFiles(''cfg/pre-commit/yamllint.yaml'') }}'
+              }}-${{ hashFiles(env.CONFIG_PATH) }}'
         path: '~/.cache/pre-commit'
-    - run: 'pre-commit install-hooks -c cfg/pre-commit/yamllint.yaml'
+    - run: 'pre-commit install-hooks -c ${{ env.CONFIG_PATH }}'
     - run: >-
         pre-commit run --all-files --color=always --show-diff-on-failure
-        --config cfg/pre-commit/yamllint.yaml
+        --config ${{ env.CONFIG_PATH }}
+    strategy:
+      matrix:
+        config:
+        - 'yamllint'
 name: 'pre-commit'
 'on':
   merge_group: null
