@@ -17,9 +17,9 @@ jobs:
     - run: 'pip install pre-commit==${{ env.PRE_COMMIT_VERSION }}'
     - uses: 'actions/cache@v3'
       with:
-        key: 'pre-commit-hook-${{ runner.os }}-${{ runner.arch }}-python-${{
-              env.PYTHON_VERSION }}-pre-commit-${{ env.PRE_COMMIT_VERSION
-              }}-${{ hashFiles(env.CONFIG_PATH) }}'
+        key: 'pre-commit-${{ matrix.config }}-${{ runner.os }}-${{ runner.arch
+              }}-python-${{ env.PYTHON_VERSION }}-pre-commit-${{
+              env.PRE_COMMIT_VERSION }}-${{ hashFiles(env.CONFIG_PATH) }}'
         path: '~/.cache/pre-commit'
     - run: 'pre-commit install-hooks -c ${{ env.CONFIG_PATH }}'
     - run: >-
