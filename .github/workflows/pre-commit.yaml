@@ -13,7 +13,11 @@ jobs:
         cache: 'pip'
         python-version: '${{ env.PYTHON_VERSION }}'
     - run: 'pip install pre-commit==${{ env.PRE_COMMIT_VERSION }}'
-    - run: 'pre-commit --version'
+    - uses: pre-commit/action@v3.0.1
+      with:
+        extra-args:
+        - '--config'
+        - 'cfg/pre-commit/yamllint.yaml'
 name: 'pre-commit'
 'on':
   merge_group: null
