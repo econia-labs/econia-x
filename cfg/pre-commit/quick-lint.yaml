@@ -5,7 +5,7 @@ repos:
   - id: 'check-case-conflict'
   - id: 'detect-private-key'
   - id: 'end-of-file-fixer'
-  - files: 'cfg/cspell/dictionary.txt'
+  - files: 'cfg/dictionary.txt'
     id: 'file-contents-sorter'
   - id: 'mixed-line-ending'
   - args:

@@ -3,7 +3,7 @@ repos:
 - hooks:
   - args:
     - '--config'
-    - 'cfg/cspell/config.json'
+    - 'cfg/cspell.yaml'
     id: 'cspell'
   repo: 'https://github.com/streetsidesoftware/cspell-cli'
   rev: 'v9.0.1'
