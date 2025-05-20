@@ -4,9 +4,9 @@ env:
   PYTHON_VERSION: '3.13'
 jobs:
   approval:
+    environment: 'alpha'
     name: 'Workflow approval'
     runs-on: 'ubuntu-latest'
-    environment: 'alpha'
     steps:
     - run: 'echo "Workflow approved"'
   pre-commit:
