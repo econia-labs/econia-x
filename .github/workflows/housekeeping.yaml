@@ -26,7 +26,7 @@ jobs:
     needs:
     - 'approval'
     secrets: 'inherit'
-    # Run for all events, since an inner step requires event context.
+      # Run for all events, since an inner step requires event context.
     uses: './.github/workflows/semantic-pr.yaml'
 name: 'Housekeeping'
 'on':
