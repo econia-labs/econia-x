@@ -5,8 +5,7 @@ jobs:
       ${{ github.event_name == 'pull_request' && 'pull-request' || '' }}
     runs-on: 'ubuntu-latest'
     steps:
-      run: |
-        echo "Workflow approved"
+    - run: 'echo "Workflow approved"'
   semantic-pr:
     needs:
     - 'approval'
