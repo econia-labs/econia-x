@@ -1,0 +1,23 @@
+---
+jobs:
+  approval:
+    environment: |
+      ${{ github.event_name == 'pull_request' && 'pull-request' || '' }}
+    runs-on: 'ubuntu-latest'
+    steps:
+      run: |
+        echo "Workflow approved"
+  semantic-pr:
+    needs:
+    - 'approval'
+    uses: './.github/workflows/semantic-pr.yaml'
+name: 'Housekeeping approval'
+'on':
+  merge_group: null
+  pull_request:
+    types:
+    - 'edited'
+    - 'opened'
+    - 'reopened'
+    - 'synchronize'
+...

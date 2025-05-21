@@ -1,31 +1,13 @@
 # cspell:word amannn
 ---
 jobs:
-  final-status:
-    if: |
-      ${{ needs.merge-group.result == 'success' }} ||
-      ${{ needs.pr-title.result == 'success' }}
+  semantic-pr:
     name: 'Semantic PR'
-    needs:
-    - 'merge-group'
-    - 'pr-title'
-    runs-on: 'ubuntu-latest'
-    steps:
-    - run: 'echo "Semantic PR workflow successfully completed"'
-  merge-group:
-    if: 'github.event_name == ''merge_group'''
-    name: 'On merge group'
-    runs-on: 'ubuntu-latest'
-    steps:
-    - run: 'echo "PR title check skipped in merge group"'
-  pr-title:
-    environment: 'pull-request'
-    if: 'github.event_name != ''merge_group'''
-    name: 'On pull request'
     runs-on: 'ubuntu-latest'
     steps:
     - env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      if: 'github.event_name == ''pull_request'''
       uses: 'amannn/action-semantic-pull-request@v5'
       with:
         requireScope: true
@@ -33,15 +15,8 @@ jobs:
         subjectPattern: '^[A-Z].*$'
         validateSingleCommit: true
         validateSingleCommitMatchesPrTitle: true
-name: 'Semantic PR'
 'on':
-  merge_group: null
-  pull_request:
-    types:
-    - 'edited'
-    - 'opened'
-    - 'reopened'
-    - 'synchronize'
+  workflow_call: null
 permissions:
   contents: 'read'
   pull-requests: 'read'

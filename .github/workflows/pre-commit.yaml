@@ -51,6 +51,5 @@ jobs:
         - 'quick-lint'
 name: 'pre-commit'
 'on':
-  merge_group: null
-  pull_request: null
+  workflow_call: null
 ...
