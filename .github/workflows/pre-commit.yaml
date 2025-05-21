@@ -6,7 +6,7 @@ jobs:
   pre-commit:
     env:
       CONFIG_PATH: 'cfg/pre-commit/${{ matrix.config }}.yaml'
-    name: '${{ matrix.config }}'
+    name: '${{ matrix.name }}'
     runs-on: 'ubuntu-latest'
     steps:
     - uses: 'actions/checkout@v4'
@@ -30,6 +30,9 @@ jobs:
         config:
         - 'cspell'
         - 'quick-lint'
+        name:
+        - 'CSpell'
+        - 'Quick lint'
 name: 'pre-commit'
 'on':
   workflow_call: null
