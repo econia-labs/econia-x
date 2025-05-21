@@ -5,16 +5,16 @@ jobs:
     name: 'Semantic PR'
     needs:
     - 'merge-group'
-    - 'semantic-pr'
+    - 'pr-title'
     runs-on: 'ubuntu-latest'
     steps:
-    - run: 'echo "Semantic PR check successful"'
+    - run: 'echo "Semantic PR workflow successfully completed"'
   merge-group:
     if: 'github.event_name == ''merge_group'''
     runs-on: 'ubuntu-latest'
     steps:
     - run: 'echo "PR title check skipped in merge group"'
-  semantic-pr:
+  pr-title:
     environment: 'alpha'
     if: 'github.event_name != ''merge_group'''
     runs-on: 'ubuntu-latest'
@@ -28,7 +28,6 @@ jobs:
         subjectPattern: '^[A-Z].*$'
         validateSingleCommit: true
         validateSingleCommitMatchesPrTitle: true
-name: 'Semantic PR'
 'on':
   merge_group: null
   pull_request:
