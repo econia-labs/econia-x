@@ -11,8 +11,6 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
     - run: 'echo "Manually approved for pull request"'
-    - run: |
-        echo '${{ toJSON(github.event) }}' | jq .
 name: 'Housekeeping approval'
 'on':
   merge_group: null
