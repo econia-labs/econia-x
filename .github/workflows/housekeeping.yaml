@@ -10,12 +10,6 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
     - run: 'echo "Workflow approved"'
-  semantic-pr:
-    needs:
-    - 'approval'
-    secrets: inherit
-    # Run for all events, since an inner step requires event context.
-    uses: './.github/workflows/semantic-pr.yaml'
   pre-commit:
     # Only run in a merge group or for default pull request events.
     if: |
@@ -27,6 +21,12 @@ jobs:
     needs:
     - 'approval'
     uses: './.github/workflows/pre-commit.yaml'
+  semantic-pr:
+    needs:
+    - 'approval'
+    secrets: 'inherit'
+    # Run for all events, since an inner step requires event context.
+    uses: './.github/workflows/semantic-pr.yaml'
 name: 'Housekeeping'
 'on':
   merge_group: null
