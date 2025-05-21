@@ -11,12 +11,14 @@ jobs:
     - run: 'echo "Semantic PR workflow successfully completed"'
   merge-group:
     if: 'github.event_name == ''merge_group'''
+    name: 'On merge group'
     runs-on: 'ubuntu-latest'
     steps:
     - run: 'echo "PR title check skipped in merge group"'
   pr-title:
     environment: 'alpha'
     if: 'github.event_name != ''merge_group'''
+    name: 'On pull request'
     runs-on: 'ubuntu-latest'
     steps:
     - env:
@@ -28,6 +30,7 @@ jobs:
         subjectPattern: '^[A-Z].*$'
         validateSingleCommit: true
         validateSingleCommitMatchesPrTitle: true
+name: 'Semantic PR'
 'on':
   merge_group: null
   pull_request:
