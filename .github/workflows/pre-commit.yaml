@@ -5,6 +5,7 @@ env:
 jobs:
   merge-group-approval:
     environment: 'alpha'
+    name: 'On merge group approval'
     if: 'github.event_name == ''merge_group'''
     runs-on: 'ubuntu-latest'
     steps:
@@ -12,6 +13,7 @@ jobs:
   pr-approval:
     environment: 'alpha'
     if: 'github.event_name == ''pull_request'''
+    name: 'On pull request approval'
     runs-on: 'ubuntu-latest'
     steps:
     - run: 'echo "Workflow approved"'
@@ -20,6 +22,7 @@ jobs:
       CONFIG_PATH: 'cfg/pre-commit/${{ matrix.config }}.yaml'
     name: 'pre-commit ${{ matrix.config }}'
     needs:
+    - 'merge-group-approval'
     - 'pr-approval'
     runs-on: 'ubuntu-latest'
     steps:
