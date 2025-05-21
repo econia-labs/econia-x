@@ -1,0 +1,13 @@
+---
+jobs:
+  echo:
+    runs-on: 'ubuntu-latest'
+    steps:
+    - run: |
+        echo '${{ toJSON(github.event) }}' | jq .
+'on':
+  workflow_run:
+    workflows:
+    - 'Housekeeping approval'
+    types:
+    - 'completed'
