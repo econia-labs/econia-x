@@ -3,29 +3,10 @@ env:
   PRE_COMMIT_VERSION: '4.2.0'
   PYTHON_VERSION: '3.13'
 jobs:
-  merge-group-approval:
-    if: 'github.event_name == ''merge_group'''
-    name: 'On merge group approval'
-    runs-on: 'ubuntu-latest'
-    steps:
-    - run: 'echo "Workflow approval skipped for merge group"'
-  pr-approval:
-    environment: 'pull-request'
-    if: 'github.event_name == ''pull_request'''
-    name: 'On pull request approval'
-    runs-on: 'ubuntu-latest'
-    steps:
-    - run: 'echo "Workflow approved"'
   pre-commit:
     env:
       CONFIG_PATH: 'cfg/pre-commit/${{ matrix.config }}.yaml'
-    if: |
-      ${{ needs.merge-group-approval.result == 'success' }} ||
-      ${{ needs.pr-approval.result == 'success' }}
     name: 'pre-commit ${{ matrix.config }}'
-    needs:
-    - 'merge-group-approval'
-    - 'pr-approval'
     runs-on: 'ubuntu-latest'
     steps:
     - uses: 'actions/checkout@v4'

@@ -7,7 +7,14 @@ jobs:
     steps:
     - env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      if: 'github.event_name == ''pull_request'''
+      # Only run for relevant pull request events, else assume success (for
+      # example when triggered by a merge group).
+      if: |
+        github.event_name == 'pull_request' && (
+        github.event.action == 'edited' ||
+        github.event.action == 'opened' ||
+        github.event.action == 'reopened' ||
+        github.event.action == 'synchronize')
       uses: 'amannn/action-semantic-pull-request@v5'
       with:
         requireScope: true
