@@ -1,3 +1,4 @@
+// cspell:word significand
 module price::price {
 
     use aptos_std::math128;

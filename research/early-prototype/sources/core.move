@@ -1,4 +1,6 @@
-// cspell:words ungated
+// cspell:word collateralized
+// cspell:word ungated
+// cspell:word unrecognize
 module econia::core {
 
     use aptos_framework::fungible_asset::Metadata;

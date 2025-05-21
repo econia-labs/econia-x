@@ -1,3 +1,8 @@
+<!---
+cspell:word bitshift
+cspell:word clmm
+-->
+
 # Uniswap v3 whitepaper
 
 This content references the [Uniswap v3 whitepaper].

@@ -1,3 +1,4 @@
+// cspell:word significand
 module amm::amm {
 
     use fee::fee;
