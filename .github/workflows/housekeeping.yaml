@@ -20,4 +20,7 @@ name: 'Housekeeping approval'
     - 'opened'
     - 'reopened'
     - 'synchronize'
+permissions:
+  contents: 'read'
+  pull-requests: 'read'
 ...
