@@ -4,7 +4,7 @@ env:
   PYTHON_VERSION: '3.13'
 jobs:
   merge-group-approval:
-    environment: 'alpha'
+    environment: 'pull-request'
     if: 'github.event_name == ''merge_group'''
     name: 'On merge group approval'
     runs-on: 'ubuntu-latest'

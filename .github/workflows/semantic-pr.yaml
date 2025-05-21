@@ -19,7 +19,7 @@ jobs:
     steps:
     - run: 'echo "PR title check skipped in merge group"'
   pr-title:
-    environment: 'alpha'
+    environment: 'pull-request'
     if: 'github.event_name != ''merge_group'''
     name: 'On pull request'
     runs-on: 'ubuntu-latest'
