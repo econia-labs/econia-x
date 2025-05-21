@@ -1,7 +1,7 @@
 ---
 jobs:
   approval:
-    # Only require explicit approval via the `pull-request` environment when
+    # Require explicit approval via the `pull-request` environment when
     # triggered by a pull request. Else implicitly approve by defining no
     # environment.
     environment: |
