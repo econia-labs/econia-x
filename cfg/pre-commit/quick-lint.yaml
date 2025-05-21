@@ -1,3 +1,6 @@
+# cspell:word frontmatter
+# cspell:word mdformat
+# cspell:word shfmt
 ---
 repos:
 - hooks:

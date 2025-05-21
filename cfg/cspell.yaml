@@ -1,8 +1,8 @@
 ---
-dictionaryDefinitions:
-  - name: repo-words
-    path: ./dictionary.txt
-    addWords: true
 dictionaries:
-  - repo-words
+- 'repo-words'
+dictionaryDefinitions:
+- addWords: true
+  name: 'repo-words'
+  path: './dictionary.txt'
 ...

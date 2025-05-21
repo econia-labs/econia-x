@@ -1,6 +1,7 @@
 # cspell:word autofix
 # cspell:word autoflake
 # cspell:word autoref
+# cspell:word chktex
 # cspell:word cleveref
 # cspell:word csquotes
 # cspell:word frontmatter
@@ -10,6 +11,7 @@
 # cspell:word localrc
 # cspell:word markdownlint
 # cspell:word mdformat
+# cspell:word movefmt
 # cspell:word shfmt
 # cspell:word mypy
 ---
