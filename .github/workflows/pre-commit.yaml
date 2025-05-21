@@ -5,8 +5,8 @@ env:
 jobs:
   merge-group-approval:
     environment: 'alpha'
-    name: 'On merge group approval'
     if: 'github.event_name == ''merge_group'''
+    name: 'On merge group approval'
     runs-on: 'ubuntu-latest'
     steps:
     - run: 'echo "Workflow approval skipped for merge group"'
@@ -20,6 +20,9 @@ jobs:
   pre-commit:
     env:
       CONFIG_PATH: 'cfg/pre-commit/${{ matrix.config }}.yaml'
+    if: |
+      ${{ needs.merge-group-approval.result == 'success' }} ||
+      ${{ needs.pr-approval.result == 'success' }}
     name: 'pre-commit ${{ matrix.config }}'
     needs:
     - 'merge-group-approval'

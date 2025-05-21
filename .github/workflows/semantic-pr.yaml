@@ -1,7 +1,10 @@
 # cspell:word amannn
 ---
 jobs:
-  job-status:
+  final-status:
+    if: |
+      ${{ needs.merge-group.result == 'success' }} ||
+      ${{ needs.pr-title.result == 'success' }}
     name: 'Semantic PR'
     needs:
     - 'merge-group'
