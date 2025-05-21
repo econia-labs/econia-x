@@ -22,6 +22,7 @@ jobs:
     - 'approval'
     uses: './.github/workflows/pre-commit.yaml'
   semantic-pr:
+    name: 'Semantic PR'
     needs:
     - 'approval'
     secrets: 'inherit'
