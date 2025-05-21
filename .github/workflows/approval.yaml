@@ -1,0 +1,25 @@
+---
+jobs:
+  merge_group:
+    if: 'github.event_name == ''merge_group'''
+    runs-on: 'ubuntu-latest'
+    steps:
+    - run: 'echo "Workflow approval skipped for merge group"'
+  pull_request:
+    # environment: 'pull-request'
+    if: 'github.event_name == ''pull_request'''
+    runs-on: 'ubuntu-latest'
+    steps:
+    - run: 'echo "Workflow approved for pull request"'
+    - run: |
+        echo '${{ toJSON(github.event) }}' | jq .
+name: 'Workflow approval'
+'on':
+  merge_group: null
+  pull_request:
+    types:
+    - 'edited'
+    - 'opened'
+    - 'reopened'
+    - 'synchronize'
+...
