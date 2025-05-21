@@ -27,12 +27,11 @@ jobs:
         --config ${{ env.CONFIG_PATH }}
     strategy:
       matrix:
-        config:
-        - 'cspell'
-        - 'quick-lint'
-        name:
-        - 'CSpell'
-        - 'Quick lint'
+        include:
+        - config: 'cspell'
+          name: 'CSpell'
+        - config: 'quick-lint'
+          name: 'Quick lint'
 name: 'pre-commit'
 'on':
   workflow_call: null
