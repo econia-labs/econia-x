@@ -4,14 +4,13 @@ env:
   PYTHON_VERSION: '3.13'
 jobs:
   merge-group-approval:
-    environment: 'pull-request'
     if: 'github.event_name == ''merge_group'''
     name: 'On merge group approval'
     runs-on: 'ubuntu-latest'
     steps:
     - run: 'echo "Workflow approval skipped for merge group"'
   pr-approval:
-    environment: 'alpha'
+    environment: 'pull-request'
     if: 'github.event_name == ''pull_request'''
     name: 'On pull request approval'
     runs-on: 'ubuntu-latest'
