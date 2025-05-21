@@ -9,6 +9,7 @@ jobs:
   semantic-pr:
     needs:
     - 'approval'
+    secrets: inherit
     uses: './.github/workflows/semantic-pr.yaml'
 name: 'Housekeeping approval'
 'on':
