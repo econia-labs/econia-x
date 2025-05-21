@@ -1,20 +1,26 @@
 # cspell:word amannn
 ---
 jobs:
-  semantic-pr:
-    env:
-      # If run from a merge group, the action should not run since it already
-      # had to pass at the PR level. However there is no way to exit early in
-      # GitHub actions per https://github.com/actions/runner/issues/662, so
-      # this conditional check can be used to skip each step.
-      SKIP_CHECK: '${{ github.event_name == ''merge_group'' }}'
-    environment: 'alpha'
+  job-status:
     name: 'Semantic PR'
+    needs:
+    - 'merge-group'
+    - 'semantic-pr'
+    runs-on: 'ubuntu-latest'
+    steps:
+    - run: 'echo "Semantic PR check successful"'
+  merge-group:
+    if: 'github.event_name == ''merge_group'''
+    runs-on: 'ubuntu-latest'
+    steps:
+    - run: 'echo "PR title check skipped in merge group"'
+  semantic-pr:
+    environment: 'alpha'
+    if: 'github.event_name != ''merge_group'''
     runs-on: 'ubuntu-latest'
     steps:
     - env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      if: '${{ env.SKIP_CHECK != ''true'' }}'
       uses: 'amannn/action-semantic-pull-request@v5'
       with:
         requireScope: true
