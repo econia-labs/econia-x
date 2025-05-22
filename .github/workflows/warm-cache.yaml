@@ -12,4 +12,3 @@ name: 'Warm cache'
     - '.github/workflows/pre-commit.yaml'
     - '.github/workflows/warm-cache.yaml'
 ...
-# This comment triggers CI
