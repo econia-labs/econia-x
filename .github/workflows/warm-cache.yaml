@@ -1,9 +1,7 @@
 ---
 jobs:
   pre-commit:
-    runs-on: 'ubuntu-latest'
-    steps:
-    - uses: './.github/workflows/pre-commit.yaml'
+    uses: './.github/workflows/pre-commit.yaml'
 name: 'Warm cache'
 'on':
   push:
@@ -13,7 +11,5 @@ name: 'Warm cache'
     - 'cfg/pre-commit/**'
     - '.github/workflows/pre-commit.yaml'
     - '.github/workflows/warm-cache.yaml'
-permissions:
-  contents: 'read'
 ...
 
