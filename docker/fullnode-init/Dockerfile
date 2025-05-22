@@ -13,4 +13,3 @@ COPY fullnode.yaml /app/
 RUN chmod +x /app/init-volume.sh
 
 ENTRYPOINT ["/app/init-volume.sh"]
-
