@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  init-volume:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NETWORK: ${NETWORK:-mainnet}
+    environment:
+      - NETWORK=${NETWORK:-mainnet}
+    volumes:
+      - aptos_data:/opt/aptos
+    command: ${NETWORK:-mainnet}
+
+  # This service is just for inspecting the initialized volume
+  inspect-volume:
+    image: alpine:3.18
+    depends_on:
+      - init-volume
+    volumes:
+      - aptos_data:/opt/aptos
+    command: sh -c "echo 'Volume contents:' && ls -la /opt/aptos && echo 'Config files:' && ls -la /opt/aptos/etc && echo 'Data directory:' && ls -la /opt/aptos/data"
+
+volumes:
+  aptos_data:
+    name: aptos_${NETWORK:-mainnet}_data
+
