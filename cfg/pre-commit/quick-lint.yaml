@@ -20,6 +20,12 @@ repos:
   repo: 'https://github.com/adrienverge/yamllint'
   rev: 'v1.37.1'
 - hooks:
+  # Lint all AWS CloudFormation files ending in `.cfn.yaml`.
+  - files: '.*\.cfn\.yaml'
+    id: 'cfn-lint'
+  repo: 'https://github.com/aws-cloudformation/cfn-lint'
+  rev: 'v1.35.3'
+- hooks:
   - args:
     - '--config'
     - 'cfg/markdownlint.yaml'
