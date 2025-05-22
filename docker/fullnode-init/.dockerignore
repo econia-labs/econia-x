@@ -1,6 +1,4 @@
-.git
-.github
-README.md
-docker-compose.yml
-.dockerignore
+*
+!init-volume.sh
+!fullnode.yaml
 

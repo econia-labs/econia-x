@@ -1,11 +1,15 @@
-FROM alpine:3.18
+FROM debian:slim-bookworm
 
-RUN apk add --no-cache bash curl
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy initialization script
+# Copy initialization script and fullnode config
 COPY init-volume.sh /app/
+COPY fullnode.yaml /app/
 RUN chmod +x /app/init-volume.sh
 
 # Default to mainnet, can be overridden with --build-arg or at runtime
@@ -16,5 +20,4 @@ ENV NETWORK=$NETWORK
 RUN mkdir -p /opt/aptos/data /opt/aptos/etc
 
 ENTRYPOINT ["/app/init-volume.sh"]
-CMD ["$NETWORK"]
 

@@ -1,0 +1,20 @@
+---
+version: '3.8'
+
+services:
+  init-volume:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NETWORK: ${NETWORK:-mainnet}
+    environment:
+      - NETWORK=${NETWORK:-mainnet}
+    volumes:
+      - aptos_data:/opt/aptos
+    command: ${NETWORK:-mainnet}
+
+volumes:
+  aptos_data:
+    name: aptos_${NETWORK:-mainnet}_data
+
