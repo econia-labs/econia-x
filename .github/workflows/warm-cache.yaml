@@ -1,0 +1,14 @@
+---
+jobs:
+  pre-commit:
+    uses: './.github/workflows/pre-commit.yaml'
+name: 'Warm cache'
+'on':
+  push:
+    branches:
+    - 'main'
+    paths:
+    - 'cfg/pre-commit/**'
+    - '.github/workflows/pre-commit.yaml'
+    - '.github/workflows/warm-cache.yaml'
+...
