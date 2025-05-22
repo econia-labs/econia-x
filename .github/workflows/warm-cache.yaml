@@ -3,7 +3,6 @@ jobs:
   pre-commit:
     runs-on: 'ubuntu-latest'
     steps:
-    - uses: 'actions/checkout@v4'
     - uses: './.github/workflows/pre-commit.yaml'
 name: 'Warm cache'
 'on':
