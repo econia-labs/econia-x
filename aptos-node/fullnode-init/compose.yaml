@@ -1,6 +1,6 @@
 ---
 services:
-  init-volume:
+  runner:
     build:
       context: '.'
       dockerfile: 'Dockerfile'
