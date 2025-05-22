@@ -6,7 +6,7 @@ name: 'Warm cache'
 'on':
   push:
     branches:
-    - 'eco-3304-create-cache-warming'
+    - 'main'
     paths:
     - 'cfg/pre-commit/**'
     - '.github/workflows/pre-commit.yaml'
