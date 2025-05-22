@@ -1,13 +1,11 @@
 ---
 jobs:
-  cache-warm:
-    name: 'Cache warming'
+  pre-commit:
     runs-on: 'ubuntu-latest'
     steps:
     - uses: 'actions/checkout@v4'
-    - name: 'Warm pre-commit cache'
-      uses: './.github/workflows/pre-commit.yaml'
-name: 'cache-warm'
+    - uses: './.github/workflows/pre-commit.yaml'
+name: 'Warm cache'
 'on':
   push:
     branches:
@@ -15,7 +13,7 @@ name: 'cache-warm'
     paths:
     - 'cfg/pre-commit/**'
     - '.github/workflows/pre-commit.yaml'
-    - '.github/workflows/cache-warm.yaml'
+    - '.github/workflows/warm-cache.yaml'
 permissions:
   contents: 'read'
 ...
