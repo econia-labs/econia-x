@@ -5,11 +5,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
 # Copy init script and fullnode config.
-COPY init-volume.sh /app/
-COPY fullnode.yaml /app/
-RUN chmod +x /app/init-volume.sh
+WORKDIR /app
+COPY init-volume.sh .
+COPY fullnode.yaml .
+RUN chmod +x init-volume.sh
 
 ENTRYPOINT ["/app/init-volume.sh"]
