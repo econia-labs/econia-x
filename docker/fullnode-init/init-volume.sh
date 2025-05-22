@@ -1,17 +1,14 @@
 #!/bin/sh
 set -e
 
-# Validate network parameter
+# Validate network parameter.
 if [ -z "$1" ]; then
   echo "Error: Network parameter is required."
   echo "Usage: $0 <network>"
   echo "Supported networks: mainnet, testnet, devnet"
   exit 1
 fi
-
 NETWORK="$1"
-
-# Validate network is one of the supported options
 case "$NETWORK" in
   mainnet|testnet|devnet)
     echo "Initializing volume for Aptos $NETWORK..."
@@ -23,43 +20,32 @@ case "$NETWORK" in
     ;;
 esac
 
-# Base URL for Aptos network files
-APTOS_NETWORKS_URL="https://raw.githubusercontent.com/aptos-labs/aptos-networks/main"
-
-# Create necessary directories
-mkdir -p /opt/aptos/data
-mkdir -p /opt/aptos/etc
-
-# Check if waypoint.txt already exists
-if [ -f "/opt/aptos/etc/waypoint.txt" ]; then
-  echo "waypoint.txt already exists, skipping download."
-else
-  echo "Downloading $NETWORK waypoint.txt..."
-  curl -s -o /opt/aptos/etc/waypoint.txt \
-    "$APTOS_NETWORKS_URL/$NETWORK/waypoint.txt"
+# If there is no data directory, create it.
+if [ ! -d "data" ]; then
+  echo "Creating data directory..."
+  mkdir -p data
 fi
 
-# Check if genesis.blob already exists
-if [ -f "/opt/aptos/etc/genesis.blob" ]; then
+# Copy fullnode config file from /app/fullnode.yaml if it doesn't exist.
+if [ -f "fullnode.yaml" ]; then
+  echo "fullnode.yaml already exists, skipping copy."
+else
+  echo "Copying fullnode.yaml..."
+  cp /app/fullnode.yaml .
+fi
+
+# Download waypoint and genesis files if they aren't present.
+BASE_URL="https://raw.githubusercontent.com/aptos-labs/aptos-networks/main"
+if [ -f "genesis.blob" ]; then
   echo "genesis.blob already exists, skipping download."
 else
   echo "Downloading $NETWORK genesis.blob..."
-  curl -s -o /opt/aptos/etc/genesis.blob \
-    "$APTOS_NETWORKS_URL/$NETWORK/genesis.blob"
+  curl -O "$BASE_URL/$NETWORK/genesis.blob"
 fi
-
-# Copy fullnode.yaml configuration file if it doesn't exist
-if [ -f "/opt/aptos/etc/fullnode.yaml" ]; then
-  echo "fullnode.yaml already exists, skipping copy."
+if [ -f "waypoint.txt" ]; then
+  echo "waypoint.txt already exists, skipping download."
 else
-  echo "Creating fullnode.yaml configuration file..."
-  cp /app/fullnode.yaml /opt/aptos/etc/
+  echo "Downloading $NETWORK waypoint.txt..."
+  curl -O "$BASE_URL/$NETWORK/waypoint.txt"
 fi
-
-echo "Volume initialization complete for $NETWORK!"
-echo "Files in /opt/aptos/etc:"
-ls -la /opt/aptos/etc/
-
-# Ensure proper permissions
-chmod -R 755 /opt/aptos
 

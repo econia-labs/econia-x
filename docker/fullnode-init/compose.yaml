@@ -1,17 +1,14 @@
 ---
-version: '3.8'
-
 services:
   init-volume:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - aptos_data:/opt/aptos
+    - data:/opt/aptos
     command: ${NETWORK}
-
 volumes:
-  aptos_data:
-    name: ${NETWORK}_fullnode_data
+  data:
+    name: fullnode_data_${NETWORK}
 ...
 
