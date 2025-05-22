@@ -1,0 +1,56 @@
+---
+name: 'cache-warm'
+env:
+  PRE_COMMIT_VERSION: '4.2.0'
+  PYTHON_VERSION: '3.13'
+
+'on':
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'cfg/pre-commit/**'
+      - '.github/workflows/pre-commit.yaml'
+      - '.github/workflows/cache-warm.yaml'
+
+jobs:
+  cache-warm:
+    name: 'Warm ${{ matrix.name }} cache'
+    runs-on: 'ubuntu-latest'
+    env:
+      CONFIG_PATH: 'cfg/pre-commit/${{ matrix.config }}.yaml'
+    strategy:
+      matrix:
+        include:
+          - config: 'cspell'
+            name: 'CSpell'
+          - config: 'quick-lint'
+            name: 'Quick lint'
+    steps:
+      - name: 'Checkout repository'
+        uses: 'actions/checkout@v4'
+
+      - name: 'Setup Python'
+        uses: 'actions/setup-python@v5'
+        with:
+          python-version: '${{ env.PYTHON_VERSION }}'
+          cache: 'pip'
+
+      - name: 'Install pre-commit'
+        run: 'pip install pre-commit==${{ env.PRE_COMMIT_VERSION }}'
+
+      - name: 'Cache pre-commit environment'
+        uses: 'actions/cache@v3'
+        with:
+          path: '~/.cache/pre-commit'
+          key: 'pre-commit-${{ matrix.config }}-${{ runner.os }}-${{ runner.arch }}-python-${{ env.PYTHON_VERSION }}-pre-commit-${{ env.PRE_COMMIT_VERSION }}-${{ hashFiles(env.CONFIG_PATH) }}'
+
+      - name: 'Install pre-commit hooks'
+        run: 'pre-commit install-hooks -c ${{ env.CONFIG_PATH }}'
+
+      - name: 'Run pre-commit'
+        run: >-
+          pre-commit run --all-files --color=always --show-diff-on-failure
+          --config ${{ env.CONFIG_PATH }}
+...
+
