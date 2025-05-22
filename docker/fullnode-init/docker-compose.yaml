@@ -6,15 +6,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        NETWORK: ${NETWORK:-mainnet}
-    environment:
-      - NETWORK=${NETWORK:-mainnet}
     volumes:
       - aptos_data:/opt/aptos
-    command: ${NETWORK:-mainnet}
+    command: ${NETWORK}
 
 volumes:
   aptos_data:
-    name: aptos_${NETWORK:-mainnet}_data
+    name: ${NETWORK}_fullnode_data
+...
 
