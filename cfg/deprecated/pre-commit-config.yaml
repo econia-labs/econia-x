@@ -1,6 +1,7 @@
 # cspell:word autofix
 # cspell:word autoflake
 # cspell:word autoref
+# cspell:word chktex
 # cspell:word cleveref
 # cspell:word csquotes
 # cspell:word frontmatter
@@ -10,6 +11,7 @@
 # cspell:word localrc
 # cspell:word markdownlint
 # cspell:word mdformat
+# cspell:word movefmt
 # cspell:word shfmt
 # cspell:word mypy
 ---
@@ -47,12 +49,6 @@ repos:
     id: 'movefmt'
     language: 'system'
     name: 'movefmt'
-  - entry: './cfg/pre-commit-local-hooks/ensure-shebang.sh'
-    id: 'ensure-shebang'
-    language: 'script'
-    name: 'ensure shebang'
-    types:
-    - 'shell'
   - entry: './src/sh/python-lint/poetry-check.sh'
     id: 'local-poetry-check'
     language: 'script'
@@ -126,60 +122,4 @@ repos:
     types:
     - 'python'
   repo: 'local'
-- hooks:
-  - id: 'check-added-large-files'
-  - id: 'check-case-conflict'
-  - id: 'detect-private-key'
-  - id: 'end-of-file-fixer'
-  - files: 'cfg/cspell-dictionary.txt'
-    id: 'file-contents-sorter'
-  - files: '.github/CODEOWNERS'
-    id: 'file-contents-sorter'
-  - id: 'mixed-line-ending'
-  - args:
-    - '--autofix'
-    id: 'pretty-format-json'
-  - id: 'trailing-whitespace'
-  repo: 'https://github.com/pre-commit/pre-commit-hooks'
-  rev: 'v4.5.0'
-- hooks:
-  - additional_dependencies:
-    - 'mdformat-gfm'
-    - 'mdformat-frontmatter'
-    - 'mdformat-myst'
-    id: 'mdformat'
-  repo: 'https://github.com/executablebooks/mdformat'
-  rev: '0.7.21'
-- hooks:
-  - args:
-    - '--config'
-    - 'cfg/markdownlint-config.yaml'
-    id: 'markdownlint-fix'
-  repo: 'https://github.com/igorshubovych/markdownlint-cli'
-  rev: 'v0.39.0'
-- hooks:
-  - args:
-    - '--autofix'
-    id: 'pretty-format-toml'
-  repo: 'https://github.com/macisamuele/language-formatters-pre-commit-hooks'
-  rev: 'v2.12.0'
-- hooks:
-  - args:
-    - '--config-file'
-    - 'cfg/yamllint-config.yaml'
-    - '--strict'
-    id: 'yamllint'
-  repo: 'https://github.com/adrienverge/yamllint'
-  rev: 'v1.35.1'
-- hooks:
-  - id: 'shfmt'
-  repo: 'https://github.com/scop/pre-commit-shfmt'
-  rev: 'v3.8.0-1'
-- hooks:
-  - args:
-    - '--config'
-    - 'cfg/cspell-config.json'
-    id: 'cspell'
-  repo: 'https://github.com/streetsidesoftware/cspell-cli'
-  rev: 'v8.6.0'
 ...

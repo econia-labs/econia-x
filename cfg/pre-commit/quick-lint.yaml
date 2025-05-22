@@ -1,0 +1,61 @@
+# cspell:word frontmatter
+# cspell:word mdformat
+# cspell:word shfmt
+---
+repos:
+- hooks:
+  - entry: './cfg/pre-commit/local-hooks/ensure-shebang.sh'
+    id: 'ensure-shebang'
+    language: 'script'
+    name: 'ensure shebang'
+    types:
+    - 'shell'
+  repo: 'local'
+- hooks:
+  - args:
+    - '--config-file'
+    - 'cfg/yamllint.yaml'
+    - '--strict'
+    id: 'yamllint'
+  repo: 'https://github.com/adrienverge/yamllint'
+  rev: 'v1.37.1'
+- hooks:
+  - args:
+    - '--config'
+    - 'cfg/markdownlint.yaml'
+    id: 'markdownlint-fix'
+  repo: 'https://github.com/igorshubovych/markdownlint-cli'
+  rev: 'v0.45.0'
+- hooks:
+  - additional_dependencies:
+    - 'mdformat-gfm'
+    - 'mdformat-frontmatter'
+    - 'mdformat-myst'
+    id: 'mdformat'
+  repo: 'https://github.com/executablebooks/mdformat'
+  rev: '0.7.22'
+- hooks:
+  - args:
+    - '--autofix'
+    id: 'pretty-format-toml'
+  repo: 'https://github.com/macisamuele/language-formatters-pre-commit-hooks'
+  rev: 'v2.14.0'
+- hooks:
+  - id: 'check-added-large-files'
+  - id: 'check-case-conflict'
+  - id: 'detect-private-key'
+  - id: 'end-of-file-fixer'
+  - files: 'cfg/dictionary.txt'
+    id: 'file-contents-sorter'
+  - id: 'mixed-line-ending'
+  - args:
+    - '--autofix'
+    id: 'pretty-format-json'
+  - id: 'trailing-whitespace'
+  repo: 'https://github.com/pre-commit/pre-commit-hooks'
+  rev: 'v5.0.0'
+- hooks:
+  - id: 'shfmt'
+  repo: 'https://github.com/scop/pre-commit-shfmt'
+  rev: 'v3.11.0-1'
+...

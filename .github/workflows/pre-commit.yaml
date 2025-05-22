@@ -1,0 +1,38 @@
+---
+env:
+  PRE_COMMIT_VERSION: '4.2.0'
+  PYTHON_VERSION: '3.13'
+jobs:
+  pre-commit:
+    env:
+      CONFIG_PATH: 'cfg/pre-commit/${{ matrix.config }}.yaml'
+    name: '${{ matrix.name }}'
+    runs-on: 'ubuntu-latest'
+    steps:
+    - uses: 'actions/checkout@v4'
+    - uses: 'actions/setup-python@v5'
+      with:
+        cache: 'pip'
+        python-version: '${{ env.PYTHON_VERSION }}'
+    - run: 'pip install pre-commit==${{ env.PRE_COMMIT_VERSION }}'
+    - uses: 'actions/cache@v3'
+      with:
+        key: 'pre-commit-${{ matrix.config }}-${{ runner.os }}-${{ runner.arch
+              }}-python-${{ env.PYTHON_VERSION }}-pre-commit-${{
+              env.PRE_COMMIT_VERSION }}-${{ hashFiles(env.CONFIG_PATH) }}'
+        path: '~/.cache/pre-commit'
+    - run: 'pre-commit install-hooks -c ${{ env.CONFIG_PATH }}'
+    - run: >-
+        pre-commit run --all-files --color=always --show-diff-on-failure
+        --config ${{ env.CONFIG_PATH }}
+    strategy:
+      matrix:
+        include:
+        - config: 'cspell'
+          name: 'CSpell'
+        - config: 'quick-lint'
+          name: 'Quick lint'
+name: 'pre-commit'
+'on':
+  workflow_call: null
+...

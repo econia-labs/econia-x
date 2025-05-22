@@ -1,0 +1,43 @@
+---
+jobs:
+  approval:
+    # Require explicit approval via the `pull-request` environment when
+    # triggered by a pull request. Else implicitly approve by defining no
+    # environment.
+    environment: |
+      ${{ github.event_name == 'pull_request' && 'pull-request' || '' }}
+    name: 'Approval'
+    runs-on: 'ubuntu-latest'
+    steps:
+    - run: 'echo "Workflow approved"'
+  pre-commit:
+    # Only run in a merge group or for default pull request events.
+    if: |
+      github.event_name == 'merge_group' || (
+      github.event_name == 'pull_request' && (
+      github.event.action == 'opened' ||
+      github.event.action == 'reopened' ||
+      github.event.action == 'synchronize'))
+    needs:
+    - 'approval'
+    uses: './.github/workflows/pre-commit.yaml'
+  semantic-pr:
+    name: 'Semantic PR'
+    needs:
+    - 'approval'
+    secrets: 'inherit'
+    # Run for all events, since an inner step requires event context.
+    uses: './.github/workflows/semantic-pr.yaml'
+name: 'Housekeeping'
+'on':
+  merge_group: null
+  pull_request:
+    types:
+    - 'edited'
+    - 'opened'
+    - 'reopened'
+    - 'synchronize'
+permissions:
+  contents: 'read'
+  pull-requests: 'read'
+...
