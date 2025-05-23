@@ -1,0 +1,13 @@
+---
+services:
+  runner:
+    build:
+      context: '.'
+      dockerfile: 'Dockerfile'
+    command: '${NETWORK}'
+    volumes:
+    - 'data:/opt/aptos'
+volumes:
+  data:
+    name: 'fullnode_data_${NETWORK}'
+...

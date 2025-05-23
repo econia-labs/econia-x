@@ -1,0 +1,16 @@
+---
+api:
+  address: '0.0.0.0:8080'
+  enabled: true
+base:
+  data_dir: '/opt/aptos/data'
+  role: 'full_node'
+  waypoint:
+    from_file: '/opt/aptos/waypoint.txt'
+execution:
+  genesis_file_location: '/opt/aptos/genesis.blob'
+full_node_networks:
+- discovery_method: 'onchain'
+  listen_address: '/ip4/127.0.0.1/tcp/6182'
+  network_id: 'public'
+...

@@ -1,2 +1,4 @@
 aptos
+devnet
 econia
+fullnode
