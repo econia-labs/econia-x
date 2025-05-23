@@ -3,18 +3,23 @@ description: Creating a PR from a Linear task
 globs:
 alwaysApply: false
 ---
+
 # PR Rules for Linear Integration
 
 ## Branch Naming
+
 - Branch names must match the Linear issue ID format: `ECO-[0-9]+`
 - Example: `ECO-123`
 
 ## PR Title and Commit Messages
-- Must follow the semantic PR workflow requirements in `.github/workflows/semantic-pr.yaml`
+
+- Must follow the semantic PR workflow requirements in
+  `.github/workflows/semantic-pr.yaml`
 - Scope must be the Linear issue ID (e.g., `ECO-123`)
 - Commit message must match PR title exactly if there is only 1 commit
 
 ## Linear Integration
+
 - PRs should be created from Linear tasks
 - Branch names should be derived from Linear issue IDs
 - PR titles should reference Linear issue IDs in the scope

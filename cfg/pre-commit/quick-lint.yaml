@@ -21,7 +21,7 @@ repos:
   rev: 'v1.37.1'
 - hooks:
   # Lint all AWS CloudFormation files ending in `.cfn.yaml`.
-  - files: '.*\.cfn\.yaml'
+  - files: '.cfn.yaml'
     id: 'cfn-lint'
   repo: 'https://github.com/aws-cloudformation/cfn-lint'
   rev: 'v1.35.3'
@@ -29,8 +29,10 @@ repos:
   - args:
     - '--config'
     - 'cfg/markdownlint.yaml'
-    files: '.*\.(md|mdc)$'
+    files: '\.(md|mdc)$'
     id: 'markdownlint-fix'
+    types:
+    - 'file'
   repo: 'https://github.com/igorshubovych/markdownlint-cli'
   rev: 'v0.45.0'
 - hooks:
@@ -38,9 +40,11 @@ repos:
     - 'mdformat-gfm'
     - 'mdformat-frontmatter'
     - 'mdformat-myst'
-    files: '.*\.(md|mdc)$'
+    files: '\.(md|mdc)$'
     id: 'mdformat'
-  repo: 'https://github.com/executablebooks/mdformat'
+    types:
+    - 'file'
+  repo: 'https://github.com/hukkin/mdformat'
   rev: '0.7.22'
 - hooks:
   - args:

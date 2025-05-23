@@ -3,21 +3,25 @@ description:
 globs:
 alwaysApply: true
 ---
+
 # Code Comments Rules
 
 ## Punctuation
+
 - All comments must end with a period.
 - This applies to both single-line and multi-line comments.
 
 ## Examples
 
 ### Single-line comments
+
 ```python
 # This is a correct comment.
 # This is incorrect without a period
 ```
 
 ### Multi-line comments
+
 ```python
 """
 This is a correct multi-line comment.

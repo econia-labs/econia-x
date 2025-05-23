@@ -3,12 +3,16 @@ description:
 globs: *.yaml
 alwaysApply: false
 ---
+
 # YAML Rules
 
-Use yamllint configuration from `cfg/yamllint.yaml` for all YAML file generation and validation.
+Use yamllint configuration from `cfg/yamllint.yaml` for all YAML file generation
+and validation.
 
 ## File Extensions
+
 Always use the `.yaml` extension for new YAML files, not `.yml`.
 
 ## Lint
+
 Config: cfg/yamllint.yaml
