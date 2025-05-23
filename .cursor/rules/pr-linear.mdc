@@ -1,3 +1,8 @@
+---
+description: Creating a PR from a Linear task
+globs:
+alwaysApply: false
+---
 # PR Rules for Linear Integration
 
 ## Branch Naming
