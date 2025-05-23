@@ -1,6 +1,6 @@
 ---
 description:
-globs:
+globs: *.yaml
 alwaysApply: false
 ---
 # YAML Rules
