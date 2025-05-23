@@ -1,5 +1,7 @@
 ---
 env:
+  AWS_ACCOUNT_ID: '123456'
+  AWS_REGION: 'us-west-2'
   BUILD_CONTEXT: 'aptos-node/fullnode-init'
   ECR_REPO: 'aptos-node/fullnode-init'
   GIT_TAG_PREFIX: 'fullnode-init'
@@ -12,15 +14,16 @@ jobs:
     - uses: 'docker/metadata-action@v5'
       with:
         images: '${{ env.ECR_REPO }}'
-        tags: 'type=match,pattern=${{ env.GIT_TAG_PREFIX }}-v(.*),group=1'
+        tags: |
+          type=match,pattern=${{ env.GIT_TAG_PREFIX }}-v(.*),group=1
+          type=raw,value=latest,enable={{is_default_branch}}
     - uses: 'docker/build-push-action@v6'
       with:
         push: 'false'
         context: '${{ env.BUILD_CONTEXT }}'
         load: 'true'
-        tags: '${{ steps.meta.outputs.tags }}'
-    - name: 'Print all images accessible to Docker CLI on runner'
-      run: 'docker images'
+    - name: 'Push to AWS ECR'
+      run: './.github/workflows/sh/push-to-aws-ecr.sh'
 name: 'Push fullnode init image to ECR'
 'on':
   push:
