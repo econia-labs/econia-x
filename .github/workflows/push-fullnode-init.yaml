@@ -13,19 +13,19 @@ jobs:
     - uses: 'actions/checkout@v4'
     - uses: 'docker/setup-buildx-action@v3'
     - id: 'metadata'
-    - uses: 'docker/metadata-action@v5'
+      uses: 'docker/metadata-action@v5'
       with:
         flavor: 'latest=false'
         images: '${{ env.ECR_REPO }}'
         tags: 'type=match,pattern=${{ env.GIT_TAG_PREFIX }}-v(.*),group=1'
-    - run: 'echo ${{ steps.meta.outputs.tags }}'
-    - id: 'build'
-      uses: 'docker/build-push-action@v6'
+    - run: 'echo ${{ steps.metadata.outputs.tags }}'
+    - uses: 'docker/build-push-action@v6'
       with:
         push: 'true'
         context: '${{ env.BUILD_CONTEXT }}'
-        outputs: 'name=${{ env.ECR_REPO }},push=true'
         load: 'true'
+        outputs: 'name=${{ env.ECR_REPO }},push=true'
+        tags: '${{ steps.metadata.outputs.tags }}'
 name: 'Push fullnode init image to ECR'
 'on':
   push:
