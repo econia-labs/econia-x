@@ -1,0 +1,28 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Rule Creation Guidelines
+
+Description: Guidelines for creating rules in the `.cursor/rules` directory
+
+## Requirements
+
+All rule files must:
+
+- Use `.mdc` extension
+- Pass both `mdformat` and `markdownlint-fix` hooks
+
+## Validation
+
+Run the following commands to validate your rule:
+
+```sh
+pre-commit run mdformat --config cfg/pre-commit/quick-lint.yaml --files .cursor/rules/your-rule.mdc
+pre-commit run markdownlint-fix --config cfg/pre-commit/quick-lint.yaml --files .cursor/rules/your-rule.mdc
+```
+
+
+
+
