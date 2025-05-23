@@ -1,7 +1,7 @@
 ---
 env:
   BUILD_CONTEXT: 'aptos-node/fullnode-init'
-  ECR_REPO: 'aptos-node'
+  ECR_REPO: 'aptos-node/fullnode-init'
   GIT_TAG_PREFIX: 'fullnode-init'
 jobs:
   build:
