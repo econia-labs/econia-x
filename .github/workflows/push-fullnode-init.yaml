@@ -3,8 +3,7 @@ env:
   AWS_ACCOUNT_ID: '123456'
   AWS_REGION: 'us-west-2'
   BUILD_CONTEXT: 'aptos-node/fullnode-init'
-  ECR_REPO: '${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION
-            }}.amazonaws.com/aptos-node/fullnode-init'
+  ECR_REPO: 'aptos-node/fullnode-init'
   GIT_TAG_PREFIX: 'fullnode-init'
 jobs:
   build:
@@ -24,7 +23,8 @@ jobs:
         push: 'true'
         context: '${{ env.BUILD_CONTEXT }}'
         load: 'true'
-        outputs: 'name=${{ env.ECR_REPO }},push=true'
+        outputs: 'name=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION
+                 }}.amazonaws.com/${{ env.ECR_REPO}},push=true'
         tags: '${{ steps.metadata.outputs.tags }}'
 name: 'Push fullnode init image to ECR'
 'on':
