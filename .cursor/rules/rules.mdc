@@ -3,12 +3,12 @@ description: Guidelines for creating Cursor rules.
 globs:
 alwaysApply: false
 ---
-# Cursor Rule Creation Guidelines
+# Cursor rule creation guidelines
 
 ## Requirements
 
 All rule files must:
 
-- Use `.mdc` extension
-- Pass the `markdown` rule at `.cursor/rules/markdown.mdc`
+- Use `.mdc` extension.
+- Pass the `markdown` rule at `.cursor/rules/markdown.mdc`.
 

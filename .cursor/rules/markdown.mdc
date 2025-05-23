@@ -3,7 +3,7 @@ description: Markdown formatting and style
 globs: *.md
 alwaysApply: false
 ---
-# Markdown Formatting and style
+# Markdown formatting and style
 
 ## Requirements
 
@@ -11,7 +11,7 @@ All markdown files must pass:
 - `mdformat` formatting
 - `markdownlint-fix` linting
 
-## Code Blocks
+## Code blocks
 
 Always use `sh` instead of `bash` for shell code blocks.
 
@@ -23,6 +23,7 @@ Always use `sh` instead of `bash` for shell code blocks.
 ## Validation
 
 Run the following commands to validate:
+
 ```sh
 pre-commit run mdformat --config cfg/pre-commit/quick-lint.yaml --files <YOUR_FILE>
 pre-commit run markdownlint-fix --config cfg/pre-commit/quick-lint.yaml --files <YOUR_FILE>
