@@ -1,6 +1,12 @@
 #!/bin/sh
 
-docker tag "$IMAGE_ID"  \
- "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO/foo"
+echo $TAGS
+
+echo foo
+
+for tag in $TAGS; do
+    TAG="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$tag"
+    docker tag "$IMAGE_ID" "$TAG"
+done
 
 docker images
