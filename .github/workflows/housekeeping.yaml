@@ -1,12 +1,10 @@
 ---
 jobs:
   approval:
-    # Only require manual approval via the `pull-request` environment for
-    # events that trigger `pre-commit` in a suitable PR context.
+    # Only require manual approval via the `pull-request` environment outside
+    # of a merge queue.
     environment: |
-      ${{ github.event_name != 'merge_group' && contains(
-      fromJson('["opened", "reopened", "synchronize"]'), github.event.action
-      ) && 'pull-request' || '' }}
+      ${{ github.event_name != 'merge_group' && 'pull-request' || '' }}
     name: 'Approval'
     runs-on: 'ubuntu-latest'
     steps:
@@ -15,22 +13,8 @@ jobs:
     needs:
     - 'approval'
     uses: './.github/workflows/pre-commit.yaml'
-  semantic-pr:
-    name: 'Semantic PR'
-    needs:
-    - 'approval'
-    secrets: 'inherit'
-    uses: './.github/workflows/semantic-pr.yaml'
 name: 'Housekeeping'
 'on':
   merge_group: null
-  pull_request:
-    types:
-    - 'edited'
-    - 'opened'
-    - 'reopened'
-    - 'synchronize'
-permissions:
-  contents: 'read'
-  pull-requests: 'read'
+  pull_request: null
 ...

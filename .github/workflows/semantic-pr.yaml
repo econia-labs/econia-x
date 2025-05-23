@@ -7,7 +7,7 @@ jobs:
     steps:
     - env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      # Assume success in a merge group by skipping the action, which can't
+      # Assume success in a merge group by skipping the step, which can't
       # access PR titles inside a merge group.
       if: |
         github.event_name != 'merge_group'
@@ -19,7 +19,11 @@ jobs:
         validateSingleCommit: true
         validateSingleCommitMatchesPrTitle: true
 'on':
-  workflow_call: null
+  merge_group: null
+  pull_request:
+    types:
+    - 'edited'
+    - 'opened'
 permissions:
   contents: 'read'
   pull-requests: 'read'
