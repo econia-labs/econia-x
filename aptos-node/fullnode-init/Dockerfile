@@ -1,3 +1,4 @@
+# cspell:word curlimages
 FROM curlimages/curl:8.13.0
 
 # Copy init script and fullnode config.
