@@ -16,12 +16,12 @@ jobs:
     - uses: 'docker/build-push-action@v6'
       with:
         push: 'false'
-        cache-from: 'type=gha'
-        cache-to: 'type=gha,mode=max'
         context: '${{ env.BUILD_CONTEXT }}'
+        load: 'true'
         tags: '${{ steps.meta.outputs.tags }}'
     - name: 'Print all images accessible to Docker CLI on runner'
       run: 'docker images'
+name: 'Push fullnode init image to ECR'
 'on':
   push:
     tags:
