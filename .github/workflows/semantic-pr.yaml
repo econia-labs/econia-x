@@ -18,6 +18,7 @@ jobs:
         subjectPattern: '^[A-Z].*$'
         validateSingleCommit: true
         validateSingleCommitMatchesPrTitle: true
+name: 'Semantic PR'
 'on':
   merge_group: null
   pull_request:
