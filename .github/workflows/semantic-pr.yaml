@@ -7,7 +7,8 @@ jobs:
     steps:
     - env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      # Only run check outside a merge group, which can't access PR titles.
+      # Assume success in a merge group by skipping the action, which can't
+      # access PR titles inside a merge group.
       if: |
         github.event_name != 'merge_group'
       uses: 'amannn/action-semantic-pull-request@v5'

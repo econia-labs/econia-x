@@ -1,10 +1,12 @@
 ---
 jobs:
   approval:
-    # Require explicit approval via the `pull-request` environment unless
-    # triggered in a merge queue.
+    # Only require manual approval via the `pull-request` environment for
+    # events that trigger `pre-commit` in a suitable PR context.
     environment: |
-      ${{ github.event_name != 'merge_group' && 'pull-request' || '' }}
+      ${{ github.event_name != 'merge_group' && contains(
+      fromJson('["opened", "reopened", "synchronize"]'), github.event.action
+      ) && 'pull-request' || '' }}
     name: 'Approval'
     runs-on: 'ubuntu-latest'
     steps:
