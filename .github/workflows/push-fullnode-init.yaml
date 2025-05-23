@@ -24,7 +24,7 @@ jobs:
         context: '${{ env.BUILD_CONTEXT }}'
         load: 'true'
         outputs: 'name=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION
-                 }}.amazonaws.com/${{ env.ECR_REPO}},push=true'
+                 }}.amazonaws.com/${{ env.ECR_REPO}},push=true,type=image'
         tags: '${{ steps.metadata.outputs.tags }}'
 name: 'Push fullnode init image to ECR'
 'on':
