@@ -1,11 +1,9 @@
 ---
-description:
+description: Markdown formatting and style
 globs: *.md
 alwaysApply: false
 ---
-# Markdown Formatting
-
-Description: Requirements for markdown files to pass linting
+# Markdown Formatting and style
 
 ## Requirements
 

@@ -18,6 +18,12 @@ alwaysApply: false
 - Scope must be the Linear issue ID (e.g., `ECO-123`)
 - Commit message must match PR title exactly if there is only 1 commit
 
+## PR Description
+
+- The PR description should use the template at
+  `.github/PULL_REQUEST_TEMPLATE.md`, and should leave the checkbox unchecked.
+- The PR description should pass the `markdown` rule.
+
 ## Linear Integration
 
 - PRs should be created from Linear tasks

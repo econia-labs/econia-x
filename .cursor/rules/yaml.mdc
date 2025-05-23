@@ -1,5 +1,5 @@
 ---
-description:
+description: YAML style
 globs: *.yaml
 alwaysApply: false
 ---
