@@ -3,6 +3,7 @@ description: Code comments rules
 globs:
 alwaysApply: true
 ---
+
 # Code comments rules
 
 ## Punctuation

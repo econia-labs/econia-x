@@ -3,6 +3,7 @@ description: YAML style
 globs: *.yaml
 alwaysApply: false
 ---
+
 # YAML rules
 
 Use yamllint configuration from `cfg/yamllint.yaml` for all YAML file generation

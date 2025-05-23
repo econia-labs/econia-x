@@ -3,6 +3,7 @@ description: Creating a PR from a Linear task
 globs:
 alwaysApply: false
 ---
+
 # PR rules for linear integration
 
 ## Branch Naming
