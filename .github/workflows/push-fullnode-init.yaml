@@ -15,7 +15,6 @@ jobs:
       uses: 'docker/metadata-action@v5'
       with:
         flavor: 'latest=false'
-        images: '${{ env.ECR_REPO }}'
         tags: 'type=match,pattern=${{ env.GIT_TAG_PREFIX }}-v(.*),group=1'
     - run: 'echo ${{ steps.metadata.outputs.tags }}'
     - id: 'build'
@@ -24,7 +23,6 @@ jobs:
         push: 'false'
         context: '${{ env.BUILD_CONTEXT }}'
         load: 'true'
-        tags: '${{ steps.metadata.outputs.tags }}'
     - env:
         AWS_ACCOUNT_ID: '${{ env.AWS_ACCOUNT_ID }}'
         AWS_REGION: '${{ env.AWS_REGION }}'
