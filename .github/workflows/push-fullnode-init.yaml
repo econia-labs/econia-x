@@ -29,7 +29,8 @@ jobs:
         ECR_REPO: '${{ env.ECR_REPO }}'
         IMAGE_ID: '${{ steps.build.outputs.imageid }}'
         TAGS: '${{ steps.meta.outputs.tags }}'
-      run: 'sh ${{ github.workspace }}/.github/workflows/sh/push-to-aws-ecr.sh'
+      run: 'sh push-fullnode-init.sh'
+      working-directory: '${{ github.workspace }}/.github/workflows/sh'
 name: 'Push fullnode init image to ECR'
 'on':
   push:
