@@ -7,14 +7,9 @@ jobs:
     steps:
     - env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      # Only run for relevant pull request events, else assume success (for
-      # example when triggered by a merge group).
+      # Only run check outside a merge group, which can't access PR titles.
       if: |
-        github.event_name == 'pull_request' && (
-        github.event.action == 'edited' ||
-        github.event.action == 'opened' ||
-        github.event.action == 'reopened' ||
-        github.event.action == 'synchronize')
+        github.event_name != 'merge_group'
       uses: 'amannn/action-semantic-pull-request@v5'
       with:
         requireScope: true
