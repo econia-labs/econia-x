@@ -1,23 +1,27 @@
 ---
 jobs:
   approval:
-    # Require explicit approval via the `pull-request` environment when
-    # triggered by a pull request. Else implicitly approve by defining no
-    # environment.
+    # Require explicit approval via the `pull-request` environment unless
+    # triggered in a merge queue.
     environment: |
-      ${{ github.event_name == 'pull_request' && 'pull-request' || '' }}
+      ${{ github.event_name != 'merge_group' && 'pull-request' || '' }}
     name: 'Approval'
     runs-on: 'ubuntu-latest'
     steps:
     - run: 'echo "Workflow approved"'
   pre-commit:
-    # Only run in a merge group or for default pull request events.
+    # Run in a merge group, for default pull request events, or when manually
+    # triggered by a comment.
     if: |
       github.event_name == 'merge_group' || (
       github.event_name == 'pull_request' && (
       github.event.action == 'opened' ||
       github.event.action == 'reopened' ||
-      github.event.action == 'synchronize'))
+      github.event.action == 'synchronize')) || (
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request &&
+      github.event.comment.body == '/housekeeping' &&
+      github.event.issue.number == github.event.pull_request.number)
     needs:
     - 'approval'
     uses: './.github/workflows/pre-commit.yaml'
@@ -37,6 +41,9 @@ name: 'Housekeeping'
     - 'opened'
     - 'reopened'
     - 'synchronize'
+  issue_comment:
+    types:
+    - 'created'
 permissions:
   contents: 'read'
   pull-requests: 'read'
