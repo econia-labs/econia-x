@@ -30,7 +30,7 @@ jobs:
         IMAGE_ID: '${{ steps.build.outputs.imageid }}'
         TAGS: '${{ steps.meta.outputs.tags }}'
       working-directory: '${{ github.workspace }}/.github/workflows/sh'
-      run: 'push-to-aws-ecr.sh'
+      run: './push-to-aws-ecr.sh'
 name: 'Push fullnode init image to ECR'
 'on':
   push:
