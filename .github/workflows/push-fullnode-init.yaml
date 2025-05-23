@@ -17,6 +17,7 @@ jobs:
         tags: |
           type=match,pattern=${{ env.GIT_TAG_PREFIX }}-v(.*),group=1
           type=raw,value=latest,enable={{is_default_branch}}
+    - run: 'echo ${{ steps.meta.outputs.tags }}'
     - id: 'build'
       uses: 'docker/build-push-action@v6'
       with:
