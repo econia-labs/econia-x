@@ -18,7 +18,7 @@ jobs:
           type=match,pattern=${{ env.GIT_TAG_PREFIX }}-v(.*),group=1
           type=raw,value=latest,enable={{is_default_branch}}
     - id: 'build'
-    - uses: 'docker/build-push-action@v6'
+      uses: 'docker/build-push-action@v6'
       with:
         push: 'false'
         context: '${{ env.BUILD_CONTEXT }}'
@@ -31,8 +31,6 @@ jobs:
         TAGS: '${{ steps.meta.outputs.tags }}'
       working-directory: '${{ github.workspace }}/.github/workflows/sh'
       run: 'push-to-aws-ecr.sh'
-    - name: 'Push to AWS ECR'
-      run: 'docker images'
 name: 'Push fullnode init image to ECR'
 'on':
   push:
