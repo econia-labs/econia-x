@@ -18,14 +18,21 @@ jobs:
         images: '${{ env.ECR_REPO }}'
         tags: 'type=match,pattern=${{ env.GIT_TAG_PREFIX }}-v(.*),group=1'
     - run: 'echo ${{ steps.metadata.outputs.tags }}'
-    - uses: 'docker/build-push-action@v6'
+    - id: 'build'
+      uses: 'docker/build-push-action@v6'
       with:
-        push: 'true'
+        push: 'false'
         context: '${{ env.BUILD_CONTEXT }}'
         load: 'true'
-        outputs: 'name=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION
-                 }}.amazonaws.com/${{ env.ECR_REPO}},push=true,type=image'
         tags: '${{ steps.metadata.outputs.tags }}'
+    - env:
+        AWS_ACCOUNT_ID: '${{ env.AWS_ACCOUNT_ID }}'
+        AWS_REGION: '${{ env.AWS_REGION }}'
+        ECR_REPO: '${{ env.ECR_REPO }}'
+        IMAGE_ID: '${{ steps.build.outputs.imageid }}'
+        TAGS: '${{ steps.metadata.outputs.tags }}'
+      run: 'sh push-fullnode-init.sh'
+      working-directory: '${{ github.workspace }}/.github/workflows/sh'
 name: 'Push fullnode init image to ECR'
 'on':
   push:
