@@ -3,7 +3,8 @@ env:
   AWS_ACCOUNT_ID: '123456'
   AWS_REGION: 'us-west-2'
   BUILD_CONTEXT: 'aptos-node/fullnode-init'
-  ECR_REPO: 'aptos-node/fullnode-init'
+  ECR_REPO: '${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION
+            }}.amazonaws.com/aptos-node/fullnode-init'
   GIT_TAG_PREFIX: 'fullnode-init'
 jobs:
   build:
@@ -11,27 +12,20 @@ jobs:
     steps:
     - uses: 'actions/checkout@v4'
     - uses: 'docker/setup-buildx-action@v3'
+    - id: 'metadata'
     - uses: 'docker/metadata-action@v5'
       with:
+        flavor: 'latest=false'
         images: '${{ env.ECR_REPO }}'
-        tags: |
-          type=match,pattern=${{ env.GIT_TAG_PREFIX }}-v(.*),group=1
-          type=raw,value=latest,enable={{is_default_branch}}
+        tags: 'type=match,pattern=${{ env.GIT_TAG_PREFIX }}-v(.*),group=1'
     - run: 'echo ${{ steps.meta.outputs.tags }}'
     - id: 'build'
       uses: 'docker/build-push-action@v6'
       with:
-        push: 'false'
+        push: 'true'
         context: '${{ env.BUILD_CONTEXT }}'
+        outputs: 'name=${{ env.ECR_REPO }},push=true'
         load: 'true'
-    - env:
-        AWS_ACCOUNT_ID: '${{ env.AWS_ACCOUNT_ID }}'
-        AWS_REGION: '${{ env.AWS_REGION }}'
-        ECR_REPO: '${{ env.ECR_REPO }}'
-        IMAGE_ID: '${{ steps.build.outputs.imageid }}'
-        TAGS: '${{ steps.meta.outputs.tags }}'
-      run: 'sh push-fullnode-init.sh'
-      working-directory: '${{ github.workspace }}/.github/workflows/sh'
 name: 'Push fullnode init image to ECR'
 'on':
   push:
