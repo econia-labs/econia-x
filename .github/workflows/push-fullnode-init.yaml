@@ -1,7 +1,5 @@
 ---
 env:
-  AWS_ACCOUNT_ID: '123456'
-  AWS_REGION: 'us-west-2'
   BUILD_CONTEXT: 'aptos-node/fullnode-init'
   ECR_REPO: 'aptos-node/fullnode-init'
   GIT_TAG_PREFIX: 'fullnode-init'
@@ -23,6 +21,11 @@ jobs:
         push: 'false'
         context: '${{ env.BUILD_CONTEXT }}'
         load: 'true'
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: '${{ env.AWS_GITHUB_ACTIONS_ROLE }}'
+        aws-region: '${{ env.AWS_REGION }}'
+    - uses: aws-actions/amazon-ecr-login@v2
     - env:
         AWS_ACCOUNT_ID: '${{ env.AWS_ACCOUNT_ID }}'
         AWS_REGION: '${{ env.AWS_REGION }}'
