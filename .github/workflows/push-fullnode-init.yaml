@@ -41,5 +41,6 @@ name: 'Push fullnode init image to ECR'
     tags:
     - 'fullnode-init-v*'
 permissions:
+  contents: 'read'
   id-token: 'write'
 ...
