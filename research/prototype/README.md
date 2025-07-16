@@ -1,3 +1,5 @@
+<!-- cspell:word nocapture -->
+
 # Testing
 
 ```sh

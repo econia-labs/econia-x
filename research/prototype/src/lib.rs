@@ -1,3 +1,7 @@
+// cspell:word borsh
+// cspell:word cfgs
+// cspell:word sysvar
+
 #![allow(unexpected_cfgs)]
 
 use borsh::{BorshDeserialize, BorshSerialize};
