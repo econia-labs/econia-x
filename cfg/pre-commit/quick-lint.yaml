@@ -48,6 +48,7 @@ repos:
 - hooks:
   - args:
     - '--autofix'
+    exclude: 'Cargo.lock'
     id: 'pretty-format-toml'
   repo: 'https://github.com/macisamuele/language-formatters-pre-commit-hooks'
   rev: 'v2.14.0'
