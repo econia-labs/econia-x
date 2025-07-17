@@ -1,5 +1,6 @@
 // cspell:word borsh
 // cspell:word cfgs
+// cspell:word repr
 // cspell:word sysvar
 
 #![allow(unexpected_cfgs)]
