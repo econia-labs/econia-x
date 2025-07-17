@@ -30,8 +30,30 @@ pub enum CounterInstruction {
     Increment,
 }
 
-pub const INITIALIZE_COUNTER_INSTRUCTION: u8 = 0;
-pub const INCREMENT_COUNTER_INSTRUCTION: u8 = 1;
+#[repr(u8)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum InstructionType {
+    Initialize = 0,
+    Increment = 1,
+}
+
+impl From<InstructionType> for u8 {
+    fn from(instruction_type: InstructionType) -> Self {
+        instruction_type as u8
+    }
+}
+
+impl TryFrom<u8> for InstructionType {
+    type Error = ProgramError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(InstructionType::Initialize),
+            1 => Ok(InstructionType::Increment),
+            _ => Err(ProgramError::InvalidInstructionData),
+        }
+    }
+}
 
 impl CounterInstruction {
 
@@ -42,8 +64,9 @@ impl CounterInstruction {
             .ok_or(ProgramError::InvalidInstructionData)?;
 
         // Match instruction type and parse the remaining bytes based on the variant.
-        match variant {
-            INITIALIZE_COUNTER_INSTRUCTION => {
+        let instruction_type = InstructionType::try_from(variant)?;
+        match instruction_type {
+            InstructionType::Initialize => {
                 // Parse the initial value for the counter from the remaining bytes.
                 let initial_value = u64::from_le_bytes(
                     rest.try_into()
@@ -51,8 +74,7 @@ impl CounterInstruction {
                 );
                 Ok(Self::Initialize { initial_value })
             }
-            INCREMENT_COUNTER_INSTRUCTION => Ok(Self::Increment),
-            _ => Err(ProgramError::InvalidInstructionData),
+            InstructionType::Increment => Ok(Self::Increment),
         }
     }
 }
@@ -165,7 +187,7 @@ mod test {
 
         // Create initialize instruction.
         println!("Testing counter initialization...");
-        let mut init_instruction_data = vec![INITIALIZE_COUNTER_INSTRUCTION];
+        let mut init_instruction_data = vec![InstructionType::Initialize.into()];
         init_instruction_data.extend_from_slice(&initial_value.to_le_bytes());
         let initialize_instruction = Instruction::new_with_bytes(
             program_id,
@@ -202,7 +224,7 @@ mod test {
         println!("Testing counter increment...");
         let increment_instruction = Instruction::new_with_bytes(
             program_id,
-            &[INCREMENT_COUNTER_INSTRUCTION],
+            &[InstructionType::Increment.into()],
             vec![AccountMeta::new(counter_keypair.pubkey(), true)],
         );
 
