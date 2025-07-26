@@ -1,3 +1,4 @@
+// cspell:word cfgs
 #![allow(unexpected_cfgs)]
 
 use solana_program::{
