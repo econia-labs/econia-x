@@ -1,5 +1,31 @@
-use solana_program::{program_error::ProgramError, pubkey::Pubkey};
+#![allow(unexpected_cfgs)]
 
+use solana_program::{
+    account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, msg,
+    program_error::ProgramError, pubkey::Pubkey,
+};
+
+entrypoint!(process_instruction);
+
+pub type ProcessInstruction =
+    fn(program_id: &Pubkey, accounts: &[AccountInfo], instruction_data: &[u8]) -> ProgramResult;
+
+pub fn process_instruction(
+    program_id: &Pubkey,
+    accounts: &[AccountInfo],
+    instruction_data: &[u8],
+) -> ProgramResult {
+    let instruction = Instruction::unpack(instruction_data)?;
+    match instruction {
+        Instruction::LaunchMarket {
+            base_mint,
+            quote_mint,
+        } => {
+            process_launch_market(program_id, accounts, base_mint, quote_mint)?;
+        }
+    };
+    Ok(())
+}
 pub struct Market {
     pub base_mint: Pubkey,
     pub quote_mint: Pubkey,
@@ -44,4 +70,18 @@ impl Instruction {
             _ => Err(ProgramError::InvalidInstructionData),
         }
     }
+}
+
+fn process_launch_market(
+    program_id: &Pubkey,
+    accounts: &[AccountInfo],
+    base_mint: Pubkey,
+    quote_mint: Pubkey,
+) -> ProgramResult {
+    msg!(
+        "Launching market with base mint: {:?} and quote mint: {:?}",
+        base_mint,
+        quote_mint
+    );
+    Ok(())
 }
