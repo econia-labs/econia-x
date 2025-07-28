@@ -11,6 +11,7 @@ use std::mem::size_of;
 mod launch;
 
 #[derive(Clone, Copy)]
+#[repr(C)]
 struct Market {
     base_mint: Pubkey,
     quote_mint: Pubkey,

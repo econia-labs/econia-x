@@ -32,6 +32,7 @@ impl<'info> TryFrom<&'info [AccountInfo<'info>]> for Accounts<'info> {
     }
 }
 
+#[repr(C)]
 pub(super) struct Instruction {
     pub(super) base_mint: Pubkey,
     pub(super) quote_mint: Pubkey,
@@ -40,15 +41,16 @@ pub(super) struct Instruction {
 impl TryFrom<&[u8]> for Instruction {
     type Error = ProgramError;
 
-    fn try_from(bytes: &[u8]) -> Result<Self, ProgramError> {
-        if bytes.len() != std::mem::size_of::<Self>() {
+    fn try_from(instruction_parameter_bytes: &[u8]) -> Result<Self, ProgramError> {
+        if instruction_parameter_bytes.len() != std::mem::size_of::<Self>() {
             return Err(ProgramError::InvalidInstructionData);
         }
-        let base_bytes_ptr = bytes.as_ptr() as *const [u8; size_of::<Pubkey>()];
+        let base_bytes_ptr =
+            instruction_parameter_bytes.as_ptr() as *const [u8; size_of::<Pubkey>()];
         unsafe {
             // Since the number of bytes in the instruction data bytes has already been verified,
             // raw pointer arithmetic and dereferencing is safe here.
-            let quote_bytes_ptr = base_bytes_ptr.add(size_of::<Pubkey>());
+            let quote_bytes_ptr = base_bytes_ptr.add(1);
             Ok({
                 Self {
                     base_mint: Pubkey::from(*base_bytes_ptr),
