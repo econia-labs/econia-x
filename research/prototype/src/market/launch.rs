@@ -1,20 +1,46 @@
-use solana_program::{program_error::ProgramError, pubkey::Pubkey};
+use solana_program::{account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey};
 use std::mem::size_of;
+use strum::EnumCount;
+use strum_macros::EnumCount;
+
+#[derive(EnumCount)]
+#[repr(usize)]
+pub(super) enum AccountIndices {
+    Market,
+    Payer,
+    SystemProgram,
+}
+
+pub(super) struct Accounts<'info> {
+    pub(super) market: &'info AccountInfo<'info>,
+    pub(super) payer: &'info AccountInfo<'info>,
+    pub(super) system_program: &'info AccountInfo<'info>,
+}
+
+impl<'info> TryFrom<&'info [AccountInfo<'info>]> for Accounts<'info> {
+    type Error = ProgramError;
+
+    fn try_from(accounts: &'info [AccountInfo<'info>]) -> Result<Self, Self::Error> {
+        if accounts.len() < AccountIndices::COUNT {
+            return Err(ProgramError::NotEnoughAccountKeys);
+        }
+        Ok(Self {
+            market: &accounts[AccountIndices::Market as usize],
+            payer: &accounts[AccountIndices::Payer as usize],
+            system_program: &accounts[AccountIndices::SystemProgram as usize],
+        })
+    }
+}
 
 pub(super) struct Instruction {
     pub(super) base_mint: Pubkey,
     pub(super) quote_mint: Pubkey,
 }
 
-#[repr(usize)]
-enum Accounts {
-    Market,
-    Payer,
-    SystemProgram,
-}
+impl TryFrom<&[u8]> for Instruction {
+    type Error = ProgramError;
 
-impl Instruction {
-    pub(super) fn unpack(bytes: &[u8]) -> Result<Self, ProgramError> {
+    fn try_from(bytes: &[u8]) -> Result<Self, ProgramError> {
         if bytes.len() != std::mem::size_of::<Self>() {
             return Err(ProgramError::InvalidInstructionData);
         }

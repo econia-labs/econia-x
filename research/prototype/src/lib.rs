@@ -16,9 +16,9 @@ enum InstructionType {
     LaunchMarket,
 }
 
-pub fn process_instruction(
+pub fn process_instruction<'info>(
     program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    accounts: &'info [AccountInfo<'info>],
     instruction_data: &[u8],
 ) -> ProgramResult {
     let (&instruction_type_byte, parameters) = instruction_data
