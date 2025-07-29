@@ -18,26 +18,26 @@ struct Market {
 }
 
 impl Market {
-    /// Derive the market address from the base and quote mint addresses.
-    fn address(&self, program_id: &Pubkey) -> Pubkey {
+    /// Derive the market account address from the base and quote mint pubkeys.
+    fn address_from_pubkeys(
+        base_mint: &Pubkey,
+        quote_mint: &Pubkey,
+        program_id: &Pubkey,
+    ) -> Pubkey {
         let (address, _bump_seed) = Pubkey::find_program_address(
-            &[&self.base_mint.to_bytes(), &self.quote_mint.to_bytes()],
+            &[&base_mint.to_bytes(), &quote_mint.to_bytes()],
             program_id,
         );
         address
     }
 
-    fn from(instruction: launch::Instruction) -> Self {
-        Self {
-            base_mint: instruction.base_mint,
-            quote_mint: instruction.quote_mint,
-        }
-    }
-
-    /// Write the market data straight to the account, overwriting any existing data.
-    fn write_to_account_unsafe(&self, account: &AccountInfo) -> ProgramResult {
-        let account_bytes_ptr = account.data.borrow_mut().as_mut_ptr() as *mut Market;
-        unsafe { std::ptr::write(account_bytes_ptr, *self) };
+    /// Write market data straight to a freshly-initialized account.
+    fn init_account(account: &AccountInfo, parameters_ref: &launch::Parameters) -> ProgramResult {
+        let market_ptr = account.data.borrow_mut().as_mut_ptr() as *mut Market;
+        // Safe since account data size is checked during account creation.
+        let market_mut = unsafe { &mut *market_ptr };
+        market_mut.base_mint = parameters_ref.base_mint;
+        market_mut.quote_mint = parameters_ref.quote_mint;
         Ok(())
     }
 }
@@ -47,10 +47,11 @@ pub(super) fn launch<'info>(
     accounts: &'info [AccountInfo<'info>],
     instruction_parameter_bytes: &[u8],
 ) -> ProgramResult {
-    // Parse the accounts and instruction parameters, and get the derived market account address.
+    // Parse the instruction accounts and parameters, then derive the market account address.
     let accounts = launch::Accounts::try_from(accounts)?;
-    let market = Market::from(launch::Instruction::try_from(instruction_parameter_bytes)?);
-    let market_address = market.address(program_id);
+    let parameters = <&launch::Parameters>::try_from(instruction_parameter_bytes)?;
+    let market_address =
+        Market::address_from_pubkeys(&parameters.base_mint, &parameters.quote_mint, program_id);
 
     // Verify that the passed market account address matches the derived market account address.
     if accounts.market.key != &market_address {
@@ -79,7 +80,7 @@ pub(super) fn launch<'info>(
     )?;
 
     // Serialize the market data into the account (safe since size checked upon account creation).
-    market.write_to_account_unsafe(accounts.market)?;
+    Market::init_account(accounts.market, parameters)?;
 
     Ok(())
 }
