@@ -14,6 +14,7 @@ async fn test_rent_exempt_balance() {
         .expect("Failed to get rent sysvar");
     let calculated_balance = rent.minimum_balance(size_of::<Market>());
 
+    // Verify that the hard-coded rent exempt balance matches the calculated one.
     assert_eq!(
         Market::RENT_EXEMPT_BALANCE,
         calculated_balance,

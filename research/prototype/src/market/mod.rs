@@ -88,7 +88,7 @@ pub(super) fn launch<'info>(
         ],
     )?;
 
-    // Serialize the market data into the account (safe since size checked upon account creation).
+    // Serialize the market data into the account.
     Market::init_account(accounts.market, parameters)?;
 
     Ok(())
