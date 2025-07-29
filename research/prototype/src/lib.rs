@@ -6,7 +6,9 @@ use solana_program::{
     account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, program_error::ProgramError,
     pubkey::Pubkey,
 };
+
 mod market;
+mod util;
 
 entrypoint!(process_instruction);
 

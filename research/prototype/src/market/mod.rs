@@ -1,19 +1,24 @@
+use crate::util::NIL;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program::invoke,
     program_error::ProgramError, pubkey::Pubkey, rent,
 };
 use solana_system_interface::instruction;
 use std::mem::size_of;
+
 mod launch;
 
 #[cfg(test)]
 mod tests;
 
-#[derive(Clone, Copy)]
 #[repr(C)]
 struct Market {
     base_mint: Pubkey,
     quote_mint: Pubkey,
+    seats_root: u16,
+    asks_root: u16,
+    bids_root: u16,
+    stack_top: u16,
 }
 
 impl Market {
@@ -40,13 +45,21 @@ impl Market {
     fn init_account(account: &AccountInfo, parameters_ref: &launch::Parameters) -> ProgramResult {
         // Get a mutable pointer to the account data and cast it to a mutable pointer to a market.
         let market_ptr = account.data.borrow_mut().as_mut_ptr() as *mut Market;
+
         // Cast the mutable pointer to a mutable reference. This is safe since account data size is
         // checked during account creation.
         let market_mut = unsafe { &mut *market_ptr };
+
         // Write the base and quote mint pubkeys straight to the market account without intermediate
-        // copies against the instruction paraemeters reference.
+        // copies against the instruction parameters reference.
         market_mut.base_mint = parameters_ref.base_mint;
         market_mut.quote_mint = parameters_ref.quote_mint;
+
+        // Initialize other fields to default values.
+        market_mut.seats_root = NIL;
+        market_mut.asks_root = NIL;
+        market_mut.bids_root = NIL;
+        market_mut.stack_top = NIL;
         Ok(())
     }
 }
