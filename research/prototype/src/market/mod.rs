@@ -1,6 +1,6 @@
 use crate::{
     price::{Price, PRICE_INFINITY, PRICE_ZERO},
-    sector::{NodeIndex, NIL},
+    sector::{SectorIndex, NIL},
 };
 
 use solana_program::{
@@ -19,23 +19,23 @@ mod tests;
 struct Market {
     base_mint: Pubkey,
     quote_mint: Pubkey,
-    /// Base subunits locked in the market.
+    /// Base subunits locked in the market, cumulative across all seats.
     base_locked: u64,
-    /// Quote subunits locked in the market.
+    /// Quote subunits locked in the market, cumulative across all seats.
     quote_locked: u64,
     /// Lowest ask price, `PRICE_INFINITY` if no asks.
     best_ask: Price,
     /// Highest bid price, `PRICE_ZERO` if no bids.
     best_bid: Price,
-    /// Sector index of market seats tree root, `NIL` if no seats.
-    seats_root: NodeIndex,
-    /// Sector index of asks tree root, `NIL` if no asks.
-    asks_root: NodeIndex,
-    /// Sector index of bids tree root, `NIL` if no bids.
-    bids_root: NodeIndex,
-    /// Sector index of `StackNode` at top of unallocated sector node stack, `NIL` if all allocated
+    /// `SectorIndex` of market seats tree root, `NIL` if no seats.
+    seats_root: SectorIndex,
+    /// `SectorIndex` of asks tree root, `NIL` if no asks.
+    asks_root: SectorIndex,
+    /// `SectorIndex` of bids tree root, `NIL` if no bids.
+    bids_root: SectorIndex,
+    /// `SectorIndex` of `StackNode` at top of unallocated sector node stack, `NIL` if all allocated
     /// sectors are in use.
-    stack_top: NodeIndex,
+    stack_top: SectorIndex,
 }
 
 impl Market {
