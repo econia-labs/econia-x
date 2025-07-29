@@ -1,14 +1,13 @@
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    program_error::ProgramError,
-    pubkey::Pubkey,
-    sysvar::{rent::Rent, Sysvar},
+    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke,
+    program_error::ProgramError, pubkey::Pubkey, rent,
 };
 use solana_system_interface::instruction;
 use std::mem::size_of;
 mod launch;
+
+#[cfg(test)]
+mod tests;
 
 #[derive(Clone, Copy)]
 #[repr(C)]
@@ -18,6 +17,12 @@ struct Market {
 }
 
 impl Market {
+    /// The rent exempt balance for a market account, calculated via official rent logic.
+    const RENT_EXEMPT_BALANCE: u64 = (((rent::ACCOUNT_STORAGE_OVERHEAD
+        + (size_of::<Market>() as u64))
+        * rent::DEFAULT_LAMPORTS_PER_BYTE_YEAR) as f64
+        * rent::DEFAULT_EXEMPTION_THRESHOLD) as u64;
+
     /// Derive the market account address from the base and quote mint pubkeys.
     fn address_from_pubkeys(
         base_mint: &Pubkey,
@@ -33,9 +38,13 @@ impl Market {
 
     /// Write market data straight to a freshly-initialized account.
     fn init_account(account: &AccountInfo, parameters_ref: &launch::Parameters) -> ProgramResult {
+        // Get a mutable pointer to the account data and cast it to a mutable pointer to a market.
         let market_ptr = account.data.borrow_mut().as_mut_ptr() as *mut Market;
-        // Safe since account data size is checked during account creation.
+        // Cast the mutable pointer to a mutable reference. This is safe since account data size is
+        // checked during account creation.
         let market_mut = unsafe { &mut *market_ptr };
+        // Write the base and quote mint pubkeys straight to the market account without intermediate
+        // copies against the instruction paraemeters reference.
         market_mut.base_mint = parameters_ref.base_mint;
         market_mut.quote_mint = parameters_ref.quote_mint;
         Ok(())
@@ -63,12 +72,12 @@ pub(super) fn launch<'info>(
         return Err(ProgramError::AccountAlreadyInitialized);
     };
 
-    // Calculate rent for the market account, then create it at the derived address.
+    // Create an account at the derived market address.
     invoke(
         &instruction::create_account(
             accounts.payer.key,
             accounts.market.key,
-            Rent::get()?.minimum_balance(size_of::<Market>()),
+            Market::RENT_EXEMPT_BALANCE,
             size_of::<Market>() as u64,
             program_id,
         ),
