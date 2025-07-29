@@ -5,6 +5,7 @@ econia
 fullnode
 keypair
 lamports
+pubkeys
 repr
 solana
 sysvar
