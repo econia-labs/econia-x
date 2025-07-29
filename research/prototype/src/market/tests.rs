@@ -18,8 +18,9 @@ async fn test_rent_exempt_balance() {
     assert_eq!(
         Market::RENT_EXEMPT_BALANCE,
         calculated_balance,
-        "Hard-coded rent balance {} doesn't match calculated balance {}.",
+        "Hard-coded rent balance {} doesn't match calculated balance {}. Market size {}.",
         Market::RENT_EXEMPT_BALANCE,
         calculated_balance,
+        size_of::<Market>(),
     );
 }

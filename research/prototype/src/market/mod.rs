@@ -1,4 +1,8 @@
-use crate::util::NIL;
+use crate::{
+    price::{Price, PRICE_INFINITY, PRICE_ZERO},
+    sector::{NodeIndex, NIL},
+};
+
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program::invoke,
     program_error::ProgramError, pubkey::Pubkey, rent,
@@ -15,14 +19,28 @@ mod tests;
 struct Market {
     base_mint: Pubkey,
     quote_mint: Pubkey,
-    seats_root: u16,
-    asks_root: u16,
-    bids_root: u16,
-    stack_top: u16,
+    /// Base subunits locked in the market.
+    base_locked: u64,
+    /// Quote subunits locked in the market.
+    quote_locked: u64,
+    /// Lowest ask price, `PRICE_INFINITY` if no asks.
+    best_ask: Price,
+    /// Highest bid price, `PRICE_ZERO` if no bids.
+    best_bid: Price,
+    /// Sector index of market seats tree root, `NIL` if no seats.
+    seats_root: NodeIndex,
+    /// Sector index of asks tree root, `NIL` if no asks.
+    asks_root: NodeIndex,
+    /// Sector index of bids tree root, `NIL` if no bids.
+    bids_root: NodeIndex,
+    /// Sector index of `StackNode` at top of unallocated sector node stack, `NIL` if all allocated
+    /// sectors are in use.
+    stack_top: NodeIndex,
 }
 
 impl Market {
-    /// The rent exempt balance for a market account, calculated via official rent logic.
+    /// The rent exempt balance for a market account, calculated at compile time via official rent
+    /// logic.
     const RENT_EXEMPT_BALANCE: u64 = (((rent::ACCOUNT_STORAGE_OVERHEAD
         + (size_of::<Market>() as u64))
         * rent::DEFAULT_LAMPORTS_PER_BYTE_YEAR) as f64
@@ -56,6 +74,10 @@ impl Market {
         market_mut.quote_mint = parameters_ref.quote_mint;
 
         // Initialize other fields to default values.
+        market_mut.base_locked = 0;
+        market_mut.quote_locked = 0;
+        market_mut.best_ask = PRICE_INFINITY;
+        market_mut.best_bid = PRICE_ZERO;
         market_mut.seats_root = NIL;
         market_mut.asks_root = NIL;
         market_mut.bids_root = NIL;

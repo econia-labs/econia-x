@@ -8,7 +8,8 @@ use solana_program::{
 };
 
 mod market;
-mod util;
+mod price;
+mod sector;
 
 entrypoint!(process_instruction);
 
