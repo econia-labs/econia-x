@@ -1,18 +1,23 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, Data, DeriveInput, Fields, FieldsNamed};
+use syn::{
+    parse_macro_input, punctuated::Punctuated, token::Comma, Data, DeriveInput, Field, Fields,
+};
 
 /// Helper function to parse struct fields and validate struct name.
-fn parse_struct_fields(input: DeriveInput, expected_name: &str) -> FieldsNamed {
+fn parse_struct_fields<'a>(
+    input: &'a DeriveInput,
+    expected_name: &'a str,
+) -> &'a Punctuated<Field, Comma> {
     // Check struct name.
     if input.ident != expected_name {
         panic!("The struct must be named `{}`", expected_name);
     }
 
     // Parse and validate struct fields.
-    match input.data {
-        Data::Struct(data_struct) => match data_struct.fields {
-            Fields::Named(fields) => fields,
+    match &input.data {
+        Data::Struct(data_struct) => match &data_struct.fields {
+            Fields::Named(fields) => &fields.named,
             _ => panic!("Only structs with named fields are supported"),
         },
         _ => panic!("Only structs are supported"),
@@ -24,7 +29,7 @@ fn parse_struct_fields(input: DeriveInput, expected_name: &str) -> FieldsNamed {
 pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStream {
     // Parse the struct content.
     let input = parse_macro_input!(input as DeriveInput);
-    let fields = parse_struct_fields(input.clone(), "Accounts").named;
+    let fields = parse_struct_fields(&input, "Accounts");
     let n_fields = fields.len();
 
     // Generate `AccountInfos` struct fields.
@@ -81,7 +86,7 @@ pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStrea
 pub fn InstructionParameters(_args: TokenStream, input: TokenStream) -> TokenStream {
     // Parse the struct content.
     let input = parse_macro_input!(input as DeriveInput);
-    parse_struct_fields(input.clone(), "Parameters");
+    parse_struct_fields(&input, "Parameters");
 
     // Overwrite the input with macro-generated code, including a `TryFrom` parser.
     let expanded = quote! {
