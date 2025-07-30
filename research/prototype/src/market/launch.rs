@@ -1,5 +1,5 @@
+use crate::InstructionParameters;
 use solana_program::{account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey};
-use std::mem::size_of;
 use strum::EnumCount;
 use strum_macros::EnumCount;
 
@@ -37,19 +37,4 @@ pub struct Parameters {
     pub(super) base_mint: Pubkey,
     pub(super) quote_mint: Pubkey,
 }
-
-impl TryFrom<&[u8]> for &Parameters {
-    type Error = ProgramError;
-
-    fn try_from(parameters_bytes: &[u8]) -> Result<Self, ProgramError> {
-        if parameters_bytes.len() != size_of::<Self>() {
-            return Err(ProgramError::InvalidInstructionData);
-        }
-        let parameters_ptr = parameters_bytes.as_ptr() as *const Parameters;
-        unsafe {
-            // Since the number of bytes in the instruction data bytes has already been verified,
-            // raw pointer dereferencing is safe here.
-            Ok(&*parameters_ptr)
-        }
-    }
-}
+impl InstructionParameters for Parameters {}

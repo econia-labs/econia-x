@@ -6,6 +6,7 @@ use solana_program::{
     account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, program_error::ProgramError,
     pubkey::Pubkey,
 };
+use std::mem::size_of;
 
 mod fee;
 mod market;
@@ -34,4 +35,16 @@ pub fn process_instruction<'info>(
         InstructionType::LaunchMarket => market::launch(program_id, accounts, params)?,
     };
     Ok(())
+}
+
+pub trait InstructionParameters: Sized {
+    fn unpack(bytes: &[u8]) -> Result<&Self, ProgramError> {
+        if bytes.len() != size_of::<Self>() {
+            return Err(ProgramError::InvalidInstructionData);
+        }
+        let parameters_ptr = bytes.as_ptr() as *const Self;
+        unsafe {
+            Ok(&*parameters_ptr) // Safe since the length has been checked.
+        }
+    }
 }
