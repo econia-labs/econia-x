@@ -7,6 +7,7 @@ use solana_program::{
     pubkey::Pubkey,
 };
 
+mod fee;
 mod market;
 mod price;
 mod sector;

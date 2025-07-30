@@ -1,4 +1,5 @@
 use crate::{
+    fee::FeeRate,
     price::{Price, PRICE_INFINITY, PRICE_ZERO},
     sector::{SectorIndex, NIL},
 };
@@ -19,6 +20,7 @@ mod tests;
 struct Market {
     base_mint: Pubkey,
     quote_mint: Pubkey,
+    fee_rate: FeeRate,
     /// Base subunits locked in the market, cumulative across all seats.
     base_locked: u64,
     /// Quote subunits locked in the market, cumulative across all seats.
