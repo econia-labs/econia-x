@@ -20,7 +20,7 @@ pub struct Parameters {
 
 pub(crate) fn process(
     program_id: &Pubkey,
-    accounts: AccountInfos,
+    accounts: AccountInfoRefs,
     parameters: &Parameters,
 ) -> ProgramResult {
     // Derive the market account address.

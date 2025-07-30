@@ -32,7 +32,7 @@ pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStrea
     let fields = parse_struct_fields(&input, "Accounts");
     let n_fields = fields.len();
 
-    // Generate `AccountInfos` struct fields.
+    // Generate `AccountInfoRefs` struct fields.
     let account_infos_fields = fields.iter().map(|field| {
         let field_name = &field.ident;
         quote! {
@@ -55,23 +55,27 @@ pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStrea
         #[derive(Debug, Clone)]
         #input
 
-        // Generate an AccountInfos struct with lifetimes.
+        // Generate an AccountInfoRefs struct with lifetimes.
         #[repr(C)]
-        pub struct AccountInfos<'info> {
+        pub struct AccountInfoRefs<'info> {
             #(#account_infos_fields,)*
         }
 
         // Generate a `TryFrom` implementation.
-        impl<'info> TryFrom<&'info [solana_program::account_info::AccountInfo<'info>]> for AccountInfos<'info> {
+        impl<'info> TryFrom<&'info [solana_program::account_info::AccountInfo<'info>]>
+            for AccountInfoRefs<'info>
+        {
             type Error = solana_program::program_error::ProgramError;
 
-            fn try_from(accounts: &'info [solana_program::account_info::AccountInfo<'info>]) -> Result<Self, Self::Error> {
+            fn try_from(
+                accounts: &'info [solana_program::account_info::AccountInfo<'info>]
+            ) -> Result<Self, Self::Error> {
                 // Check that there are enough accounts.
                 if accounts.len() < #n_fields {
                     return Err(Self::Error::NotEnoughAccountKeys);
                 }
                 // Map each field to its array index using the generated assignments.
-                Ok(AccountInfos {
+                Ok(AccountInfoRefs {
                     #(#field_assignments,)*
                 })
             }
