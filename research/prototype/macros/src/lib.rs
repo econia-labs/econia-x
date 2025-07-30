@@ -116,3 +116,26 @@ pub fn InstructionParameters(_args: TokenStream, input: TokenStream) -> TokenStr
 
     TokenStream::from(expanded)
 }
+
+#[proc_macro_attribute]
+#[allow(non_snake_case)]
+pub fn InstructionProcessor(_args: TokenStream, input: TokenStream) -> TokenStream {
+    let input_fn = parse_macro_input!(input as syn::ItemFn);
+    let fn_name = &input_fn.sig.ident;
+    let fn_body = &input_fn.block;
+    let fn_vis = &input_fn.vis;
+
+    let expanded = quote! {
+        // Keep the original function, but add arguments to the function signature and a return.
+        #fn_vis fn #fn_name(
+            program_id: &solana_program::pubkey::Pubkey,
+            accounts: AccountInfoRefs,
+            parameters: &Parameters,
+        ) -> solana_program::entrypoint::ProgramResult {
+            // Call the original function body.
+            #fn_body
+        }
+    };
+
+    TokenStream::from(expanded)
+}
