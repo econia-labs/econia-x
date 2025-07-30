@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{
     parse_macro_input, punctuated::Punctuated, token::Comma, Data, DeriveInput, Field, Fields,
+    ReturnType, Visibility,
 };
 
 /// Helper function to parse struct fields and validate struct name.
@@ -14,14 +15,32 @@ fn parse_struct_fields<'a>(
         panic!("The struct must be named `{}`", expected_name);
     }
 
+    // Check struct visibility is public.
+    if !matches!(input.vis, Visibility::Public(_)) {
+        panic!("The {} struct must be public", expected_name);
+    }
+
     // Parse and validate struct fields.
-    match &input.data {
+    let fields = match &input.data {
         Data::Struct(data_struct) => match &data_struct.fields {
             Fields::Named(fields) => &fields.named,
             _ => panic!("Only structs with named fields are supported"),
         },
         _ => panic!("Only structs are supported"),
+    };
+
+    // Check all fields are public
+    for field in fields {
+        if !matches!(field.vis, Visibility::Public(_)) {
+            let field_name = field.ident.as_ref().unwrap();
+            panic!(
+                "Field `{}` in {} struct must be public",
+                field_name, expected_name
+            );
+        }
     }
+
+    fields
 }
 
 #[proc_macro_attribute]
@@ -124,6 +143,26 @@ pub fn InstructionProcessor(_args: TokenStream, input: TokenStream) -> TokenStre
     let fn_name = &input_fn.sig.ident;
     let fn_body = &input_fn.block;
     let fn_vis = &input_fn.vis;
+
+    // Check function name is `process`.
+    if fn_name != "process" {
+        panic!("Function must be named `process`");
+    }
+
+    // Check visibility is `pub(crate)`.
+    if !matches!(input_fn.vis, Visibility::Restricted(ref vis) if vis.path.is_ident("crate")) {
+        panic!("Function must have `pub(crate)` visibility");
+    }
+
+    // Check no arguments.
+    if !input_fn.sig.inputs.is_empty() {
+        panic!("Function must have no arguments (they are auto-generated)");
+    }
+
+    // Check no explicit return type.
+    if !matches!(input_fn.sig.output, ReturnType::Default) {
+        panic!("Function must not specify a return type (ProgramResult is auto-generated)");
+    }
 
     let expanded = quote! {
         // Keep the original function, but add arguments to the function signature and a return.
