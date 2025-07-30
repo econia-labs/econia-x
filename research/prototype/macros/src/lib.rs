@@ -178,3 +178,45 @@ pub fn InstructionProcessor(_args: TokenStream, input: TokenStream) -> TokenStre
 
     TokenStream::from(expanded)
 }
+
+#[proc_macro]
+pub fn instruction(input: TokenStream) -> TokenStream {
+    let module_name = parse_macro_input!(input as syn::Ident);
+
+    let expanded = quote! {
+        // Import the module with the specified name.
+        pub mod #module_name;
+
+        // Run compile-time checks for instruction module layout.
+        const _: () = {
+            // Ensure structs exist.
+            fn _check_structs_exist() {
+                let _: Option<#module_name::Accounts> = None;
+                let _: Option<#module_name::Parameters> = None;
+                let _: Option<#module_name::AccountInfoRefs<'static>> = None;
+            }
+
+            // Ensure the `process` function exists with correct signature.
+            fn _check_process_exists() {
+                let _: fn(
+                    &solana_program::pubkey::Pubkey,
+                    #module_name::AccountInfoRefs,
+                    &#module_name::Parameters,
+                ) -> solana_program::entrypoint::ProgramResult = #module_name::process;
+            }
+
+            // Ensure the `TryFrom` implementations can be invoked.
+            fn _check_try_from_impls() {
+                fn test_usage() {
+                    let dummy_bytes: &[u8] = &[];
+                    let _: Result<&#module_name::Parameters, _> = dummy_bytes.try_into();
+
+                    let dummy_accounts: &[solana_program::account_info::AccountInfo] = &[];
+                    let _: Result<#module_name::AccountInfoRefs, _> = dummy_accounts.try_into();
+                }
+            }
+        };
+    };
+
+    TokenStream::from(expanded)
+}

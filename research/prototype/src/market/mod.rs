@@ -3,11 +3,12 @@ use crate::{
     price::{Price, PRICE_INFINITY, PRICE_ZERO},
     sector::{SectorIndex, NIL},
 };
+use macros::instruction;
 
 use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, pubkey::Pubkey, rent};
 use std::mem::size_of;
 
-pub mod launch;
+instruction!(launch);
 
 #[cfg(test)]
 mod tests;
