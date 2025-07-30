@@ -2,7 +2,6 @@ use crate::{
     fee::FeeRate,
     price::{Price, PRICE_INFINITY, PRICE_ZERO},
     sector::{SectorIndex, NIL},
-    InstructionParameters,
 };
 
 use solana_program::{
@@ -96,7 +95,7 @@ pub(super) fn launch<'info>(
 ) -> ProgramResult {
     // Parse the instruction accounts and parameters, then derive the market account address.
     let accounts = launch::AccountInfos::try_from(accounts)?;
-    let parameters = launch::Parameters::unpack(instruction_parameter_bytes)?;
+    let parameters = <&launch::Parameters>::try_from(instruction_parameter_bytes)?;
     let market_address =
         Market::address_from_pubkeys(&parameters.base_mint, &parameters.quote_mint, program_id);
 

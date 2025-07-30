@@ -1,25 +1,30 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, Data, DeriveInput, Fields};
+use syn::{parse_macro_input, Data, DeriveInput, Fields, FieldsNamed};
+
+/// Helper function to parse struct fields and validate struct name.
+fn parse_struct_fields(input: DeriveInput, expected_name: &str) -> FieldsNamed {
+    // Check struct name.
+    if input.ident != expected_name {
+        panic!("The struct must be named `{}`", expected_name);
+    }
+
+    // Parse and validate struct fields.
+    match input.data {
+        Data::Struct(data_struct) => match data_struct.fields {
+            Fields::Named(fields) => fields,
+            _ => panic!("Only structs with named fields are supported"),
+        },
+        _ => panic!("Only structs are supported"),
+    }
+}
 
 #[proc_macro_attribute]
 #[allow(non_snake_case)]
 pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStream {
-    // Parse the struct name.
+    // Parse the struct content.
     let input = parse_macro_input!(input as DeriveInput);
-    let struct_name = &input.ident;
-    if struct_name != "Accounts" {
-        panic!("The struct must be named `Accounts`");
-    }
-
-    // Parse the struct fields.
-    let fields = match &input.data {
-        Data::Struct(data_struct) => match &data_struct.fields {
-            Fields::Named(fields) => &fields.named,
-            _ => panic!("Only structs with named fields are supported"),
-        },
-        _ => panic!("Only structs are supported"),
-    };
+    let fields = parse_struct_fields(input.clone(), "Accounts").named;
     let n_fields = fields.len();
 
     // Generate `AccountInfos` struct fields.
@@ -46,25 +51,56 @@ pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStrea
         #input
 
         // Generate an AccountInfos struct with lifetimes.
-        #[repr(C)] // Add `#[repr(C)]` to ensure C-compatible layout for reliable parsing.
+        #[repr(C)]
         pub struct AccountInfos<'info> {
             #(#account_infos_fields,)*
         }
 
-
         // Generate a `TryFrom` implementation.
-        impl<'info> TryFrom<&'info [AccountInfo<'info>]> for AccountInfos<'info> {
+        impl<'info> TryFrom<&'info [solana_program::account_info::AccountInfo<'info>]> for AccountInfos<'info> {
             type Error = solana_program::program_error::ProgramError;
 
-            fn try_from(accounts: &'info [AccountInfo<'info>]) -> Result<Self, Self::Error> {
+            fn try_from(accounts: &'info [solana_program::account_info::AccountInfo<'info>]) -> Result<Self, Self::Error> {
                 // Check that there are enough accounts.
                 if accounts.len() < #n_fields {
-                    return Err(solana_program::program_error::ProgramError::NotEnoughAccountKeys);
+                    return Err(Self::Error::NotEnoughAccountKeys);
                 }
                 // Map each field to its array index using the generated assignments.
                 Ok(AccountInfos {
                     #(#field_assignments,)*
                 })
+            }
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
+#[proc_macro_attribute]
+#[allow(non_snake_case)]
+pub fn InstructionParameters(_args: TokenStream, input: TokenStream) -> TokenStream {
+    // Parse the struct content.
+    let input = parse_macro_input!(input as DeriveInput);
+    parse_struct_fields(input.clone(), "Parameters");
+
+    // Overwrite the input with macro-generated code, including a `TryFrom` parser.
+    let expanded = quote! {
+        // Keep the original Accounts struct.
+        #[repr(C)]
+        #input
+
+        // Generate a `TryFrom` implementation for zero-copy deserialization.
+        impl TryFrom<&[u8]> for &Parameters {
+            type Error = solana_program::program_error::ProgramError;
+
+            fn try_from(instruction_parameter_bytes: &[u8]) -> Result<Self, Self::Error> {
+                if instruction_parameter_bytes.len() != size_of::<Self>() {
+                    return Err(Self::Error::InvalidInstructionData);
+                }
+                let parameters_ptr = instruction_parameter_bytes.as_ptr() as *const Self;
+                unsafe {
+                    Ok(&*parameters_ptr) // Safe since the length has been checked.
+                }
             }
         }
     };

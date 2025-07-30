@@ -1,6 +1,5 @@
-use crate::InstructionParameters;
-use macros::InstructionAccounts;
-use solana_program::{account_info::AccountInfo, pubkey::Pubkey};
+use macros::{InstructionAccounts, InstructionParameters};
+use solana_program::pubkey::Pubkey;
 
 #[InstructionAccounts]
 pub struct Accounts {
@@ -9,9 +8,8 @@ pub struct Accounts {
     pub system_program: Pubkey,
 }
 
-#[repr(C)]
+#[InstructionParameters]
 pub struct Parameters {
-    pub(super) base_mint: Pubkey,
-    pub(super) quote_mint: Pubkey,
+    pub base_mint: Pubkey,
+    pub quote_mint: Pubkey,
 }
-impl InstructionParameters for Parameters {}
