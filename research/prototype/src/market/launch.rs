@@ -1,8 +1,7 @@
 use super::Market;
 use macros::{InstructionAccounts, InstructionParameters};
 use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke,
-    program_error::ProgramError, pubkey::Pubkey,
+    entrypoint::ProgramResult, program::invoke, program_error::ProgramError, pubkey::Pubkey,
 };
 use solana_system_interface::instruction;
 
@@ -19,14 +18,12 @@ pub struct Parameters {
     pub quote_mint: Pubkey,
 }
 
-pub(crate) fn process<'info>(
+pub(crate) fn process(
     program_id: &Pubkey,
-    accounts: &'info [AccountInfo<'info>],
-    instruction_parameter_bytes: &[u8],
+    accounts: AccountInfos,
+    parameters: &Parameters,
 ) -> ProgramResult {
-    // Parse the instruction accounts and parameters, then derive the market account address.
-    let accounts = AccountInfos::try_from(accounts)?;
-    let parameters = <&Parameters>::try_from(instruction_parameter_bytes)?;
+    // Derive the market account address.
     let market_address =
         Market::address_from_pubkeys(&parameters.base_mint, &parameters.quote_mint, program_id);
 

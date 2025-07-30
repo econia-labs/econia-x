@@ -31,7 +31,9 @@ pub fn process_instruction<'info>(
     let instruction_type = InstructionType::try_from(instruction_type_byte)
         .map_err(|_| ProgramError::InvalidInstructionData)?;
     match instruction_type {
-        InstructionType::LaunchMarket => market::launch::process(program_id, accounts, params)?,
+        InstructionType::LaunchMarket => {
+            market::launch::process(program_id, accounts.try_into()?, params.try_into()?)?
+        }
     };
     Ok(())
 }
