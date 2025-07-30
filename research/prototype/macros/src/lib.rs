@@ -29,7 +29,7 @@ fn parse_struct_fields<'a>(
         _ => panic!("Only structs are supported"),
     };
 
-    // Check all fields are public
+    // Check all fields are public.
     for field in fields {
         if !matches!(field.vis, Visibility::Public(_)) {
             let field_name = field.ident.as_ref().unwrap();
@@ -69,12 +69,12 @@ pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStrea
 
     // Overwrite the input with macro-generated code, including a `TryFrom` parser.
     let expanded = quote! {
-        // Keep the original Accounts struct.
+        // Keep the original `Accounts` struct.
         #[allow(dead_code)]
         #[derive(Debug, Clone)]
         #input
 
-        // Generate an AccountInfoRefs struct with lifetimes.
+        // Generate an `AccountInfoRefs` struct with lifetimes.
         #[repr(C)]
         pub struct AccountInfoRefs<'info> {
             #(#account_infos_fields,)*
@@ -113,7 +113,7 @@ pub fn InstructionParameters(_args: TokenStream, input: TokenStream) -> TokenStr
 
     // Overwrite the input with macro-generated code, including a `TryFrom` parser.
     let expanded = quote! {
-        // Keep the original Accounts struct.
+        // Keep the original `Parameters` struct.
         #[repr(C)]
         #input
 
