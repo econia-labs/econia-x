@@ -95,7 +95,7 @@ pub(super) fn launch<'info>(
     instruction_parameter_bytes: &[u8],
 ) -> ProgramResult {
     // Parse the instruction accounts and parameters, then derive the market account address.
-    let accounts = launch::Accounts::try_from(accounts)?;
+    let accounts = launch::AccountInfos::try_from(accounts)?;
     let parameters = launch::Parameters::unpack(instruction_parameter_bytes)?;
     let market_address =
         Market::address_from_pubkeys(&parameters.base_mint, &parameters.quote_mint, program_id);

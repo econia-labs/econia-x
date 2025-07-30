@@ -2,14 +2,17 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, Data, DeriveInput, Fields};
 
-/// Generates a TryFrom implementation for account structs
-/// Maps each field to its corresponding index in the accounts array
 #[proc_macro_attribute]
 #[allow(non_snake_case)]
 pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStream {
-    // Parse the struct fields.
+    // Parse the struct name.
     let input = parse_macro_input!(input as DeriveInput);
     let struct_name = &input.ident;
+    if struct_name != "Accounts" {
+        panic!("The struct must be named `Accounts`");
+    }
+
+    // Parse the struct fields.
     let fields = match &input.data {
         Data::Struct(data_struct) => match &data_struct.fields {
             Fields::Named(fields) => &fields.named,
@@ -19,7 +22,15 @@ pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStrea
     };
     let n_fields = fields.len();
 
-    // Generate field assignment text: `first_field: &accounts[0] ... `.
+    // Generate `AccountInfos` struct fields.
+    let account_infos_fields = fields.iter().map(|field| {
+        let field_name = &field.ident;
+        quote! {
+            pub(super) #field_name: &'info solana_program::account_info::AccountInfo<'info>
+        }
+    });
+
+    // Generate field assignment text for `TryFrom`: `first_field: &accounts[0] ... `.
     let field_assignments = fields.iter().enumerate().map(|(i, field)| {
         let field_name = &field.ident;
         quote! {
@@ -27,13 +38,22 @@ pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStrea
         }
     });
 
-    // Overwrite the input with macro-generated code.
+    // Overwrite the input with macro-generated code, including a `TryFrom` parser.
     let expanded = quote! {
-        #[repr(C)] // Add `#[repr(C)]` to ensure C-compatible layout.
-        #input // Keep the original struct definition.
+        // Keep the original Accounts struct.
+        #[allow(dead_code)]
+        #[derive(Debug, Clone)]
+        #input
+
+        // Generate an AccountInfos struct with lifetimes.
+        #[repr(C)] // Add `#[repr(C)]` to ensure C-compatible layout for reliable parsing.
+        pub struct AccountInfos<'info> {
+            #(#account_infos_fields,)*
+        }
+
 
         // Generate a `TryFrom` implementation.
-        impl<'info> TryFrom<&'info [AccountInfo<'info>]> for #struct_name<'info> {
+        impl<'info> TryFrom<&'info [AccountInfo<'info>]> for AccountInfos<'info> {
             type Error = solana_program::program_error::ProgramError;
 
             fn try_from(accounts: &'info [AccountInfo<'info>]) -> Result<Self, Self::Error> {
@@ -42,7 +62,7 @@ pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStrea
                     return Err(solana_program::program_error::ProgramError::NotEnoughAccountKeys);
                 }
                 // Map each field to its array index using the generated assignments.
-                Ok(#struct_name {
+                Ok(AccountInfos {
                     #(#field_assignments,)*
                 })
             }
