@@ -206,7 +206,7 @@ pub fn instruction(input: TokenStream) -> TokenStream {
             }
 
             // Ensure the `TryFrom` implementations can be invoked.
-            fn _check_try_from_impls() {
+            fn _check_try_from_implementations() {
                 fn test_usage() {
                     let dummy_bytes: &[u8] = &[];
                     let _: Result<&#module_name::Parameters, _> = dummy_bytes.try_into();
