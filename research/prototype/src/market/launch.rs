@@ -1,55 +1,55 @@
-use solana_program::{account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey};
-use std::mem::size_of;
-use strum::EnumCount;
-use strum_macros::EnumCount;
+use super::Market;
+use macros::{InstructionAccounts, InstructionParameters, InstructionProcessor};
+use solana_program::{program::invoke, program_error::ProgramError, pubkey::Pubkey};
+use solana_system_interface::instruction;
 
-#[derive(EnumCount)]
-#[repr(usize)]
-enum AccountIndices {
-    Market,
-    Payer,
-    SystemProgram,
+#[InstructionAccounts]
+pub struct Accounts {
+    pub market: Pubkey,
+    pub payer: Pubkey,
+    pub system_program: Pubkey,
 }
 
-pub struct Accounts<'info> {
-    pub market: &'info AccountInfo<'info>,
-    pub payer: &'info AccountInfo<'info>,
-    pub system_program: &'info AccountInfo<'info>,
-}
-
-impl<'info> TryFrom<&'info [AccountInfo<'info>]> for Accounts<'info> {
-    type Error = ProgramError;
-
-    fn try_from(accounts: &'info [AccountInfo<'info>]) -> Result<Self, Self::Error> {
-        if accounts.len() < AccountIndices::COUNT {
-            return Err(ProgramError::NotEnoughAccountKeys);
-        }
-        Ok(Accounts {
-            market: &accounts[AccountIndices::Market as usize],
-            payer: &accounts[AccountIndices::Payer as usize],
-            system_program: &accounts[AccountIndices::SystemProgram as usize],
-        })
-    }
-}
-
-#[repr(C)]
+#[InstructionParameters]
 pub struct Parameters {
-    pub(super) base_mint: Pubkey,
-    pub(super) quote_mint: Pubkey,
+    pub base_mint: Pubkey,
+    pub quote_mint: Pubkey,
 }
 
-impl TryFrom<&[u8]> for &Parameters {
-    type Error = ProgramError;
+#[InstructionProcessor]
+pub(crate) fn process() {
+    // Derive the market account address.
+    let market_address =
+        Market::address_from_pubkeys(&parameters.base_mint, &parameters.quote_mint, program_id);
 
-    fn try_from(parameters_bytes: &[u8]) -> Result<Self, ProgramError> {
-        if parameters_bytes.len() != size_of::<Self>() {
-            return Err(ProgramError::InvalidInstructionData);
-        }
-        let parameters_ptr = parameters_bytes.as_ptr() as *const Parameters;
-        unsafe {
-            // Since the number of bytes in the instruction data bytes has already been verified,
-            // raw pointer dereferencing is safe here.
-            Ok(&*parameters_ptr)
-        }
-    }
+    // Verify that the passed market account address matches the derived market account address.
+    if accounts.market.key != &market_address {
+        return Err(ProgramError::InvalidAccountData);
+    };
+
+    // Ensure that the market account does not already exist.
+    if !accounts.market.data_is_empty() || accounts.market.owner != accounts.system_program.key {
+        return Err(ProgramError::AccountAlreadyInitialized);
+    };
+
+    // Create an account at the derived market address.
+    invoke(
+        &instruction::create_account(
+            accounts.payer.key,
+            accounts.market.key,
+            Market::RENT_EXEMPT_BALANCE,
+            size_of::<Market>() as u64,
+            program_id,
+        ),
+        &[
+            accounts.payer.clone(),
+            accounts.market.clone(),
+            accounts.system_program.clone(),
+        ],
+    )?;
+
+    // Serialize the market data into the account.
+    Market::init_account(accounts.market, parameters)?;
+
+    Ok(())
 }
