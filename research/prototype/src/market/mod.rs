@@ -1,5 +1,6 @@
 use crate::{
     fee::FeeRate,
+    market,
     price::{Price, PRICE_INFINITY, PRICE_ZERO},
     sector::{SectorIndex, NIL},
 };
@@ -59,28 +60,31 @@ impl Market {
     }
 
     /// Write market data straight to a freshly-initialized account.
-    fn init_account(account: &AccountInfo, parameters_ref: &launch::Parameters) -> ProgramResult {
-        // Get a mutable pointer to the account data and cast it to a mutable pointer to a market.
+    fn init_account(account: &AccountInfo, args_ref: &launch::Arguments) -> ProgramResult {
+        // Get a mutable pointer to the account data and cast it to a mutable pointer to a `Market`.
         let market_ptr = account.data.borrow_mut().as_mut_ptr() as *mut Market;
 
-        // Cast the mutable pointer to a mutable reference. This is safe since account data size is
-        // checked during account creation.
-        let market_mut = unsafe { &mut *market_ptr };
+        // Write the market data to the account using zero-copy. This is safe so long as the account
+        // data size is checked during account creation.
+        unsafe {
+            std::ptr::write(
+                market_ptr,
+                Market {
+                    base_mint: args_ref.base_mint,
+                    quote_mint: args_ref.quote_mint,
+                    fee_rate: 0,
+                    base_locked: 0,
+                    quote_locked: 0,
+                    best_ask: PRICE_INFINITY,
+                    best_bid: PRICE_ZERO,
+                    seats_root: NIL,
+                    asks_root: NIL,
+                    bids_root: NIL,
+                    stack_top: NIL,
+                },
+            );
+        }
 
-        // Write the base and quote mint pubkeys straight to the market account without intermediate
-        // copies against the instruction parameters reference.
-        market_mut.base_mint = parameters_ref.base_mint;
-        market_mut.quote_mint = parameters_ref.quote_mint;
-
-        // Initialize other fields to default values.
-        market_mut.base_locked = 0;
-        market_mut.quote_locked = 0;
-        market_mut.best_ask = PRICE_INFINITY;
-        market_mut.best_bid = PRICE_ZERO;
-        market_mut.seats_root = NIL;
-        market_mut.asks_root = NIL;
-        market_mut.bids_root = NIL;
-        market_mut.stack_top = NIL;
         Ok(())
     }
 }

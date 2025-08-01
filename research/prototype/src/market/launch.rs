@@ -1,5 +1,5 @@
 use super::Market;
-use macros::{InstructionAccounts, InstructionParameters, InstructionProcessor};
+use macros::{InstructionAccounts, InstructionArguments, InstructionProcessor};
 use solana_program::{program::invoke, program_error::ProgramError, pubkey::Pubkey};
 use solana_system_interface::instruction;
 
@@ -10,8 +10,8 @@ pub struct Accounts {
     pub system_program: Pubkey,
 }
 
-#[InstructionParameters]
-pub struct Parameters {
+#[InstructionArguments]
+pub struct Arguments {
     pub base_mint: Pubkey,
     pub quote_mint: Pubkey,
 }
@@ -20,7 +20,7 @@ pub struct Parameters {
 pub(crate) fn process() {
     // Derive the market account address.
     let market_address =
-        Market::address_from_pubkeys(&parameters.base_mint, &parameters.quote_mint, program_id);
+        Market::address_from_pubkeys(&args.base_mint, &args.quote_mint, program_id);
 
     // Verify that the passed market account address matches the derived market account address.
     if accounts.market.key != &market_address {
@@ -49,7 +49,7 @@ pub(crate) fn process() {
     )?;
 
     // Serialize the market data into the account.
-    Market::init_account(accounts.market, parameters)?;
+    Market::init_account(accounts.market, args)?;
 
     Ok(())
 }

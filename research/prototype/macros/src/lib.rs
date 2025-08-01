@@ -5,8 +5,8 @@ use syn::{
     ReturnType, Visibility,
 };
 
-/// Helper function to parse struct fields and validate struct name.
-fn parse_struct_fields<'a>(
+/// Verify struct visibility and parse field names.
+fn parse_struct<'a>(
     input: &'a DeriveInput,
     expected_name: &'a str,
 ) -> &'a Punctuated<Field, Comma> {
@@ -48,7 +48,7 @@ fn parse_struct_fields<'a>(
 pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStream {
     // Parse the struct content.
     let input = parse_macro_input!(input as DeriveInput);
-    let fields = parse_struct_fields(&input, "Accounts");
+    let fields = parse_struct(&input, "Accounts");
     let n_fields = fields.len();
 
     // Generate `AccountInfoRefs` struct fields.
@@ -106,28 +106,28 @@ pub fn InstructionAccounts(_args: TokenStream, input: TokenStream) -> TokenStrea
 
 #[proc_macro_attribute]
 #[allow(non_snake_case)]
-pub fn InstructionParameters(_args: TokenStream, input: TokenStream) -> TokenStream {
+pub fn InstructionArguments(_args: TokenStream, input: TokenStream) -> TokenStream {
     // Parse the struct content.
     let input = parse_macro_input!(input as DeriveInput);
-    parse_struct_fields(&input, "Parameters");
+    parse_struct(&input, "Arguments");
 
     // Overwrite the input with macro-generated code, including a `TryFrom` parser.
     let expanded = quote! {
-        // Keep the original `Parameters` struct.
+        // Keep the original `Arguments` struct.
         #[repr(C)]
         #input
 
         // Generate a `TryFrom` implementation for zero-copy deserialization.
-        impl TryFrom<&[u8]> for &Parameters {
+        impl TryFrom<&[u8]> for &Arguments {
             type Error = solana_program::program_error::ProgramError;
 
-            fn try_from(instruction_parameter_bytes: &[u8]) -> Result<Self, Self::Error> {
-                if instruction_parameter_bytes.len() != size_of::<Self>() {
+            fn try_from(instruction_argument_bytes: &[u8]) -> Result<Self, Self::Error> {
+                if instruction_argument_bytes.len() != size_of::<Self>() {
                     return Err(Self::Error::InvalidInstructionData);
                 }
-                let parameters_ptr = instruction_parameter_bytes.as_ptr() as *const Self;
+                let arguments_ptr = instruction_argument_bytes.as_ptr() as *const Self;
                 unsafe {
-                    Ok(&*parameters_ptr) // Safe since the length has been checked.
+                    Ok(&*arguments_ptr) // Safe since the length has been checked.
                 }
             }
         }
@@ -169,7 +169,7 @@ pub fn InstructionProcessor(_args: TokenStream, input: TokenStream) -> TokenStre
         #fn_vis fn #fn_name(
             program_id: &solana_program::pubkey::Pubkey,
             accounts: AccountInfoRefs,
-            parameters: &Parameters,
+            args: &Arguments,
         ) -> solana_program::entrypoint::ProgramResult {
             // Call the original function body.
             #fn_body
@@ -192,7 +192,7 @@ pub fn instruction(input: TokenStream) -> TokenStream {
             // Ensure structs exist.
             fn _check_structs_exist() {
                 let _: Option<#module_name::Accounts> = None;
-                let _: Option<#module_name::Parameters> = None;
+                let _: Option<#module_name::Arguments> = None;
                 let _: Option<#module_name::AccountInfoRefs<'static>> = None;
             }
 
@@ -201,7 +201,7 @@ pub fn instruction(input: TokenStream) -> TokenStream {
                 let _: fn(
                     &solana_program::pubkey::Pubkey,
                     #module_name::AccountInfoRefs,
-                    &#module_name::Parameters,
+                    &#module_name::Arguments,
                 ) -> solana_program::entrypoint::ProgramResult = #module_name::process;
             }
 
@@ -209,7 +209,7 @@ pub fn instruction(input: TokenStream) -> TokenStream {
             fn _check_try_from_implementations() {
                 fn test_usage() {
                     let dummy_bytes: &[u8] = &[];
-                    let _: Result<&#module_name::Parameters, _> = dummy_bytes.try_into();
+                    let _: Result<&#module_name::Arguments, _> = dummy_bytes.try_into();
 
                     let dummy_accounts: &[solana_program::account_info::AccountInfo] = &[];
                     let _: Result<#module_name::AccountInfoRefs, _> = dummy_accounts.try_into();
