@@ -1,5 +1,5 @@
 use crate::{
-    market::Market,
+    market::{self, Market},
     price::{PRICE_INFINITY, PRICE_ZERO},
     sector::NIL,
 };
@@ -28,13 +28,12 @@ pub struct Arguments {
 
 #[InstructionProcessor]
 pub(crate) fn process() {
-    // Derive the market account address.
+    // Derive the market account address, and ensure that it matches the passed market account.
     let market_address =
         Market::address_from_pubkeys(&args.base_mint, &args.quote_mint, program_id);
-
-    // Ensure that the passed market account matches the derived address, is empty, and is owned by
-    // the system program.
     svm_assert!(*accounts.market.key == market_address, InvalidArgument);
+
+    // Ensure that the passed market account is empty and is owned by the system program.
     svm_assert!(accounts.market.data_is_empty(), AccountAlreadyInitialized);
     svm_assert!(
         accounts.market.owner == accounts.system_program.key,
@@ -57,26 +56,26 @@ pub(crate) fn process() {
         ],
     )?;
 
-    // Write the market data straight to the account using zero-copy. This is safe since the account
-    // is empty its size is checked during account creation.
-    unsafe {
-        std::ptr::write(
-            accounts.market.data.borrow_mut().as_mut_ptr() as *mut Market,
-            Market {
-                base_mint: args.base_mint,
-                quote_mint: args.quote_mint,
-                fee_rate: 0,
-                base_locked: 0,
-                quote_locked: 0,
-                best_ask: PRICE_INFINITY,
-                best_bid: PRICE_ZERO,
-                seats_root: NIL,
-                asks_root: NIL,
-                bids_root: NIL,
-                stack_top: NIL,
-            },
-        );
-    }
+    // Get a mutable pointer to the market account data, and cast it into a mutable pointer to a
+    // `Market`. Then cast the pointer into a mutable reference to `Market`. This is safe since the
+    // account is empty and its size is checked during account creation.
+    let market_ptr = accounts.market.data.borrow_mut().as_mut_ptr() as *mut Market;
+    let market_mut: &mut Market = unsafe { &mut *market_ptr };
+
+    // Zero-copy initialize the base and quote mints from the instruction arguments.
+    market_mut.base_mint = args.base_mint;
+    market_mut.quote_mint = args.quote_mint;
+
+    // Initialize the rest of the market fields to their default values.
+    market_mut.fee_rate = 0;
+    market_mut.base_locked = 0;
+    market_mut.quote_locked = 0;
+    market_mut.best_ask = PRICE_INFINITY;
+    market_mut.best_bid = PRICE_ZERO;
+    market_mut.seats_root = NIL;
+    market_mut.asks_root = NIL;
+    market_mut.bids_root = NIL;
+    market_mut.stack_top = NIL;
 
     Ok(())
 }
