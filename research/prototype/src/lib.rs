@@ -1,6 +1,7 @@
 // cspell:word cfgs
 #![allow(unexpected_cfgs)]
 
+use macros::process_instruction;
 use num_enum::TryFromPrimitive;
 use solana_program::{
     account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, program_error::ProgramError,
@@ -25,15 +26,13 @@ pub fn process_instruction<'info>(
     accounts: &'info [AccountInfo<'info>],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    let (&instruction_type_byte, params) = instruction_data
+    let (&instruction_discriminant, instruction_args) = instruction_data
         .split_first()
         .ok_or(ProgramError::InvalidInstructionData)?;
-    let instruction_type = InstructionType::try_from(instruction_type_byte)
+    let instruction_type = InstructionType::try_from(instruction_discriminant)
         .map_err(|_| ProgramError::InvalidInstructionData)?;
     match instruction_type {
-        InstructionType::LaunchMarket => {
-            market::launch::process(program_id, accounts.try_into()?, params.try_into()?)?
-        }
+        InstructionType::LaunchMarket => process_instruction!(market::launch),
     };
     Ok(())
 }

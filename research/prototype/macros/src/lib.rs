@@ -240,3 +240,14 @@ pub fn svm_assert(input: TokenStream) -> TokenStream {
     };
     TokenStream::from(expanded)
 }
+
+#[proc_macro]
+pub fn process_instruction(input: TokenStream) -> TokenStream {
+    let module_path = parse_macro_input!(input as syn::Path);
+    let expanded = quote! {
+        {
+            #module_path::process(program_id, accounts.try_into()?, instruction_args.try_into()?)?
+        }
+    };
+    TokenStream::from(expanded)
+}
