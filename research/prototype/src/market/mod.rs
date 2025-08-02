@@ -1,11 +1,7 @@
-use crate::{
-    fee::FeeRate,
-    price::{Price, PRICE_INFINITY, PRICE_ZERO},
-    sector::{SectorIndex, NIL},
-};
+use crate::{fee::FeeRate, price::Price, sector::SectorIndex};
 use macros::instruction;
 
-use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, pubkey::Pubkey, rent};
+use solana_program::{pubkey::Pubkey, rent};
 use std::mem::size_of;
 
 instruction!(launch);
@@ -51,39 +47,10 @@ impl Market {
         quote_mint: &Pubkey,
         program_id: &Pubkey,
     ) -> Pubkey {
-        let (address, _bump_seed) = Pubkey::find_program_address(
+        let (address, _) = Pubkey::find_program_address(
             &[&base_mint.to_bytes(), &quote_mint.to_bytes()],
             program_id,
         );
         address
-    }
-
-    /// Write market data straight to a freshly-initialized account.
-    fn init_account(account: &AccountInfo, args_ref: &launch::Arguments) -> ProgramResult {
-        // Get a mutable pointer to the account data and cast it to a mutable pointer to a `Market`.
-        let market_ptr = account.data.borrow_mut().as_mut_ptr() as *mut Market;
-
-        // Write the market data to the account using zero-copy. This is safe so long as the account
-        // data size is checked during account creation.
-        unsafe {
-            std::ptr::write(
-                market_ptr,
-                Market {
-                    base_mint: args_ref.base_mint,
-                    quote_mint: args_ref.quote_mint,
-                    fee_rate: 0,
-                    base_locked: 0,
-                    quote_locked: 0,
-                    best_ask: PRICE_INFINITY,
-                    best_bid: PRICE_ZERO,
-                    seats_root: NIL,
-                    asks_root: NIL,
-                    bids_root: NIL,
-                    stack_top: NIL,
-                },
-            );
-        }
-
-        Ok(())
     }
 }

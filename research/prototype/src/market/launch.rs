@@ -1,4 +1,8 @@
-use super::Market;
+use crate::{
+    market::Market,
+    price::{PRICE_INFINITY, PRICE_ZERO},
+    sector::NIL,
+};
 use macros::{svm_assert, InstructionAccounts, InstructionArguments, InstructionProcessor};
 use solana_program::{
     program::invoke,
@@ -53,8 +57,26 @@ pub(crate) fn process() {
         ],
     )?;
 
-    // Serialize the market data into the account.
-    Market::init_account(accounts.market, args)?;
+    // Write the market data straight to the account using zero-copy. This is safe since the account
+    // is empty its size is checked during account creation.
+    unsafe {
+        std::ptr::write(
+            accounts.market.data.borrow_mut().as_mut_ptr() as *mut Market,
+            Market {
+                base_mint: args.base_mint,
+                quote_mint: args.quote_mint,
+                fee_rate: 0,
+                base_locked: 0,
+                quote_locked: 0,
+                best_ask: PRICE_INFINITY,
+                best_bid: PRICE_ZERO,
+                seats_root: NIL,
+                asks_root: NIL,
+                bids_root: NIL,
+                stack_top: NIL,
+            },
+        );
+    }
 
     Ok(())
 }
