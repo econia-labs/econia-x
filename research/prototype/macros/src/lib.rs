@@ -235,7 +235,7 @@ pub fn svm_assert(input: TokenStream) -> TokenStream {
     let error: proc_macro2::TokenStream = parts[1].parse().unwrap();
     let expanded = quote! {
         if !(#condition) {
-            return Err(solana_program::program_error::ProgramError::#error);
+            return Err(#error);
         }
     };
     TokenStream::from(expanded)
