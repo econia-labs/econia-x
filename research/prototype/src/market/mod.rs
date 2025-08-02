@@ -1,11 +1,7 @@
-use crate::{
-    fee::FeeRate,
-    price::{Price, PRICE_INFINITY, PRICE_ZERO},
-    sector::{SectorIndex, NIL},
-};
+use crate::{fee::FeeRate, price::Price, sector::SectorIndex};
 use macros::instruction;
 
-use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, pubkey::Pubkey, rent};
+use solana_program::{pubkey::Pubkey, rent};
 use std::mem::size_of;
 
 instruction!(launch);
@@ -51,36 +47,10 @@ impl Market {
         quote_mint: &Pubkey,
         program_id: &Pubkey,
     ) -> Pubkey {
-        let (address, _bump_seed) = Pubkey::find_program_address(
+        let (address, _) = Pubkey::find_program_address(
             &[&base_mint.to_bytes(), &quote_mint.to_bytes()],
             program_id,
         );
         address
-    }
-
-    /// Write market data straight to a freshly-initialized account.
-    fn init_account(account: &AccountInfo, parameters_ref: &launch::Parameters) -> ProgramResult {
-        // Get a mutable pointer to the account data and cast it to a mutable pointer to a market.
-        let market_ptr = account.data.borrow_mut().as_mut_ptr() as *mut Market;
-
-        // Cast the mutable pointer to a mutable reference. This is safe since account data size is
-        // checked during account creation.
-        let market_mut = unsafe { &mut *market_ptr };
-
-        // Write the base and quote mint pubkeys straight to the market account without intermediate
-        // copies against the instruction parameters reference.
-        market_mut.base_mint = parameters_ref.base_mint;
-        market_mut.quote_mint = parameters_ref.quote_mint;
-
-        // Initialize other fields to default values.
-        market_mut.base_locked = 0;
-        market_mut.quote_locked = 0;
-        market_mut.best_ask = PRICE_INFINITY;
-        market_mut.best_bid = PRICE_ZERO;
-        market_mut.seats_root = NIL;
-        market_mut.asks_root = NIL;
-        market_mut.bids_root = NIL;
-        market_mut.stack_top = NIL;
-        Ok(())
     }
 }

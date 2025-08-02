@@ -1,6 +1,16 @@
-use super::Market;
-use macros::{InstructionAccounts, InstructionParameters, InstructionProcessor};
-use solana_program::{program::invoke, program_error::ProgramError, pubkey::Pubkey};
+use crate::{
+    market::Market,
+    price::{PRICE_INFINITY, PRICE_ZERO},
+    sector::NIL,
+};
+use macros::{svm_assert, InstructionAccounts, InstructionArguments, InstructionProcessor};
+use solana_program::{
+    program::invoke,
+    program_error::ProgramError::{
+        AccountAlreadyInitialized, InvalidAccountOwner, InvalidArgument,
+    },
+    pubkey::Pubkey,
+};
 use solana_system_interface::instruction;
 
 #[InstructionAccounts]
@@ -10,27 +20,25 @@ pub struct Accounts {
     pub system_program: Pubkey,
 }
 
-#[InstructionParameters]
-pub struct Parameters {
+#[InstructionArguments]
+pub struct Arguments {
     pub base_mint: Pubkey,
     pub quote_mint: Pubkey,
 }
 
 #[InstructionProcessor]
 pub(crate) fn process() {
-    // Derive the market account address.
+    // Derive the market account address, and ensure that it matches the passed market account.
     let market_address =
-        Market::address_from_pubkeys(&parameters.base_mint, &parameters.quote_mint, program_id);
+        Market::address_from_pubkeys(&args.base_mint, &args.quote_mint, program_id);
+    svm_assert!(*accounts.market.key == market_address, InvalidArgument);
 
-    // Verify that the passed market account address matches the derived market account address.
-    if accounts.market.key != &market_address {
-        return Err(ProgramError::InvalidAccountData);
-    };
-
-    // Ensure that the market account does not already exist.
-    if !accounts.market.data_is_empty() || accounts.market.owner != accounts.system_program.key {
-        return Err(ProgramError::AccountAlreadyInitialized);
-    };
+    // Ensure that the passed market account is empty and is owned by the system program.
+    svm_assert!(accounts.market.data_is_empty(), AccountAlreadyInitialized);
+    svm_assert!(
+        accounts.market.owner == accounts.system_program.key,
+        InvalidAccountOwner
+    );
 
     // Create an account at the derived market address.
     invoke(
@@ -48,8 +56,26 @@ pub(crate) fn process() {
         ],
     )?;
 
-    // Serialize the market data into the account.
-    Market::init_account(accounts.market, parameters)?;
+    // Get a mutable pointer to the market account data, and cast it into a mutable pointer to a
+    // `Market`. Then cast the pointer into a mutable reference to `Market`. This is safe since the
+    // account is empty and its size is checked during account creation.
+    let market_ptr = accounts.market.data.borrow_mut().as_mut_ptr() as *mut Market;
+    let market_mut: &mut Market = unsafe { &mut *market_ptr };
+
+    // Zero-copy initialize the base and quote mints from the instruction arguments.
+    market_mut.base_mint = args.base_mint;
+    market_mut.quote_mint = args.quote_mint;
+
+    // Initialize the rest of the market fields to their default values.
+    market_mut.fee_rate = 0;
+    market_mut.base_locked = 0;
+    market_mut.quote_locked = 0;
+    market_mut.best_ask = PRICE_INFINITY;
+    market_mut.best_bid = PRICE_ZERO;
+    market_mut.seats_root = NIL;
+    market_mut.asks_root = NIL;
+    market_mut.bids_root = NIL;
+    market_mut.stack_top = NIL;
 
     Ok(())
 }
