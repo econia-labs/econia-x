@@ -220,3 +220,23 @@ pub fn instruction(input: TokenStream) -> TokenStream {
 
     TokenStream::from(expanded)
 }
+
+#[proc_macro]
+pub fn svm_assert(input: TokenStream) -> TokenStream {
+    // Check arguments.
+    let input_str = input.to_string();
+    let parts: Vec<&str> = input_str.split(',').map(|s| s.trim()).collect();
+    if parts.len() != 2 {
+        panic!("svm_assert! expects exactly 2 arguments: condition, error");
+    }
+
+    // Parse the condition and error type, and generate the assertion code.
+    let condition: proc_macro2::TokenStream = parts[0].parse().unwrap();
+    let error: proc_macro2::TokenStream = parts[1].parse().unwrap();
+    let expanded = quote! {
+        if !(#condition) {
+            return Err(solana_program::program_error::ProgramError::#error);
+        }
+    };
+    TokenStream::from(expanded)
+}

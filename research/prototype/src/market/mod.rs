@@ -1,6 +1,5 @@
 use crate::{
     fee::FeeRate,
-    market,
     price::{Price, PRICE_INFINITY, PRICE_ZERO},
     sector::{SectorIndex, NIL},
 };

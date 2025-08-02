@@ -1,6 +1,6 @@
 use super::Market;
-use macros::{InstructionAccounts, InstructionArguments, InstructionProcessor};
-use solana_program::{program::invoke, program_error::ProgramError, pubkey::Pubkey};
+use macros::*;
+use solana_program::{program::invoke, pubkey::Pubkey};
 use solana_system_interface::instruction;
 
 #[InstructionAccounts]
@@ -22,15 +22,14 @@ pub(crate) fn process() {
     let market_address =
         Market::address_from_pubkeys(&args.base_mint, &args.quote_mint, program_id);
 
-    // Verify that the passed market account address matches the derived market account address.
-    if accounts.market.key != &market_address {
-        return Err(ProgramError::InvalidAccountData);
-    };
-
-    // Ensure that the market account does not already exist.
-    if !accounts.market.data_is_empty() || accounts.market.owner != accounts.system_program.key {
-        return Err(ProgramError::AccountAlreadyInitialized);
-    };
+    // Ensure that the passed market account matches the derived address, is empty, and is owned by
+    // the system program.
+    svm_assert!(*accounts.market.key == market_address, InvalidArgument);
+    svm_assert!(accounts.market.data_is_empty(), AccountAlreadyInitialized);
+    svm_assert!(
+        accounts.market.owner == accounts.system_program.key,
+        InvalidAccountOwner
+    );
 
     // Create an account at the derived market address.
     invoke(
