@@ -1,5 +1,5 @@
 use crate::{
-    market::{self, Market},
+    market::Market,
     price::{PRICE_INFINITY, PRICE_ZERO},
     sector::NIL,
 };
