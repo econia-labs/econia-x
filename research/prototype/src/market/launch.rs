@@ -1,5 +1,5 @@
 use super::Market;
-use macros::*;
+use macros::{svm_assert, InstructionAccounts, InstructionArguments, InstructionProcessor};
 use solana_program::{program::invoke, pubkey::Pubkey};
 use solana_system_interface::instruction;
 

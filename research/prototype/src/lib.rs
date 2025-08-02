@@ -4,8 +4,8 @@
 use macros::process_instruction;
 use num_enum::TryFromPrimitive;
 use solana_program::{
-    account_info::AccountInfo, entrypoint, entrypoint::ProgramResult, program_error::ProgramError,
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint, entrypoint::ProgramResult,
+    program_error::ProgramError::InvalidInstructionData, pubkey::Pubkey,
 };
 
 mod fee;
@@ -28,9 +28,9 @@ pub fn process_instruction<'info>(
 ) -> ProgramResult {
     let (&instruction_discriminant, instruction_args) = instruction_data
         .split_first()
-        .ok_or(ProgramError::InvalidInstructionData)?;
-    let instruction_type = InstructionType::try_from(instruction_discriminant)
-        .map_err(|_| ProgramError::InvalidInstructionData)?;
+        .ok_or(InvalidInstructionData)?;
+    let instruction_type =
+        InstructionType::try_from(instruction_discriminant).map_err(|_| InvalidInstructionData)?;
     match instruction_type {
         InstructionType::LaunchMarket => process_instruction!(market::launch),
     };
